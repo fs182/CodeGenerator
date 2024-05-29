@@ -8,6 +8,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = CodeGenerator.Console
-build_property.ProjectDir = C:\Fernando\Oficina\CodeGenerator\CodeGenerator\CodeGenerator.Console\
+build_property.ProjectDir = C:\Fernando\Oficina\CodeGenerator\CodeGenerator.Console\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
