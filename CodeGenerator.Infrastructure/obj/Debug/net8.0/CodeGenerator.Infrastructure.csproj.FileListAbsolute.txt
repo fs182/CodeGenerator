@@ -1,0 +1,11 @@
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator\CodeGenerator.Infrastructure\bin\Debug\net8.0\CodeGenerator.Infrastructure.deps.json
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator\CodeGenerator.Infrastructure\bin\Debug\net8.0\CodeGenerator.Infrastructure.dll
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator\CodeGenerator.Infrastructure\bin\Debug\net8.0\CodeGenerator.Infrastructure.pdb
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator\CodeGenerator.Infrastructure\obj\Debug\net8.0\CodeGenerator.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator\CodeGenerator.Infrastructure\obj\Debug\net8.0\CodeGenerator.Infrastructure.AssemblyInfoInputs.cache
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator\CodeGenerator.Infrastructure\obj\Debug\net8.0\CodeGenerator.Infrastructure.AssemblyInfo.cs
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator\CodeGenerator.Infrastructure\obj\Debug\net8.0\CodeGenerator.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator\CodeGenerator.Infrastructure\obj\Debug\net8.0\CodeGenerator.Infrastructure.dll
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator\CodeGenerator.Infrastructure\obj\Debug\net8.0\refint\CodeGenerator.Infrastructure.dll
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator\CodeGenerator.Infrastructure\obj\Debug\net8.0\CodeGenerator.Infrastructure.pdb
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator\CodeGenerator.Infrastructure\obj\Debug\net8.0\ref\CodeGenerator.Infrastructure.dll

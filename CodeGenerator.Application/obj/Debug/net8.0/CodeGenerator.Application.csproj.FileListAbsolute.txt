@@ -1,0 +1,11 @@
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator\CodeGenerator.Application\bin\Debug\net8.0\CodeGenerator.Application.deps.json
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator\CodeGenerator.Application\bin\Debug\net8.0\CodeGenerator.Application.dll
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator\CodeGenerator.Application\bin\Debug\net8.0\CodeGenerator.Application.pdb
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator\CodeGenerator.Application\obj\Debug\net8.0\CodeGenerator.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator\CodeGenerator.Application\obj\Debug\net8.0\CodeGenerator.Application.AssemblyInfoInputs.cache
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator\CodeGenerator.Application\obj\Debug\net8.0\CodeGenerator.Application.AssemblyInfo.cs
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator\CodeGenerator.Application\obj\Debug\net8.0\CodeGenerator.Application.csproj.CoreCompileInputs.cache
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator\CodeGenerator.Application\obj\Debug\net8.0\CodeGenerator.Application.dll
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator\CodeGenerator.Application\obj\Debug\net8.0\refint\CodeGenerator.Application.dll
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator\CodeGenerator.Application\obj\Debug\net8.0\CodeGenerator.Application.pdb
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator\CodeGenerator.Application\obj\Debug\net8.0\ref\CodeGenerator.Application.dll
