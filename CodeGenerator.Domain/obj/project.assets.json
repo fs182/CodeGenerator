@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Fernando\\Oficina\\CodeGenerator\\CodeGenerator\\CodeGenerator.Domain\\CodeGenerator.Domain.csproj",
+      "projectUniqueName": "C:\\Fernando\\Oficina\\CodeGenerator\\CodeGenerator.Domain\\CodeGenerator.Domain.csproj",
       "projectName": "CodeGenerator.Domain",
-      "projectPath": "C:\\Fernando\\Oficina\\CodeGenerator\\CodeGenerator\\CodeGenerator.Domain\\CodeGenerator.Domain.csproj",
+      "projectPath": "C:\\Fernando\\Oficina\\CodeGenerator\\CodeGenerator.Domain\\CodeGenerator.Domain.csproj",
       "packagesPath": "C:\\Users\\fs182\\.nuget\\packages\\",
-      "outputPath": "C:\\Fernando\\Oficina\\CodeGenerator\\CodeGenerator\\CodeGenerator.Domain\\obj\\",
+      "outputPath": "C:\\Fernando\\Oficina\\CodeGenerator\\CodeGenerator.Domain\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\fs182\\AppData\\Roaming\\NuGet\\NuGet.Config",

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Fernando\\Oficina\\CodeGenerator\\CodeGenerator\\CodeGenerator.Application\\CodeGenerator.Application.csproj": {}
+    "C:\\Fernando\\Oficina\\CodeGenerator\\CodeGenerator.Application\\CodeGenerator.Application.csproj": {}
   },
   "projects": {
-    "C:\\Fernando\\Oficina\\CodeGenerator\\CodeGenerator\\CodeGenerator.Application\\CodeGenerator.Application.csproj": {
+    "C:\\Fernando\\Oficina\\CodeGenerator\\CodeGenerator.Application\\CodeGenerator.Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Fernando\\Oficina\\CodeGenerator\\CodeGenerator\\CodeGenerator.Application\\CodeGenerator.Application.csproj",
+        "projectUniqueName": "C:\\Fernando\\Oficina\\CodeGenerator\\CodeGenerator.Application\\CodeGenerator.Application.csproj",
         "projectName": "CodeGenerator.Application",
-        "projectPath": "C:\\Fernando\\Oficina\\CodeGenerator\\CodeGenerator\\CodeGenerator.Application\\CodeGenerator.Application.csproj",
+        "projectPath": "C:\\Fernando\\Oficina\\CodeGenerator\\CodeGenerator.Application\\CodeGenerator.Application.csproj",
         "packagesPath": "C:\\Users\\fs182\\.nuget\\packages\\",
-        "outputPath": "C:\\Fernando\\Oficina\\CodeGenerator\\CodeGenerator\\CodeGenerator.Application\\obj\\",
+        "outputPath": "C:\\Fernando\\Oficina\\CodeGenerator\\CodeGenerator.Application\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\fs182\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -45,6 +45,12 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "dependencies": {
+            "MediatR": {
+              "target": "Package",
+              "version": "[12.3.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

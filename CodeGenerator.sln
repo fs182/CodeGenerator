@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.34916.146
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Domain", "CodeGenerator.Domain\CodeGenerator.Domain.csproj", "{D0BBA2E1-087D-41E6-9A74-ED792402E2AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeGenerator.Domain", "CodeGenerator.Domain\CodeGenerator.Domain.csproj", "{D0BBA2E1-087D-41E6-9A74-ED792402E2AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Application", "CodeGenerator.Application\CodeGenerator.Application.csproj", "{53943838-009B-47E7-AEE6-3B0B33A76B27}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeGenerator.Application", "CodeGenerator.Application\CodeGenerator.Application.csproj", "{53943838-009B-47E7-AEE6-3B0B33A76B27}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Infrastructure", "CodeGenerator.Infrastructure\CodeGenerator.Infrastructure.csproj", "{6D3B7975-5277-4EB1-9233-35F4383F6D19}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeGenerator.Infrastructure", "CodeGenerator.Infrastructure\CodeGenerator.Infrastructure.csproj", "{6D3B7975-5277-4EB1-9233-35F4383F6D19}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Console", "CodeGenerator.Console\CodeGenerator.Console.csproj", "{F15EB6CD-023A-4F79-9030-06FEDBE2F24D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeGenerator.Console", "CodeGenerator.Console\CodeGenerator.Console.csproj", "{F15EB6CD-023A-4F79-9030-06FEDBE2F24D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.API", "CodeGenerator.API\CodeGenerator.API.csproj", "{275DA96F-2E66-4B33-8331-241221A0FFF5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{F15EB6CD-023A-4F79-9030-06FEDBE2F24D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F15EB6CD-023A-4F79-9030-06FEDBE2F24D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F15EB6CD-023A-4F79-9030-06FEDBE2F24D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{275DA96F-2E66-4B33-8331-241221A0FFF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{275DA96F-2E66-4B33-8331-241221A0FFF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{275DA96F-2E66-4B33-8331-241221A0FFF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{275DA96F-2E66-4B33-8331-241221A0FFF5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
