@@ -9,3 +9,15 @@ C:\Fernando\Oficina\CodeGenerator\CodeGenerator\CodeGenerator.Domain\obj\Debug\n
 C:\Fernando\Oficina\CodeGenerator\CodeGenerator\CodeGenerator.Domain\obj\Debug\net8.0\refint\CodeGenerator.Domain.dll
 C:\Fernando\Oficina\CodeGenerator\CodeGenerator\CodeGenerator.Domain\obj\Debug\net8.0\CodeGenerator.Domain.pdb
 C:\Fernando\Oficina\CodeGenerator\CodeGenerator\CodeGenerator.Domain\obj\Debug\net8.0\ref\CodeGenerator.Domain.dll
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator.Domain\bin\Debug\net8.0\CodeGenerator.Domain.deps.json
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator.Domain\bin\Debug\net8.0\CodeGenerator.Domain.dll
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator.Domain\bin\Debug\net8.0\CodeGenerator.Domain.pdb
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator.Domain\obj\Debug\net8.0\CodeGenerator.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator.Domain\obj\Debug\net8.0\CodeGenerator.Domain.AssemblyInfoInputs.cache
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator.Domain\obj\Debug\net8.0\CodeGenerator.Domain.AssemblyInfo.cs
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator.Domain\obj\Debug\net8.0\CodeGenerator.Domain.csproj.CoreCompileInputs.cache
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator.Domain\obj\Debug\net8.0\CodeGenerator.Domain.sourcelink.json
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator.Domain\obj\Debug\net8.0\CodeGenerator.Domain.dll
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator.Domain\obj\Debug\net8.0\refint\CodeGenerator.Domain.dll
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator.Domain\obj\Debug\net8.0\CodeGenerator.Domain.pdb
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator.Domain\obj\Debug\net8.0\ref\CodeGenerator.Domain.dll

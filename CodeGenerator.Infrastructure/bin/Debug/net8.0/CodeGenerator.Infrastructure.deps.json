@@ -583,10 +583,16 @@
       },
       "CodeGenerator.Application/1.0.0": {
         "dependencies": {
+          "CodeGenerator.Domain": "1.0.0",
           "MediatR": "12.3.0"
         },
         "runtime": {
           "CodeGenerator.Application.dll": {}
+        }
+      },
+      "CodeGenerator.Domain/1.0.0": {
+        "runtime": {
+          "CodeGenerator.Domain.dll": {}
         }
       }
     }
@@ -997,6 +1003,11 @@
       "hashPath": "system.windows.extensions.6.0.0.nupkg.sha512"
     },
     "CodeGenerator.Application/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "CodeGenerator.Domain/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

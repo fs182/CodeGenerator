@@ -2,10 +2,11 @@
 
 namespace CodeGenerator.Infrastructure.Context
 {
-    public class GeneralContext : DbContext
+    public class ExternalContext : DbContext
     {
-        public GeneralContext(DbContextOptions<GeneralContext> options) : base(options)
+        public ExternalContext(DbContextOptions<ExternalContext> options) : base(options)
         {
+            
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

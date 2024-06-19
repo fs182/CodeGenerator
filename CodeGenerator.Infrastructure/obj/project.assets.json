@@ -1021,6 +1021,7 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v8.0",
         "dependencies": {
+          "CodeGenerator.Domain": "1.0.0",
           "MediatR": "12.3.0"
         },
         "compile": {
@@ -1028,6 +1029,16 @@
         },
         "runtime": {
           "bin/placeholder/CodeGenerator.Application.dll": {}
+        }
+      },
+      "CodeGenerator.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/CodeGenerator.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/CodeGenerator.Domain.dll": {}
         }
       }
     }
@@ -2819,6 +2830,11 @@
       "type": "project",
       "path": "../CodeGenerator.Application/CodeGenerator.Application.csproj",
       "msbuildProject": "../CodeGenerator.Application/CodeGenerator.Application.csproj"
+    },
+    "CodeGenerator.Domain/1.0.0": {
+      "type": "project",
+      "path": "../CodeGenerator.Domain/CodeGenerator.Domain.csproj",
+      "msbuildProject": "../CodeGenerator.Domain/CodeGenerator.Domain.csproj"
     }
   },
   "projectFileDependencyGroups": {

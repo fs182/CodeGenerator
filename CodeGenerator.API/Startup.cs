@@ -1,8 +1,8 @@
 ﻿using CodeGenerator.API.Models;
 using CodeGenerator.Application.Handlers.Table;
-using CodeGenerator.Application.Interfaces.General;
+using CodeGenerator.Application.Interfaces.External;
 using CodeGenerator.Infrastructure.Context;
-using CodeGenerator.Infrastructure.Repositories.General;
+using CodeGenerator.Infrastructure.Repositories.External;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -26,17 +26,18 @@ namespace CodeGenerator.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors(options =>
-                options.AddPolicy(name: "HeritageTreesCors", builder =>
+                options.AddPolicy(name: "FinancialModelCors", builder =>
                 {
                     builder.AllowAnyOrigin();
                 })
             );
             services.AddControllers();
-            var connectionString = Configuration.GetConnectionString("HeritageTreesDB");
+            var financialModelConnectionString = Configuration.GetConnectionString("FinancialModelDB");
+            var codeGeneratorConnectionString = Configuration.GetConnectionString("CodeGeneratorDB");
             //IConfiguration configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json", false).Build();
             services.AddSingleton<IConfiguration>(Configuration);
-            services.AddDbContext<GeneralContext>(f => f.UseSqlServer(connectionString), ServiceLifetime.Transient);
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddDbContext<ExternalContext>(f => f.UseSqlServer(financialModelConnectionString), ServiceLifetime.Transient);
+            //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<ApplicationDbContext>();
 
             // Adding Authentication
             services.AddAuthentication(options =>
@@ -94,13 +95,16 @@ namespace CodeGenerator.API
 
             services.AddSwaggerGen(options =>
             {
-                options.SwaggerDoc("v1", new OpenApiInfo { Title = "HeritageTrees.API", Version = "2.0" });
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = "FinancialModel.API", Version = "1.0.1" });
                 options.CustomSchemaIds(c => c.FullName);
                 options.EnableAnnotations();
 
             });
-            services.AddMediatR( typeof(PopulateHandler).GetTypeInfo().Assembly);
-            services.AddTransient<IGeneralRepository, GeneralRepository>();
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(assembly));
+            }
+            services.AddTransient<IExternalRepository, ExternalRepository>();
             
         }
 

@@ -8,6 +8,7 @@
     ".NETCoreApp,Version=v8.0": {
       "CodeGenerator.Application/1.0.0": {
         "dependencies": {
+          "CodeGenerator.Domain": "1.0.0",
           "MediatR": "12.3.0"
         },
         "runtime": {
@@ -41,6 +42,11 @@
             "fileVersion": "8.0.23.53103"
           }
         }
+      },
+      "CodeGenerator.Domain/1.0.0": {
+        "runtime": {
+          "CodeGenerator.Domain.dll": {}
+        }
       }
     }
   },
@@ -70,6 +76,11 @@
       "sha512": "sha512-cjWrLkJXK0rs4zofsK4bSdg+jhDLTaxrkXu4gS6Y7MAlCvRyNNgwY/lJi5RDlQOnSZweHqoyvgvbdvQsRIW+hg==",
       "path": "microsoft.extensions.dependencyinjection.abstractions/8.0.0",
       "hashPath": "microsoft.extensions.dependencyinjection.abstractions.8.0.0.nupkg.sha512"
+    },
+    "CodeGenerator.Domain/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
     }
   }
 }

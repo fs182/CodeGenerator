@@ -22,3 +22,6 @@ C:\Fernando\Oficina\CodeGenerator\CodeGenerator.Application\obj\Debug\net8.0\ref
 C:\Fernando\Oficina\CodeGenerator\CodeGenerator.Application\obj\Debug\net8.0\CodeGenerator.Application.pdb
 C:\Fernando\Oficina\CodeGenerator\CodeGenerator.Application\obj\Debug\net8.0\ref\CodeGenerator.Application.dll
 C:\Fernando\Oficina\CodeGenerator\CodeGenerator.Application\obj\Debug\net8.0\CodeGenerator.Application.csproj.AssemblyReference.cache
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator.Application\bin\Debug\net8.0\CodeGenerator.Domain.dll
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator.Application\bin\Debug\net8.0\CodeGenerator.Domain.pdb
+C:\Fernando\Oficina\CodeGenerator\CodeGenerator.Application\obj\Debug\net8.0\CodeGene.DC118CF4.Up2Date

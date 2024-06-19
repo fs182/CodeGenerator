@@ -15,4 +15,8 @@
     <ProjectReference Include="..\CodeGenerator.Application\CodeGenerator.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Repositories\NewFolder\" />
+  </ItemGroup>
+
 </Project>
