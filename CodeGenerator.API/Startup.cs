@@ -1,16 +1,12 @@
-﻿using CodeGenerator.API.Models;
-using CodeGenerator.Application.Handlers.Table;
-using CodeGenerator.Application.Interfaces.External;
+﻿using CodeGenerator.Application.Interfaces.External;
 using CodeGenerator.Infrastructure.Context;
+using CodeGenerator.Infrastructure.Mappers;
 using CodeGenerator.Infrastructure.Repositories.External;
-using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
-using System.Reflection;
 using System.Text;
 
 namespace CodeGenerator.API
@@ -35,8 +31,9 @@ namespace CodeGenerator.API
             var financialModelConnectionString = Configuration.GetConnectionString("FinancialModelDB");
             var codeGeneratorConnectionString = Configuration.GetConnectionString("CodeGeneratorDB");
             //IConfiguration configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json", false).Build();
-            services.AddSingleton<IConfiguration>(Configuration);
+            //services.AddSingleton<IConfiguration>(Configuration);
             services.AddDbContext<ExternalContext>(f => f.UseSqlServer(financialModelConnectionString), ServiceLifetime.Transient);
+            services.AddAutoMapper(typeof(AutoMapperProfile));
             //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<ApplicationDbContext>();
 
             // Adding Authentication

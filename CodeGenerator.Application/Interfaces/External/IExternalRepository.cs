@@ -1,9 +1,10 @@
 ﻿using CodeGenerator.Application.Commands.General;
+using CodeGenerator.Application.Responses;
 
 namespace CodeGenerator.Application.Interfaces.External
 {
     public interface IExternalRepository
     {
-        Task GetMetadataTable(PopulateCommand command);
+        Task<List<TableResponse>> GetMetadataTable(PopulateCommand command);
     }
 }
