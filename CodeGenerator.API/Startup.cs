@@ -2,6 +2,7 @@
 using CodeGenerator.Infrastructure.Context;
 using CodeGenerator.Infrastructure.Mappers;
 using CodeGenerator.Infrastructure.Repositories.External;
+using CodeGenerator.Infrastructure.Repositories.Local;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -33,6 +34,7 @@ namespace CodeGenerator.API
             //IConfiguration configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json", false).Build();
             //services.AddSingleton<IConfiguration>(Configuration);
             services.AddDbContext<ExternalContext>(f => f.UseSqlServer(financialModelConnectionString), ServiceLifetime.Transient);
+            services.AddDbContext<LocalContext>(f => f.UseSqlServer(codeGeneratorConnectionString), ServiceLifetime.Transient);
             services.AddAutoMapper(typeof(AutoMapperProfile));
             //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<ApplicationDbContext>();
 
@@ -102,7 +104,8 @@ namespace CodeGenerator.API
                 services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(assembly));
             }
             services.AddTransient<IExternalRepository, ExternalRepository>();
-            
+            services.AddTransient<ILocalRepository, LocalRepository>();
+
         }
 
         public void Configure(IApplicationBuilder app)

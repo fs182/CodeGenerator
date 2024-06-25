@@ -1,8 +1,10 @@
-﻿using CodeGenerator.Domain;
-
-namespace CodeGenerator.Application.Responses
+﻿namespace CodeGenerator.Application.Responses
 {
-    public class TableResponse : Table
+    public class TableResponse 
     {
+        public short ProjectId { get; set; }
+        public int ObjectId { get; set; }
+        public string SchemaName { get; set; }
+        public string TableName { get; set; }
     }
 }

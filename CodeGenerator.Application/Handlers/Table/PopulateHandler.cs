@@ -9,7 +9,9 @@ namespace CodeGenerator.Application.Handlers.Table
         public async Task<Unit> Handle(PopulateCommand command, CancellationToken cancellationToken)
         {
             var tables = await externalRepository.GetMetadataTable(command);
-            await localRepository.PopulateTable(tables);
+            await localRepository.PopulateTable(tables, command);
+            var columns = await externalRepository.GetMetadataColumn(command);
+            await localRepository.PopulateColumn(columns, command);
             return Unit.Value;
         }
     }

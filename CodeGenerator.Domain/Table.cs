@@ -2,7 +2,6 @@
 {
     public class Table
     {
-        public int TableId { get; set; }
         public int ObjectId { get; set; }
         public string SchemaName { get; set; }
         public string TableName { get; set; }
