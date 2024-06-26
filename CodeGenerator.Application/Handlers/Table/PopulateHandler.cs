@@ -11,7 +11,7 @@ namespace CodeGenerator.Application.Handlers.Table
             var tables = await externalRepository.GetMetadataTable(command);
             await localRepository.PopulateTable(tables, command);
             var columns = await externalRepository.GetMetadataColumn(command);
-            await localRepository.PopulateColumn(columns, command);
+            await localRepository.PopulateCatalogProperty(columns, command);
             return Unit.Value;
         }
     }

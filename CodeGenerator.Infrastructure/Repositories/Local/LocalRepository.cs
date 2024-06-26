@@ -29,7 +29,7 @@ namespace CodeGenerator.Infrastructure.Repositories.Local
             });
         }
 
-        public async Task PopulateColumn(List<ColumnResponse> columns, PopulateCommand command)
+        public async Task PopulateCatalogProperty(List<ColumnResponse> columns, PopulateCommand command)
         {
             var tempColumns = mapper.Map<List<ColumnTemp>>(columns);
             await Task.Run(() => {
@@ -107,6 +107,52 @@ namespace CodeGenerator.Infrastructure.Repositories.Local
 						isnull(a.[TableTarget],'') = isnull(c.[TableTarget],'') and
 						isnull(a.[ColumnTarget],'') = isnull(c.[ColumnTarget],'') 
 					WHERE c.ObjectId is null and a.ProjectId = {command.ProjectId}
+
+
+					INSERT INTO [dbo].[Catalog]
+					     SELECT
+					            a.TableId,
+					            cast (1 as bit) as IsEnabled, 
+					            cast (1 as bit) as HasMenu,
+					            cast (1 as bit) as HasGrid,
+					            cast (1 as bit) as HasForm,
+					            cast (1 as bit) as HasSearchEngine,
+					            cast (1 as bit) as HasPagination, 
+					            cast (1 as bit) as HasOnlyBackend,
+								cast (1 as bit) as IsEditable, 
+								cast (1 as bit) as CanBeDeleted, 
+								cast (1 as bit) as CanBeCreated, 
+								cast (1 as bit) as CanBeUpdated, 
+					            a.TableName + '[Form name]' as FormName, 
+					            a.TableName + '[Form description]' as FormDescription,
+					            a.TableName + '[Grid name]' as GridName, 
+								a.TableName + '[Grid description]' as GridDescription, 
+					            cast({command.ProjectId} as bigint) as AuditId
+					FROM dbo.[Table] a LEFT OUTER JOIN dbo.[Catalog] b
+						ON a.TableId = b.TableId
+						WHERE b.CatalogId IS NULL and a.ProjectId = {command.ProjectId}
+
+					INSERT INTO [dbo].[Property]
+					SELECT          
+						c.CatalogId
+						,a.ColumnId
+						,cast(1 as bit) as IsEnabled
+						,cast(1 as bit) as IsForSearchEngine
+						,cast(1 as bit) as IsForForm
+						,cast(1 as bit) as IsForGrid
+						,cast(0 as bit) as IsReadOnly
+						,cast(1 as smallint) as [Order]
+						,a.ColumnName + '[Grid header]' as GridHeader
+						,a.ColumnName + '[Form title]' as FormTitle
+						,a.ColumnName + '[Form description]' as FormDescription
+						,a.ColumnName + '[Search engine title]' as SearchEngineTitle
+						,cast({command.AuditId} as bigint) as AuditId
+					
+					FROM dbo.[Column] a 
+						INNER JOIN dbo.[Table] b on a.TableId = b.TableId
+						INNER JOIN dbo.[Catalog] c on b.TableId = c.TableId
+						LEFT OUTER JOIN dbo.[Property] d on a.ColumnId = d.ColumnId
+						WHERE d.PropertyId IS NULL AND b.ProjectId = {command.ProjectId}
                 ");
             });
         }

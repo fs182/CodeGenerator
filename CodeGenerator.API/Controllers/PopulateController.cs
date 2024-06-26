@@ -10,13 +10,13 @@ namespace CodeGenerator.API.Controllers
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public partial class AgenteDanoController : ApiControllerBase
+    public partial class PopulateController : ApiControllerBase
     {
 
         [HttpPost]
-        [Route("/agenteDano/getPaginated")]
+        [Route("/populate")]
         [SwaggerOperation(Description = "Trae los registros de AgenteDano paginados.")]
-        public async Task<ActionResult> PopulateTable([FromBody] PopulateCommand command)
+        public async Task<ActionResult> Populate([FromBody] PopulateCommand command)
         {
             try
             {

@@ -6,6 +6,6 @@ namespace CodeGenerator.Application.Interfaces.External
     public interface ILocalRepository
     {
         Task PopulateTable(List<TableResponse> tables, PopulateCommand command);
-        Task PopulateColumn(List<ColumnResponse> columns, PopulateCommand command);
+        Task PopulateCatalogProperty(List<ColumnResponse> columns, PopulateCommand command);
     }
 }
