@@ -12,9 +12,9 @@ namespace CodeGenerator.Infrastructure.Repositories.External
     {
         public async Task<List<TableResponse>> GetMetadataTable(PopulateCommand command)
         {
-            var result = new List<Table>();
+            var result = new List<TableDto>();
             await Task.Run(() => {
-                result = [.. context.Database.SqlQuery<Table>($@"
+                result = [.. context.Database.SqlQuery<TableDto>($@"
                     SELECT	
 		                cast({command.ProjectId} as smallint) as ProjectId,
                         t.object_id as ObjectId, 
@@ -28,9 +28,9 @@ namespace CodeGenerator.Infrastructure.Repositories.External
         }
         public async Task<List<ColumnResponse>> GetMetadataColumn(PopulateCommand command)
         {
-            var result = new List<Column>();
+            var result = new List<ColumnDto>();
             await Task.Run(() => {
-                result = [.. context.Database.SqlQuery<Column>($@"
+                result = [.. context.Database.SqlQuery<ColumnDto>($@"
                     SELECT 
 						cast({command.ProjectId} as smallint) as ProjectId,
 						t.object_id as ObjectId,

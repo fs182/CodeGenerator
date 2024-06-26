@@ -13,10 +13,20 @@ namespace CodeGenerator.Infrastructure.Context
         {
             modelBuilder.Entity<TableTemp>();
             modelBuilder.Entity<ColumnTemp>();
+            modelBuilder.Entity<Project>();
+            modelBuilder.Entity<Table>();
+            modelBuilder.Entity<Column>();
+            modelBuilder.Entity<Catalog>();
+            modelBuilder.Entity<Property>();
         }
 
         
         public DbSet<TableTemp> TableTemps { get; set; }
         public DbSet<ColumnTemp> ColumnTemps { get; set; }
+        public DbSet<Project> Projects { get; set; }
+        public DbSet<Table> Tables { get; set; }
+        public DbSet<Column> Columns { get; set; }
+        public DbSet<Catalog> Catalogs { get; set; }
+        public DbSet<Property> Properties { get; set; }
     }
 }

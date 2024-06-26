@@ -8,9 +8,9 @@ namespace CodeGenerator.Infrastructure.Mappers
     {
         public AutoMapperProfile()
         {
-            CreateMap<Table, TableResponse>();
+            CreateMap<TableDto, TableResponse>();
             CreateMap<TableResponse, TableTemp>();
-            CreateMap<Column, ColumnResponse>();
+            CreateMap<ColumnDto, ColumnResponse>();
             CreateMap<ColumnResponse, ColumnTemp>();
         }
     }

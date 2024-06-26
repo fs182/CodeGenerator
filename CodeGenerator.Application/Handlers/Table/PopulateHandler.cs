@@ -12,6 +12,7 @@ namespace CodeGenerator.Application.Handlers.Table
             await localRepository.PopulateTable(tables, command);
             var columns = await externalRepository.GetMetadataColumn(command);
             await localRepository.PopulateCatalogProperty(columns, command);
+            await localRepository.GetProject(command.ProjectId);
             return Unit.Value;
         }
     }

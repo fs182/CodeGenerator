@@ -1,19 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace CodeGenerator.Infrastructure.Context.Models
+﻿namespace CodeGenerator.Infrastructure.Context.Models
 {
-    [Table("Column", Schema = "dbo")]
-    public class Column
+    public class ColumnDto
     {
-        [Key]
-        public int ColumnId { get; set; }
-        public int TableId { get; set; }
+        public short ProjectId { get; set; }
         public int ObjectId { get; set; }
         public string SchemaName { get; set; }
         public string TableName { get; set; }
-        public int ColumnNumber { get; set; }
+        public byte ColumnNumber { get; set; }
         public string ColumnName { get; set; }
         public string SqlDataType { get; set; }
         public short MaxLength { get; set; }
@@ -29,7 +22,5 @@ namespace CodeGenerator.Infrastructure.Context.Models
         public string SchemaTarget { get; set; }
         public string TableTarget { get; set; }
         public string ColumnTarget { get; set; }
-        public long AuditId { get; set; }
-        public Property Property { get; set; }
     }
 }

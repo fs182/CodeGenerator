@@ -10,6 +10,25 @@ namespace CodeGenerator.Infrastructure.Repositories.Local
 {
     public partial class LocalRepository(LocalContext context, IMapper mapper) : ILocalRepository
     {
+        public async Task GetProject(short projectId)
+        {
+			var x = new Project();
+			var projectResult = new Project(); 
+            await Task.Run(() => {
+				projectResult = context.Projects.Where(f => f.ProjectId == projectId).
+					Include(g => g.Tables).
+					ThenInclude(g => g.Columns).
+                    ThenInclude(g => g.Property).
+                    Include(g=> g.Catalogs).
+                    ThenInclude(g => g.Properties).
+                    First();
+            });
+            foreach (var item in projectResult.Tables)
+            {
+				item.Catalog = projectResult.Catalogs.First(f => f.TableId == item.TableId);
+            }
+        }
+
         public async Task PopulateTable(List<TableResponse> tables, PopulateCommand command)
         {
             var tempTables = mapper.Map<List<TableTemp>>(tables);
@@ -111,7 +130,8 @@ namespace CodeGenerator.Infrastructure.Repositories.Local
 
 					INSERT INTO [dbo].[Catalog]
 					     SELECT
-					            a.TableId,
+					            cast({command.ProjectId} as bigint) as ProjectId,
+								a.TableId,
 					            cast (1 as bit) as IsEnabled, 
 					            cast (1 as bit) as HasMenu,
 					            cast (1 as bit) as HasGrid,
