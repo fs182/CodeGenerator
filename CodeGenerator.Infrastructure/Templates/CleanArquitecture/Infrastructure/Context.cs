@@ -29,6 +29,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
                 outputFile.WriteLine(string.Concat("        public DbSet<", entity.TableName, "CommandResult> ", entity.TableName, "s { get; set; }"));
             outputFile.WriteLine(string.Concat("    }"));
             outputFile.WriteLine(string.Concat("}"));
+            outputFile.Close();
             outputFile.Dispose();
         }
 
@@ -55,6 +56,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
                 outputFile.WriteLine(string.Concat("        public DbSet<", entity.TableName, "GetPaginatedResult> ", entity.TableName, "s { get; set; }"));
             outputFile.WriteLine(string.Concat("    }"));
             outputFile.WriteLine(string.Concat("}"));
+            outputFile.Close(); 
             outputFile.Dispose();
         }
     }

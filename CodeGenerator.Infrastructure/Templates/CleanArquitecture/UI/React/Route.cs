@@ -26,6 +26,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
             }
             outputFile.WriteLine(string.Concat("];"));
             outputFile.WriteLine(string.Concat("export default catalogsRoutes;"));
+            outputFile.Close();
             outputFile.Dispose();
         }
     }

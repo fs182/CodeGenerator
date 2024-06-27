@@ -337,6 +337,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
             outputFile.WriteLine($"    );");
             outputFile.WriteLine("};");
             outputFile.WriteLine($"export default {table.TableName};");
+            outputFile.Close();
             outputFile.Dispose();
         }
 
@@ -428,6 +429,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
             outputFile.WriteLine($"    );");
             outputFile.WriteLine("};");
             outputFile.WriteLine($"export default {table.TableName}Item;");
+            outputFile.Close();
             outputFile.Dispose();
         }
     }

@@ -41,10 +41,10 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
                 }
                 outputFile.WriteLine("                };");
                 outputFile.WriteLine($"            var result = new List<Context.StoredProcedureResult.Commands.{table.TableName}CommandResult>();");
-                outputFile.Write(string.Concat("            Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"[", table.SchemaName, "].[", table.TableName, "_Update] @PageNumber, @RowsOfPage, @ExistingRows OUTPUT,"));
-                foreach (var c in table.Columns.Where(f => f.ColumnName != "AuditId"))
+                outputFile.Write(string.Concat("            await Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"[", table.SchemaName, "].[", table.TableName, "_Update] @PageNumber, @RowsOfPage, @ExistingRows OUTPUT,"));
+                foreach (var c in table.Columns.Where(f => f.ColumnName != "AuditoriaId"))
                     outputFile.Write($" @{c.ColumnName},");
-                outputFile.WriteLine(" @AuditId\", parameters).ToList(); });");
+                outputFile.WriteLine(" @AuditoriaId\", parameters).ToList(); });");
                 outputFile.WriteLine("            var existingRows = (int)parameters[2].Value;");
                 outputFile.WriteLine($"            return {table.TableName}Mapper.Map(result, command.RowsOfPage, existingRows);");
                 outputFile.WriteLine("        }");
@@ -64,7 +64,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
             //    outputFile.WriteLine("                        new SqlParameter() {ParameterName = \"@RowsOfPage\", SqlDbType =  System.Data.SqlDbType.Int, Value = command.RowsOfPage},");
             //    outputFile.WriteLine("                        new SqlParameter() {ParameterName = \"@ExistingRows\", SqlDbType =  System.Data.SqlDbType.Int, Direction = System.Data.ParameterDirection.Output},");
             //}
-            var mainColumn = table.Columns.FirstOrDefault(f => f.IsForeignKey && f.ColumnName != "AuditId");
+            var mainColumn = table.Columns.FirstOrDefault(f => f.IsPrimaryKey);
             //if (!table.SimplifiedCommand)
             //    outputFile.WriteLine(string.Concat("                        new SqlParameter() {ParameterName = \"@", pk.Name, "\", SqlDbType =  System.Data.SqlDbType.Int, Value = command.", pk.Name, "}"));
             //else
@@ -76,11 +76,16 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
             //if (!table.SimplifiedCommand)
             //{
             //    outputFile.WriteLine($"            var result = new List<Context.StoredProcedureResult.Commands.{table.TableName}CommandResult>();");
-            //    outputFile.WriteLine(string.Concat("            Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"[", table.SchemaName, "].[", table.TableName, "_Delete] @PageNumber, @RowsOfPage, @ExistingRows OUTPUT, @", pk.Name, "\", parameters).ToList(); });"));
+            //    outputFile.WriteLine(string.Concat("            await Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"[", table.SchemaName, "].[", table.TableName, "_Delete] @PageNumber, @RowsOfPage, @ExistingRows OUTPUT, @", pk.Name, "\", parameters).ToList(); });"));
             //}
             //else
             if (mainColumn != null)
-                outputFile.WriteLine($"            _context.Database.ExecuteSqlRawAsync(\"[{table.SchemaName}].[{table.TableName}_Delete_Only] @{mainColumn.ColumnName}\", parameters);");
+            {
+                outputFile.WriteLine("            await Task.Run(() => {");
+                outputFile.WriteLine($"             _context.Database.ExecuteSqlRaw(\"[{table.SchemaName}].[{table.TableName}_Delete_Only] @{mainColumn.ColumnName}\", parameters);");
+                outputFile.WriteLine("            });");
+            }
+                
 
             //if (!table.SimplifiedCommand)
             //{
@@ -115,23 +120,25 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
             //if (!table.SimplifiedCommand)
             //{
             //    outputFile.WriteLine($"            var result = new List<Context.StoredProcedureResult.Commands.{table.TableName}CommandResult>();");
-            //    outputFile.Write(string.Concat("            Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"[", table.SchemaName, "].[", table.TableName, "_Insert] @PageNumber, @RowsOfPage, @ExistingRows OUTPUT, "));
+            //    outputFile.Write(string.Concat("            await Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"[", table.SchemaName, "].[", table.TableName, "_Insert] @PageNumber, @RowsOfPage, @ExistingRows OUTPUT, "));
 
             //}
             //else
-                outputFile.Write($"            _context.Database.ExecuteSqlRawAsync(\"[{table.SchemaName}].[{table.TableName}_Insert] ");
-            foreach (var c in table.Columns.Where(f => !f.IsIdentity && f.ColumnName != "AuditId"))
+            outputFile.WriteLine("            await Task.Run(() => {");
+            outputFile.Write($"             _context.Database.ExecuteSqlRawAsync(\"[{table.SchemaName}].[{table.TableName}_Insert] ");
+
+            foreach (var c in table.Columns.Where(f => !f.IsIdentity && f.ColumnName != "AuditoriaId"))
                 outputFile.Write($"@{c.ColumnName}, ");
 
             //if (!table.SimplifiedCommand)
             //{
-            //    outputFile.WriteLine("@AuditId\", parameters).ToList(); });");
+            //    outputFile.WriteLine("@AuditoriaId\", parameters).ToList(); });");
             //    outputFile.WriteLine("            var existingRows = (int)parameters[2].Value;");
             //    outputFile.WriteLine($"            return {table.TableName}Mapper.Map(result, command.RowsOfPage, existingRows);");
             //}
             //else
-                outputFile.WriteLine("@AuditId\", parameters);");
-
+                outputFile.WriteLine("@AuditoriaId\", parameters);");
+            outputFile.WriteLine("            });");
 
             outputFile.WriteLine("        }");
 
@@ -148,15 +155,16 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
                 outputFile.WriteLine(string.Concat("                        new SqlParameter() {ParameterName = \"@", c.ColumnName, "\", SqlDbType =  System.Data.SqlDbType.", Helper.GetStringSQLDBType(c.SqlDataType), ",", c.IsNullable ? " IsNullable = true," : "", " Value = command.", c.ColumnName, nullableValue, "},"));
             }
             outputFile.WriteLine("                };");
-            outputFile.Write(string.Concat("            Task.Run(() => { _context.Database.ExecuteSqlRaw(\"", table.SchemaName, ".", table.TableName, "_Insert_Only @", pk.ColumnName, " OUTPUT,"));
-            foreach (var c in table.Columns.Where(f => !f.IsIdentity && f.ColumnName != "AuditId"))
+            outputFile.Write(string.Concat("            await Task.Run(() => { _context.Database.ExecuteSqlRaw(\"", table.SchemaName, ".", table.TableName, "_Insert_Only @", pk.ColumnName, " OUTPUT,"));
+            foreach (var c in table.Columns.Where(f => !f.IsIdentity && f.ColumnName != "AuditoriaId"))
                 outputFile.Write($"@{c.ColumnName}, ");
-            outputFile.WriteLine("@AuditId\", parameters);});");
+            outputFile.WriteLine("@AuditoriaId\", parameters);});");
             outputFile.WriteLine($"            var {Helper.GetCamel(pk.ColumnName)} = ({Helper.GetStringNetCoreType(pk.SqlDataType)})parameters[0].Value;");
             outputFile.WriteLine($"            return {Helper.GetCamel(pk.ColumnName)};");
             outputFile.WriteLine("        }");
             outputFile.WriteLine(string.Concat("    }"));
             outputFile.WriteLine(string.Concat("}"));
+            outputFile.Close();
             outputFile.Dispose();
         }
 
@@ -190,9 +198,9 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
             outputFile.WriteLine(string.Concat("                };"));
             outputFile.WriteLine($"            var result = new List<Context.StoredProcedureResult.Queries.{table.TableName}GetPaginatedResult>();");
             //if (table.GetBySpecificField == null)
-                outputFile.WriteLine(string.Concat("            Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"[", table.SchemaName, "].[", table.TableName, "_Get_Paginated] @PageNumber, @RowsOfPage, @ExistingRows OUTPUT\", parameters).ToList(); });"));
+                outputFile.WriteLine(string.Concat("            await Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"[", table.SchemaName, "].[", table.TableName, "_Get_Paginated] @PageNumber, @RowsOfPage, @ExistingRows OUTPUT\", parameters).ToList(); });"));
             //else
-            //    outputFile.WriteLine(string.Concat("            Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"[", table.SchemaName, "].[", table.TableName, "_Get_By", table.GetBySpecificField, "] @", table.GetBySpecificField, " \", parameters).ToList(); });"));
+            //    outputFile.WriteLine(string.Concat("            await Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"[", table.SchemaName, "].[", table.TableName, "_Get_By", table.GetBySpecificField, "] @", table.GetBySpecificField, " \", parameters).ToList(); });"));
 
 
             //if (table.GetBySpecificField == null)
@@ -211,7 +219,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
             outputFile.WriteLine(string.Concat("                        new SqlParameter() {ParameterName = \"@", pk.ColumnName, "\", SqlDbType =  System.Data.SqlDbType.", Helper.GetStringSQLDBType(pk.SqlDataType), ", Value = query.", pk.ColumnName, "},"));
             outputFile.WriteLine(string.Concat("                };"));
             outputFile.WriteLine($"            var result = new List<Context.StoredProcedureResult.Queries.{table.TableName}GetPaginatedResult>();");
-            outputFile.WriteLine(string.Concat("            Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"[", table.SchemaName, "].[", table.TableName, "_Get_ById] @", pk.ColumnName, "\", parameters).ToList(); });"));
+            outputFile.WriteLine(string.Concat("            await Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"[", table.SchemaName, "].[", table.TableName, "_Get_ById] @", pk.ColumnName, "\", parameters).ToList(); });"));
             outputFile.WriteLine(string.Concat("            return ", table.TableName, "Mapper.Map(result.First());"));
             outputFile.WriteLine(string.Concat("        }"));
 
@@ -225,7 +233,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
                 outputFile.WriteLine(string.Concat("                    new SqlParameter() {ParameterName = \"@", colNombre.ColumnName, "\", SqlDbType =  System.Data.SqlDbType.", Helper.GetStringSQLDBType(colNombre.SqlDataType), ", Value = name},"));
                 outputFile.WriteLine("                };");
                 outputFile.WriteLine($"            var result = new List<Context.StoredProcedureResult.Queries.{table.TableName}GetPaginatedResult>();");
-                outputFile.WriteLine(string.Concat("            Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"", table.SchemaName, ".", table.TableName, "_Get_ByNombre @", colNombre.ColumnName, "\", parameters).ToList() ;});"));
+                outputFile.WriteLine(string.Concat("            await Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"", table.SchemaName, ".", table.TableName, "_Get_ByNombre @", colNombre.ColumnName, "\", parameters).ToList() ;});"));
                 outputFile.WriteLine($"            var {Helper.GetCamel(table.TableName)} = result.FirstOrDefault();");
                 outputFile.WriteLine($"            if ({Helper.GetCamel(table.TableName)} != null)");
                 outputFile.WriteLine($"                return {table.TableName}Mapper.Map({Helper.GetCamel(table.TableName)});");
@@ -235,6 +243,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
 
             outputFile.WriteLine(string.Concat("    }"));
             outputFile.WriteLine(string.Concat("}"));
+            outputFile.Close();
             outputFile.Dispose();
         }
     }

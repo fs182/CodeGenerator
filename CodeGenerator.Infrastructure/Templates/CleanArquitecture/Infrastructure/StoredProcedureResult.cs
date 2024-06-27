@@ -35,7 +35,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
             outputFile.WriteLine(string.Concat("        public string NombreCortoUsuario { get; set; }"));
             outputFile.WriteLine(string.Concat("        public DateTime FechaModificacion { get; set; }"));
 
-            foreach (var c in table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditId"))
+            foreach (var c in table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId"))
             {
                 var fkTableInfo = project.Tables.First(f => f.TableName == c.TableTarget);
                 var namedColumnInfo = fkTableInfo.Columns.FirstOrDefault(f => f.ColumnName.ToLower().Contains("nombre") || (f.ColumnName.ToLower().Contains("descripcion") && !f.ColumnName.ToLower().Contains("descripcionid")) || f.ColumnName.ToLower().Contains("codigo"));
