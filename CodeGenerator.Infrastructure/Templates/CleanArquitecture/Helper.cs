@@ -1,4 +1,4 @@
-﻿namespace CodeGenerator.Infrastructure.UI.React
+﻿namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture
 {
     public static class Helper
     {
@@ -7,6 +7,65 @@
             return string.Concat(value.Substring(0, 1).ToLower(), value.Substring(1));
         }
 
+        public static string GetStringSQLDBType(string sqlDataType)
+        {
+            return sqlDataType switch
+            {
+                "bigint" => "BigInt",
+                "char" => "Char",
+                "datetime" => "DateTime",
+                "datetime2" => "DateTime2",
+                "decimal" => "Decimal",
+                "int" => "Int",
+                "smallint" => "SmallInt",
+                "varchar" => "VarChar",
+                "bit" => "Bit",
+                "tinyint" => "TinyInt",
+                "money" => "Money",
+                "nvarchar" => "Nvarchar",
+                //case "xml": return typeof(Xml);
+                _ => throw new Exception($"type not implemented for {sqlDataType}"),
+            };
+        }
+
+        public static string GetStringNetCoreType(string sqlDataType)
+        {
+            return sqlDataType switch
+            {
+                "bigint" => "long",
+                "binary" => "byte[]",
+                "bit" => "bool",
+                "char" => "string",
+                "date" => "DateTime",
+                "datetime" => "DateTime",
+                "datetime2" => "DateTime",
+                "datetimeoffset" => "DateTimeOffset",
+                "decimal" => "decimal",
+                "float" => "double",
+                "image" => "byte[]",
+                "int" => "int",
+                "money" => "decimal",
+                "nchar" => "string",
+                "ntext" => "string",
+                "numeric" => "decimal",
+                "nvarchar" => "string",
+                "real" => "Single",
+                "rowversion" => "byte[]",
+                "smalldatetime" => "DateTime",
+                "smallint" => "short",
+                "smallmoney" => "decimal",
+                "sql_variant" => "object",
+                "text" => "string",
+                "time" => "TimeSpan",
+                "timestamp" => "byte[]",
+                "tinyint" => "byte",
+                "uniqueidentifier" => "Guid",
+                "varbinary" => "Byte[]",
+                "varchar" => "string",
+                //case "xml": return typeof(Xml);
+                _ => throw new Exception("type not implemented"),
+            };
+        }
         public static (List<int>, bool, int, int) GetColumnLayout(int columns)
         {
             return columns switch

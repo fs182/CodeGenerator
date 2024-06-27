@@ -1,7 +1,7 @@
 ﻿using CodeGenerator.Infrastructure.Context.Models;
 using System.Text;
 
-namespace CodeGenerator.Infrastructure.UI.React
+namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
 {
     public static class Route
     {
@@ -15,14 +15,14 @@ namespace CodeGenerator.Infrastructure.UI.React
 
             foreach (var entity in project.Tables)
                 outputFile.WriteLine(string.Concat("import ", entity.TableName, " from \"app/pages/catalogs/", entity.TableName, "\";"));
-            
+
             outputFile.WriteLine(string.Concat("const catalogsRoutes = ["));
             foreach (var entity in project.Tables)
             {
-                 outputFile.WriteLine(string.Concat("    {"));
-                 outputFile.WriteLine(string.Concat("        path: \"/catalogs/", entity.TableName, "\","));
-                 outputFile.WriteLine(string.Concat("        element: <Page component={", entity.TableName, "} />,"));
-                 outputFile.WriteLine(string.Concat("    },"));
+                outputFile.WriteLine(string.Concat("    {"));
+                outputFile.WriteLine(string.Concat("        path: \"/catalogs/", entity.TableName, "\","));
+                outputFile.WriteLine(string.Concat("        element: <Page component={", entity.TableName, "} />,"));
+                outputFile.WriteLine(string.Concat("    },"));
             }
             outputFile.WriteLine(string.Concat("];"));
             outputFile.WriteLine(string.Concat("export default catalogsRoutes;"));

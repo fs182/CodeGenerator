@@ -1,8 +1,7 @@
 ﻿using CodeGenerator.Infrastructure.Context.Models;
-using System.Runtime.InteropServices;
 using System.Text;
 
-namespace CodeGenerator.Infrastructure.UI.React
+namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
 {
     public static class Component
     {
@@ -31,9 +30,9 @@ namespace CodeGenerator.Infrastructure.UI.React
             outputFile.WriteLine($"    const [{Helper.GetCamel(table.TableName)}s, set{table.TableName}s] = React.useState(null);");
 
             var foreings = table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditId").ToArray();
-            string prefixFk="";
+            string prefixFk = "";
             int countFk = 0;
-            for (var i=0; i<= foreings.Count()-1; i++)
+            for (var i = 0; i <= foreings.Count() - 1; i++)
             {
                 if (table.Columns.Count(f => f.TableTarget == foreings[i].TableTarget) > 1)
                 {
@@ -74,7 +73,7 @@ namespace CodeGenerator.Infrastructure.UI.React
             outputFile.WriteLine("        if (createMode) {");
             outputFile.WriteLine($"            setDialogTitle('Crear');");
             outputFile.WriteLine($"            setDialogButtonText('Insertar');");
-            
+
             prefixFk = "";
             countFk = 0;
             foreach (var c in table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditId"))
@@ -87,7 +86,7 @@ namespace CodeGenerator.Infrastructure.UI.React
                 outputFile.WriteLine($"            set{c.TableTarget}{prefixFk}(null);");
                 prefixFk = "";
             }
-                
+
             outputFile.WriteLine("        }");
             outputFile.WriteLine("        else {");
             outputFile.WriteLine($"            setDialogTitle('Editar');");
@@ -113,7 +112,7 @@ namespace CodeGenerator.Infrastructure.UI.React
                 outputFile.WriteLine($"            set{c.TableTarget}{prefixFk}(null);");
                 outputFile.WriteLine("            return;");
                 outputFile.WriteLine("        }");
-                outputFile.WriteLine(string.Concat("        set", c.TableTarget, prefixFk, "(", Helper.GetCamel(c.TableTarget), prefixFk,"s.find((e) => { return e.", Helper.GetCamel(c.ColumnName), " === ", Helper.GetCamel(c.ColumnName), "}));"));
+                outputFile.WriteLine(string.Concat("        set", c.TableTarget, prefixFk, "(", Helper.GetCamel(c.TableTarget), prefixFk, "s.find((e) => { return e.", Helper.GetCamel(c.ColumnName), " === ", Helper.GetCamel(c.ColumnName), "}));"));
                 outputFile.WriteLine(string.Concat("    }, [", Helper.GetCamel(c.ColumnName), "]);"));
                 outputFile.WriteLine($"");
                 prefixFk = "";
@@ -139,7 +138,7 @@ namespace CodeGenerator.Infrastructure.UI.React
                     }
                     columnNullable = c.IsNullable ? $"{Helper.GetCamel(c.TableTarget)}{prefixFk} == null ? null : {Helper.GetCamel(c.TableTarget)}{prefixFk}.{Helper.GetCamel(c.ColumnName)};" : $"{Helper.GetCamel(c.TableTarget)}{prefixFk}.{Helper.GetCamel(c.ColumnName)};";
                     prefixFk = "";
-                }                   
+                }
                 outputFile.WriteLine(string.Concat($"        newItem.{Helper.GetCamel(c.ColumnName)} = ", c.IsForeignKey ? $"{columnNullable}" : $"{Helper.GetCamel(c.ColumnName)};"));
             }
 
@@ -182,7 +181,7 @@ namespace CodeGenerator.Infrastructure.UI.React
                 outputFile.WriteLine($"            setCall{c.TableTarget}{prefixFk}(true);");
                 prefixFk = "";
             }
-                
+
 
             outputFile.WriteLine("        });");
             outputFile.WriteLine("    }, [currentPage]);");
@@ -199,10 +198,10 @@ namespace CodeGenerator.Infrastructure.UI.React
                 outputFile.WriteLine("    React.useEffect(() => {");
                 outputFile.WriteLine($"        if (!call{c.TableTarget}{prefixFk})");
                 outputFile.WriteLine($"            return;");
-                outputFile.WriteLine(string.Concat("        axios.post(`${API_URL}", Helper.GetCamel(c.TableTarget),prefixFk ,"/getPaginated`, { pageNumber: 1, rowsOfPage: 9999 }).then((response) => {"));
+                outputFile.WriteLine(string.Concat("        axios.post(`${API_URL}", Helper.GetCamel(c.TableTarget), prefixFk, "/getPaginated`, { pageNumber: 1, rowsOfPage: 9999 }).then((response) => {"));
                 outputFile.WriteLine($"            set{c.TableTarget}{prefixFk}s(response.data);");
                 outputFile.WriteLine("        });");
-                outputFile.WriteLine(string.Concat("    }, [call", c.TableTarget,prefixFk, "]);"));
+                outputFile.WriteLine(string.Concat("    }, [call", c.TableTarget, prefixFk, "]);"));
                 outputFile.WriteLine($"");
                 prefixFk = "";
             }
@@ -234,7 +233,7 @@ namespace CodeGenerator.Infrastructure.UI.React
                 {
                     var fkTableInfo = project.Tables.First(f => f.TableName == columnsArray[i].TableTarget);
                     var fkColumnsInfo = fkTableInfo.Columns;
-                    var namedColumnInfo = fkColumnsInfo.FirstOrDefault(f => f.ColumnName.ToLower().Contains("nombre") || (f.ColumnName.ToLower().Contains("descripcion") && !f.ColumnName.ToLower().Contains("descripcionid")) || f.ColumnName.ToLower().Contains("codigo"));
+                    var namedColumnInfo = fkColumnsInfo.FirstOrDefault(f => f.ColumnName.ToLower().Contains("nombre") || f.ColumnName.ToLower().Contains("descripcion") && !f.ColumnName.ToLower().Contains("descripcionid") || f.ColumnName.ToLower().Contains("codigo"));
                     namedColumnInfo ??= fkColumnsInfo.First(f => f.IsPrimaryKey);
 
                     outputFile.WriteLine(string.Concat($"                                 {namedColumnInfo.ColumnName}"));
@@ -275,7 +274,7 @@ namespace CodeGenerator.Infrastructure.UI.React
             foreach (var row in formLayoutArray)
             {
                 count++;
-                outputFile.WriteLine(string.Concat("                                  <Grid container spacing={3} p={1} ", (count == formLayoutArray.Length ? "pb={3}" : ""), ">"));
+                outputFile.WriteLine(string.Concat("                                  <Grid container spacing={3} p={1} ", count == formLayoutArray.Length ? "pb={3}" : "", ">"));
                 foreach (var c in row)
                 {
                     outputFile.WriteLine(string.Concat("                                     <Grid item xs={", c, "} md={", c, "} lg={", c, "} >"));
@@ -293,7 +292,7 @@ namespace CodeGenerator.Infrastructure.UI.React
                         outputFile.WriteLine(string.Concat("                                             id=\"combo-box-demo\""));
                         var fkTableInfo = project.Tables.First(f => f.TableName == columnsArray[j].TableTarget);
                         var fkColumnsInfo = fkTableInfo.Columns;
-                        var namedColumnInfo = fkColumnsInfo.FirstOrDefault(f => f.ColumnName.ToLower().Contains("nombre") || (f.ColumnName.ToLower().Contains("descripcion") && !f.ColumnName.ToLower().Contains("descripcionid")) || f.ColumnName.ToLower().Contains("codigo"));
+                        var namedColumnInfo = fkColumnsInfo.FirstOrDefault(f => f.ColumnName.ToLower().Contains("nombre") || f.ColumnName.ToLower().Contains("descripcion") && !f.ColumnName.ToLower().Contains("descripcionid") || f.ColumnName.ToLower().Contains("codigo"));
                         namedColumnInfo ??= fkColumnsInfo.First(f => f.IsPrimaryKey);
 
                         if (table.Columns.Where(f => f.TableTarget == columnsArray[j].TableTarget).Count() > 1)
@@ -398,7 +397,7 @@ namespace CodeGenerator.Infrastructure.UI.React
                 {
                     var fkTableInfo = project.Tables.First(f => f.TableName == columnsArray[i].TableTarget);
                     var fkColumnsInfo = fkTableInfo.Columns;
-                    var namedColumnInfo = fkColumnsInfo.FirstOrDefault(f => f.ColumnName.ToLower().Contains("nombre") || (f.ColumnName.ToLower().Contains("descripcion") && !f.ColumnName.ToLower().Contains("descripcionid")) || f.ColumnName.ToLower().Contains("codigo"));
+                    var namedColumnInfo = fkColumnsInfo.FirstOrDefault(f => f.ColumnName.ToLower().Contains("nombre") || f.ColumnName.ToLower().Contains("descripcion") && !f.ColumnName.ToLower().Contains("descripcionid") || f.ColumnName.ToLower().Contains("codigo"));
                     namedColumnInfo ??= fkColumnsInfo.First(f => f.IsPrimaryKey);
                     outputFile.WriteLine(string.Concat("                        {item.", Helper.GetCamel(fkTableInfo.TableName), namedColumnInfo.ColumnName, "}"));
                 }

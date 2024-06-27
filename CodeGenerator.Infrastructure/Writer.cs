@@ -1,5 +1,6 @@
 ﻿using CodeGenerator.Infrastructure.Context.Models;
-using CodeGenerator.Infrastructure.UI.React;
+using CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructure;
+using CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React;
 
 namespace CodeGenerator.Infrastructure
 {
@@ -13,8 +14,8 @@ namespace CodeGenerator.Infrastructure
             {
                 await IndividualFiles(project, t);
             }
-            //await Context.WriteCommandContext(tablesInfo, env).ConfigureAwait(false);
-            //await Context.WriteQueryContext(tablesInfo, env).ConfigureAwait(false);
+            await Task.Run(() => { Templates.CleanArquitecture.Infrastructure.Context.WriteCommandContext(project); });
+            await Task.Run(() => { Templates.CleanArquitecture.Infrastructure.Context.WriteQueryContext(project); });
             await Task.Run(() => { Route.WriteRoutes(project); });
         }
 
@@ -39,8 +40,8 @@ namespace CodeGenerator.Infrastructure
             //await Response.WriteCommandResponse(columnsInfo, env, entity);
             //await Response.WriteGetResponse(columnsInfo, env, entity);
             //await Entities.WriteEntities(columnsInfo, env, entity, tablesInfo, connectionString);
-            //await StoredProcedure.WriteCommands(columnsInfo, env, entity);
-            //await StoredProcedure.WriteQueries(columnsInfo, env, entity, tablesInfo, connectionString);
+            await Task.Run(() => { StoredProcedureResult.WriteCommands(project, table); });
+            await Task.Run(() => { StoredProcedureResult.WriteQueries(project, table); });
             //await Mapper.WriteMappers(columnsInfo, env, entity, tablesInfo, connectionString);
 
             await Task.Run(() => { Component.WriteComponents(project, table); });
@@ -48,8 +49,8 @@ namespace CodeGenerator.Infrastructure
 
             //await Interface.WriteCommandsInterfaces(columnsInfo, entity, env);
             //await Interface.WriteQueriesInterfaces(columnsInfo, entity, env);
-            //await Repository.WriteCommandRepository(tablesInfo, entity, env, connectionString);
-            //await Repository.WriteQueryRepository(entity, env, connectionString);
+            await Task.Run(() => { Repository.WriteCommandRepository(project, table); });
+            await Task.Run(() => { Repository.WriteQueryRepository(project, table); });
         }
     }
 }
