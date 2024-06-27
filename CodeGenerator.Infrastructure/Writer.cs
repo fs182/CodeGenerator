@@ -8,10 +8,14 @@ namespace CodeGenerator.Infrastructure
 
         public static async Task GenerateProject(Project project)
         {
-            foreach (var t in project.Tables)
+            var tables = project.Tables.Where(f => f.Catalog.IsEnabled).ToList();
+            foreach (var t in tables)
             {
                 await IndividualFiles(project, t);
             }
+            //await Context.WriteCommandContext(tablesInfo, env).ConfigureAwait(false);
+            //await Context.WriteQueryContext(tablesInfo, env).ConfigureAwait(false);
+            await Task.Run(() => { Route.WriteRoutes(project); });
         }
 
         private static async Task IndividualFiles(Project project, Table table)
@@ -38,8 +42,10 @@ namespace CodeGenerator.Infrastructure
             //await StoredProcedure.WriteCommands(columnsInfo, env, entity);
             //await StoredProcedure.WriteQueries(columnsInfo, env, entity, tablesInfo, connectionString);
             //await Mapper.WriteMappers(columnsInfo, env, entity, tablesInfo, connectionString);
-            await Component.WriteComponents(project, table);
-            await Component.WriteComponentItems(project, table);
+
+            await Task.Run(() => { Component.WriteComponents(project, table); });
+            await Task.Run(() => { Component.WriteComponentItems(project, table); });
+
             //await Interface.WriteCommandsInterfaces(columnsInfo, entity, env);
             //await Interface.WriteQueriesInterfaces(columnsInfo, entity, env);
             //await Repository.WriteCommandRepository(tablesInfo, entity, env, connectionString);

@@ -12,10 +12,9 @@ namespace CodeGenerator.Infrastructure.Repositories.Local
     {
         public async Task GetProject(short projectId)
         {
-			var x = new Project();
-			var projectResult = new Project(); 
+			var project = new Project(); 
             await Task.Run(() => {
-				projectResult = context.Projects.Where(f => f.ProjectId == projectId).
+				project = context.Projects.Where(f => f.ProjectId == projectId).
 					Include(g => g.Tables).
 					ThenInclude(g => g.Columns).
                     ThenInclude(g => g.Property).
@@ -23,10 +22,8 @@ namespace CodeGenerator.Infrastructure.Repositories.Local
                     ThenInclude(g => g.Properties).
                     First();
             });
-            foreach (var item in projectResult.Tables)
-            {
-				item.Catalog = projectResult.Catalogs.First(f => f.TableId == item.TableId);
-            }
+			project.Tables.ForEach(f=> f.Catalog = project.Catalogs.First(g => g.TableId == f.TableId));
+			await Writer.GenerateProject(project);
         }
 
         public async Task PopulateTable(List<TableResponse> tables, PopulateCommand command)
