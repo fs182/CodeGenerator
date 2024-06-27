@@ -15,6 +15,9 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
             var fkCount = table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId").Count();
             var foreingColumnsResult = "";
             var foreingColumnsF = "";
+
+            string prefixFk = "";
+            int countFk = 0;
             foreach (var c in table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId"))
             {
                 count++;
@@ -22,11 +25,19 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
                 var fkColumnsInfo = fkTableInfo.Columns;
                 var fkColumnInfoPk = fkColumnsInfo.First(f => f.IsPrimaryKey);
                 var namedColumnInfo = fkColumnsInfo.FirstOrDefault(f => f.ColumnName.ToLower().Contains("nombre") || (f.ColumnName.ToLower().Contains("descripcion") && !f.ColumnName.ToLower().Contains("descripcionid")) || f.ColumnName.ToLower().Contains("codigo"));
+
+                if (table.Columns.Count(f => f.TableTarget == c.TableTarget) > 1)
+                {
+                    countFk++;
+                    prefixFk = countFk.ToString();
+                }
+
                 if (namedColumnInfo != null)
                 {
-                    foreingColumnsResult += string.Concat($"{fkTableInfo.TableName}{namedColumnInfo.ColumnName} = result.{fkTableInfo.TableName}{namedColumnInfo.ColumnName}, ");
-                    foreingColumnsF += string.Concat($"{fkTableInfo.TableName}{namedColumnInfo.ColumnName} = f.{fkTableInfo.TableName}{namedColumnInfo.ColumnName}, ");
+                    foreingColumnsResult += string.Concat($"{fkTableInfo.TableName}{namedColumnInfo.ColumnName}{prefixFk} = result.{fkTableInfo.TableName}{namedColumnInfo.ColumnName}{prefixFk}, ");
+                    foreingColumnsF += string.Concat($"{fkTableInfo.TableName}{namedColumnInfo.ColumnName}{prefixFk} = f.{fkTableInfo.TableName}{namedColumnInfo.ColumnName}{prefixFk}, ");
                 }
+                prefixFk = "";
 
             }
 

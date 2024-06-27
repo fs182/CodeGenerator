@@ -22,7 +22,7 @@
                 "bit" => "Bit",
                 "tinyint" => "TinyInt",
                 "money" => "Money",
-                "nvarchar" => "Nvarchar",
+                "nvarchar" => "NVarChar",
                 //case "xml": return typeof(Xml);
                 _ => throw new Exception($"type not implemented for {sqlDataType}"),
             };

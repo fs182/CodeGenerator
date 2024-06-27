@@ -1,4 +1,5 @@
 ﻿using CodeGenerator.Infrastructure.Context.Models;
+using System.Diagnostics.Metrics;
 using System.Text;
 
 namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Domain
@@ -19,15 +20,25 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Domain
                 outputFile.WriteLine(string.Concat("        public ", Helper.GetStringNetCoreType(c.SqlDataType), c.IsNullable ? "?" : "", " ", c.ColumnName, " { get; set; }"));
             }
 
+            string prefixFk = "";
+            int countFk = 0;
             foreach (var c in table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId"))
             {
                 var fkTableInfo = project.Tables.First(f => f.TableName == c.TableTarget);
                 var fkColumnsInfo = fkTableInfo.Columns;
                 var namedColumnInfo = fkColumnsInfo.FirstOrDefault(f => f.ColumnName.ToLower().Contains("nombre") || (f.ColumnName.ToLower().Contains("descripcion") && !f.ColumnName.ToLower().Contains("descripcionid")) || f.ColumnName.ToLower().Contains("codigo"));
+
+                if (table.Columns.Count(f => f.TableTarget == c.TableTarget) > 1)
+                {
+                    countFk++;
+                    prefixFk = countFk.ToString();
+                }
+
                 if (namedColumnInfo != null)
                 {
-                    outputFile.WriteLine(string.Concat("        public ", Helper.GetStringNetCoreType(namedColumnInfo.SqlDataType), c.IsNullable ? "?" : "", " ", fkTableInfo.TableName, namedColumnInfo.ColumnName, " { get; set; }"));
+                    outputFile.WriteLine(string.Concat("        public ", Helper.GetStringNetCoreType(namedColumnInfo.SqlDataType), c.IsNullable ? "?" : "", " ", fkTableInfo.TableName, namedColumnInfo.ColumnName,prefixFk, " { get; set; }"));
                 }
+                prefixFk = "";
             }
 
             outputFile.WriteLine("    }");

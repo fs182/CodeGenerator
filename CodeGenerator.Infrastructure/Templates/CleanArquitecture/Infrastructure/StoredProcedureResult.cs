@@ -34,15 +34,25 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
                 outputFile.WriteLine(string.Concat("        public ", Helper.GetStringNetCoreType(c.SqlDataType), (c.IsNullable && c.SqlDataType.ToLower() != "varchar") ? "?" : "", " ", c.ColumnName, " { get; set; }"));
             outputFile.WriteLine(string.Concat("        public string NombreCortoUsuario { get; set; }"));
             outputFile.WriteLine(string.Concat("        public DateTime FechaModificacion { get; set; }"));
-
+            
+            string prefixFk = "";
+            int countFk = 0;
             foreach (var c in table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId"))
             {
                 var fkTableInfo = project.Tables.First(f => f.TableName == c.TableTarget);
                 var namedColumnInfo = fkTableInfo.Columns.FirstOrDefault(f => f.ColumnName.ToLower().Contains("nombre") || (f.ColumnName.ToLower().Contains("descripcion") && !f.ColumnName.ToLower().Contains("descripcionid")) || f.ColumnName.ToLower().Contains("codigo"));
+
+                if (table.Columns.Count(f => f.TableTarget == c.TableTarget) > 1)
+                {
+                    countFk++;
+                    prefixFk = countFk.ToString();
+                }
+
                 if (namedColumnInfo != null)
                 {
-                    outputFile.WriteLine(string.Concat("        public ", Helper.GetStringNetCoreType(namedColumnInfo.SqlDataType), (c.IsNullable && c.SqlDataType.ToLower() != "varchar") ? "?" : "", " ", fkTableInfo.TableName, namedColumnInfo.ColumnName, " { get; set; }"));
+                    outputFile.WriteLine(string.Concat("        public ", Helper.GetStringNetCoreType(namedColumnInfo.SqlDataType), (c.IsNullable && c.SqlDataType.ToLower() != "varchar") ? "?" : "", " ", fkTableInfo.TableName, namedColumnInfo.ColumnName, prefixFk, " { get; set; }"));
                 }
+                prefixFk = "";
             }
             outputFile.WriteLine(string.Concat("    }"));
             outputFile.WriteLine(string.Concat("}"));
