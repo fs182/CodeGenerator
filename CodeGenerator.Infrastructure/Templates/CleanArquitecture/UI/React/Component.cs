@@ -29,7 +29,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
             outputFile.WriteLine("    const formRef = React.useRef();");
             outputFile.WriteLine($"    const [{Helper.GetCamel(table.TableName)}s, set{table.TableName}s] = React.useState(null);");
 
-            var foreings = table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditId").ToArray();
+            var foreings = table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId").ToArray();
             string prefixFk = "";
             int countFk = 0;
             for (var i = 0; i <= foreings.Count() - 1; i++)
@@ -53,7 +53,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
             outputFile.WriteLine($"    const [dialogTitle, setDialogTitle] = React.useState('');");
             outputFile.WriteLine($"    const [dialogButtonText, setDialogButtonText] = React.useState('');");
             outputFile.WriteLine("    const [refItem, setRefItem] = React.useState({});");
-            foreach (var c in table.Columns.Where(f => !f.IsIdentity && f.ColumnName != "AuditId"))
+            foreach (var c in table.Columns.Where(f => !f.IsIdentity && f.ColumnName != "AuditoriaId"))
                 outputFile.WriteLine($"    const [{Helper.GetCamel(c.ColumnName)}, set{c.ColumnName}] = React.useState(null);");
 
             outputFile.WriteLine($"");
@@ -76,7 +76,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
 
             prefixFk = "";
             countFk = 0;
-            foreach (var c in table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditId"))
+            foreach (var c in table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId"))
             {
                 if (table.Columns.Count(f => f.TableTarget == c.TableTarget) > 1)
                 {
@@ -91,7 +91,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
             outputFile.WriteLine("        else {");
             outputFile.WriteLine($"            setDialogTitle('Editar');");
             outputFile.WriteLine($"            setDialogButtonText('Actualizar');");
-            foreach (var c in table.Columns.Where(f => !f.IsPrimaryKey && f.ColumnName != "AuditId"))
+            foreach (var c in table.Columns.Where(f => !f.IsPrimaryKey && f.ColumnName != "AuditoriaId"))
                 outputFile.WriteLine($"            set{c.ColumnName}(refItem.{Helper.GetCamel(c.ColumnName)});");
             outputFile.WriteLine("        }");
             outputFile.WriteLine("    }, [open]);");
@@ -99,7 +99,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
 
             prefixFk = "";
             countFk = 0;
-            foreach (var c in table.Columns.Where(f => f.IsForeignKey && f.TableName != "AuditId"))
+            foreach (var c in table.Columns.Where(f => f.IsForeignKey && f.TableTarget != "Auditoria"))
             {
                 if (table.Columns.Count(f => f.TableTarget == c.TableTarget) > 1)
                 {
@@ -126,7 +126,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
 
             prefixFk = "";
             countFk = 0;
-            foreach (var c in table.Columns.Where(f => !f.IsIdentity && f.ColumnName != "AuditId"))
+            foreach (var c in table.Columns.Where(f => !f.IsIdentity && f.ColumnName != "AuditoriaId"))
             {
                 var columnNullable = "";
                 if (c.IsForeignKey)
@@ -147,6 +147,8 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
             outputFile.WriteLine("        if (createMode) {");
             outputFile.WriteLine($"            newItem.{Helper.GetCamel(pk.ColumnName)} = 0;");
             outputFile.WriteLine(string.Concat("            axios.post(`${API_URL}", Helper.GetCamel(table.TableName), "/create`, newItem).then((response) => {"));
+            outputFile.WriteLine($"                if(!response.data)");
+            outputFile.WriteLine($"                     return;");
             outputFile.WriteLine($"                set{table.TableName}s(response.data);");
             outputFile.WriteLine($"                setTotalPages(response.data[0].totalPages);");
             outputFile.WriteLine($"                commandAlert('success', 'creó', null);");
@@ -154,6 +156,8 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
             outputFile.WriteLine("        }");
             outputFile.WriteLine("        else {");
             outputFile.WriteLine(string.Concat("            axios.post(`${API_URL}", Helper.GetCamel(table.TableName), "/update`, newItem).then((response) => {"));
+            outputFile.WriteLine($"                if(!response.data)");
+            outputFile.WriteLine($"                     return;");
             outputFile.WriteLine($"                set{table.TableName}s(response.data);");
             outputFile.WriteLine($"                setTotalPages(response.data[0].totalPages);");
             outputFile.WriteLine($"                commandAlert('success', 'actualizó', null);");
@@ -166,12 +170,14 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
             outputFile.WriteLine($"        if (currentPage == undefined || currentPage === 0)");
             outputFile.WriteLine($"            return;");
             outputFile.WriteLine(string.Concat("        axios.post(`${API_URL}", Helper.GetCamel(table.TableName), "/getPaginated`, { pageNumber: currentPage, rowsOfPage: ROWS_OF_PAGE }).then((response) => {"));
+            outputFile.WriteLine($"                if(!response.data)");
+            outputFile.WriteLine($"                     return;");
             outputFile.WriteLine($"            set{table.TableName}s(response.data);");
             outputFile.WriteLine($"            setTotalPages(response.data[0].totalPages);");
 
             prefixFk = "";
             countFk = 0;
-            foreach (var c in table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditId"))
+            foreach (var c in table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId"))
             {
                 if (table.Columns.Count(f => f.TableTarget == c.TableTarget) > 1)
                 {
@@ -188,7 +194,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
             outputFile.WriteLine($"");
             prefixFk = "";
             countFk = 0;
-            foreach (var c in table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditId"))
+            foreach (var c in table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId"))
             {
                 if (table.Columns.Count(f => f.TableTarget == c.TableTarget) > 1)
                 {
@@ -199,6 +205,8 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
                 outputFile.WriteLine($"        if (!call{c.TableTarget}{prefixFk})");
                 outputFile.WriteLine($"            return;");
                 outputFile.WriteLine(string.Concat("        axios.post(`${API_URL}", Helper.GetCamel(c.TableTarget), prefixFk, "/getPaginated`, { pageNumber: 1, rowsOfPage: 9999 }).then((response) => {"));
+                outputFile.WriteLine($"                if(!response.data)");
+                outputFile.WriteLine($"                     return;");
                 outputFile.WriteLine($"            set{c.TableTarget}{prefixFk}s(response.data);");
                 outputFile.WriteLine("        });");
                 outputFile.WriteLine(string.Concat("    }, [call", c.TableTarget, prefixFk, "]);"));
@@ -214,7 +222,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
             outputFile.WriteLine($"            </Stack>");
             outputFile.WriteLine("            <Stack spacing={2}>");
             outputFile.WriteLine($"                <JumboCardQuick");
-            var columnsArray = table.Columns.Where(f => !f.IsIdentity && f.ColumnName != "AuditId").ToList();
+            var columnsArray = table.Columns.Where(f => !f.IsIdentity && f.ColumnName != "AuditoriaId").ToList();
             var formLayoutArray = Helper.GetFormLayout(columnsArray.Count).ToArray();
 
             outputFile.WriteLine("                    title={");
@@ -227,7 +235,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
                 outputFile.WriteLine(string.Concat("                            <Grid item xs={", gridColumnSizeArray[i], "} md={", gridColumnSizeArray[i], "} lg={", gridColumnSizeArray[i], "}>"));
                 if (!columnsArray[i].IsForeignKey)
                 {
-                    outputFile.WriteLine(string.Concat($"                                 {columnsArray[i].TableName}"));
+                    outputFile.WriteLine(string.Concat($"                                 {columnsArray[i].ColumnName}"));
                 }
                 else
                 {
@@ -366,6 +374,8 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
             outputFile.WriteLine($"        toDeleteItem.rowsOfPage = ROWS_OF_PAGE;");
             outputFile.WriteLine($"        toDeleteItem.pageNumber = currentPage;");
             outputFile.WriteLine(string.Concat("        axios.post(`${API_URL}", Helper.GetCamel(table.TableName), "/delete`, toDeleteItem).then((response) => {"));
+            outputFile.WriteLine($"                if(!response.data)");
+            outputFile.WriteLine($"                     return;");
             outputFile.WriteLine($"            setItems(response.data);");
             outputFile.WriteLine($"            setTotalPages(response.data[0].totalPages);");
             outputFile.WriteLine($"            commandAlert('success','eliminó',null);");
@@ -384,7 +394,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
 
             outputFile.WriteLine("                <Grid container alignItems='center' justifyContent='center' spacing={3.75} sx={{ p: theme => theme.spacing(0.8, 1) }} >");
             //DETALLE GRID
-            var columnsArray = table.Columns.Where(f => !f.IsIdentity && f.ColumnName != "AuditId").ToList();
+            var columnsArray = table.Columns.Where(f => !f.IsIdentity && f.ColumnName != "AuditoriaId").ToList();
             var gridColumnLayout = Helper.GetColumnLayout(columnsArray.Count);
             var gridColumnSizeArray = gridColumnLayout.Item1.ToArray();
             for (int i = 0; i <= columnsArray.Count - 1; i++)

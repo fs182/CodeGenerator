@@ -14,7 +14,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
             sb.AppendLine("-- =============================================");
             sb.AppendLine(string.Concat("-- Author: ", project.Autor));
             //sb.AppendLine(string.Concat("-- Create date: ", DateTime.Now.ToLongDateString(), " - ", DateTime.Now.ToLongTimeString()));
-            sb.AppendLine(string.Concat("-- Create date: ", DateTime.Now.ToLongDateString()));
+            //sb.AppendLine(string.Concat("-- Create date: ", DateTime.Now.ToLongDateString()));
             sb.AppendLine(string.Concat("-- Description: Delete ", table.TableName));
             sb.AppendLine("-- =============================================");
             sb.AppendLine(string.Concat("CREATE OR ALTER PROCEDURE ", table.SchemaName, ".[", project.StoredProceduresPrefix, table.TableName, "_Delete]"));

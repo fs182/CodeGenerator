@@ -13,11 +13,11 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
             outputFile.WriteLine(string.Concat("import React from \"react\";"));
             outputFile.WriteLine(string.Concat("import Page from \"@jumbo/shared/Page\";"));
 
-            foreach (var entity in project.Tables)
+            foreach (var entity in project.Tables.Where(f=>f.Catalog.IsEnabled))
                 outputFile.WriteLine(string.Concat("import ", entity.TableName, " from \"app/pages/catalogs/", entity.TableName, "\";"));
 
             outputFile.WriteLine(string.Concat("const catalogsRoutes = ["));
-            foreach (var entity in project.Tables)
+            foreach (var entity in project.Tables.Where(f => f.Catalog.IsEnabled))
             {
                 outputFile.WriteLine(string.Concat("    {"));
                 outputFile.WriteLine(string.Concat("        path: \"/catalogs/", entity.TableName, "\","));

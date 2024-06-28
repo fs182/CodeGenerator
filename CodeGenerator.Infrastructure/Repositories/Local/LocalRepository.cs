@@ -142,7 +142,7 @@ namespace CodeGenerator.Infrastructure.Repositories.Local
 								cast (1 as bit) as CanBeUpdated, 
 					            a.TableName + '[Form name]' as FormName, 
 					            a.TableName + '[Form description]' as FormDescription,
-					            a.TableName + '[Grid name]' as GridName, 
+								a.TableName as GridName, 
 								a.TableName + '[Grid description]' as GridDescription, 
 					            cast({command.ProjectId} as bigint) as AuditId
 					FROM dbo.[Table] a LEFT OUTER JOIN dbo.[Catalog] b
