@@ -1,5 +1,7 @@
 ﻿using CodeGenerator.Infrastructure.Context.Models;
+using CodeGenerator.Infrastructure.Templates.CleanArquitecture.API;
 using CodeGenerator.Infrastructure.Templates.CleanArquitecture.Application;
+using CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.StoredProcedure;
 using CodeGenerator.Infrastructure.Templates.CleanArquitecture.Domain;
 using CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructure;
 using CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React;
@@ -23,21 +25,21 @@ namespace CodeGenerator.Infrastructure
 
         private static async Task IndividualFiles(Project project, Table table)
         {
-            //await Get.WriteGetPaginated(columnsInfo, env, entity, tablesInfo, connectionString);
-            //await Get.WriteGetById(columnsInfo, env, entity, tablesInfo, connectionString);
-            //await Get.WriteGetByNombre(columnsInfo, env, entity, tablesInfo, connectionString);
-            //await Insert.WriteInsertSP(columnsInfo, env, entity);
-            //await Insert.WriteInsertOnlySP(columnsInfo, env, entity);
-            //await Update.WriteUpdateSP(columnsInfo, env, entity);
-            //await Delete.WriteDeleteSP(columnsInfo, env, entity);
-            //await Controller.WriteController(columnsInfo, env, entity);
+            await Task.Run(() => { Get.WriteGetPaginated(project, table); });
+            await Task.Run(() => { Get.WriteGetById(project, table); });
+            await Task.Run(() => { Get.WriteGetByNombre(project, table); });
+            //await Task.Run(() => { Insert.WriteInsertSP(project, table); });
+            //await Task.Run(() => { Insert.WriteInsertOnlySP(project, table); });
+            //await Task.Run(() => { Update.WriteUpdateSP(project, table); });
+            await Task.Run(() => { Delete.WriteDeleteSP(project, table); });
+            await Task.Run(() => { Controller.WriteController(project, table); });
             await Task.Run(() => { Command.WriteCreateCommand(project, table); });
             await Task.Run(() => { Command.WriteUpdateCommand(project, table); });
             await Task.Run(() => { Command.WriteDeleteCommand(project, table); });
-            //await Handler.WriteGetHandler(columnsInfo, env, entity);
-            //await Handler.WriteUpdateHandler(columnsInfo, env, entity);
-            //await Handler.WriteCreateHandler(columnsInfo, env, entity);
-            //await Handler.WriteDeleteHandler(columnsInfo, env, entity);
+            await Task.Run(() => { Handler.WriteGetHandler(project, table);});
+            await Task.Run(() => { Handler.WriteUpdateHandler(project, table);});
+            await Task.Run(() => { Handler.WriteCreateHandler(project, table);});
+            await Task.Run(() => { Handler.WriteDeleteHandler(project, table);});
             await Task.Run(() => { Query.WriteGetQuery(project, table);});
             await Task.Run(() => { Response.WriteCommandResponse(project, table);});
             await Task.Run(() => { Response.WriteGetResponse(project, table); });
