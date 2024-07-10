@@ -33,8 +33,8 @@ namespace CodeGenerator.API
             var codeGeneratorConnectionString = Configuration.GetConnectionString("CodeGeneratorDB");
             //IConfiguration configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json", false).Build();
             //services.AddSingleton<IConfiguration>(Configuration);
-            services.AddDbContext<ExternalContext>(f => f.UseSqlServer(financialModelConnectionString), ServiceLifetime.Transient);
-            services.AddDbContext<LocalContext>(f => f.UseSqlServer(codeGeneratorConnectionString), ServiceLifetime.Transient);
+            services.AddDbContext<ExternalContext>(f => f.UseSqlServer(financialModelConnectionString, f => f.CommandTimeout(600)), ServiceLifetime.Transient);
+            services.AddDbContext<LocalContext>(f => f.UseSqlServer(codeGeneratorConnectionString, f=>f.CommandTimeout(600)), ServiceLifetime.Transient);
             services.AddAutoMapper(typeof(AutoMapperProfile));
             //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<ApplicationDbContext>();
 
