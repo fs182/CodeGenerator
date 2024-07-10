@@ -235,7 +235,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
                 outputFile.WriteLine(string.Concat("                            <Grid item xs={", gridColumnSizeArray[i], "} md={", gridColumnSizeArray[i], "} lg={", gridColumnSizeArray[i], "}>"));
                 if (!columnsArray[i].IsForeignKey)
                 {
-                    outputFile.WriteLine(string.Concat($"                                 {columnsArray[i].Property.FormTitle}"));
+                    outputFile.WriteLine(string.Concat($"                                 { project.Tables.First(f=>f.TableName == columnsArray[i].TableTarget).Catalog.GridName}"));
                 }
                 else
                 {

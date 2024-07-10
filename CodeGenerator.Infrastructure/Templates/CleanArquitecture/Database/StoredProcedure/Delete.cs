@@ -36,16 +36,15 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
             outputFile.Write(sb.ToString());
             outputFile.Close();
             outputFile.Dispose();
-            using (SqlConnection conn = new SqlConnection(project.ConnectionString))
-            {
-                using (SqlCommand cmd = new SqlCommand(sb.ToString(), conn))
-                {
-                    cmd.CommandType = CommandType.Text;
-                    conn.Open();
-                    cmd.ExecuteNonQuery();
-                    return;
-                }
-            }
+            using SqlConnection conn = new SqlConnection(project.ConnectionString);
+            using SqlCommand cmd = new SqlCommand(sb.ToString(), conn);
+            cmd.CommandType = CommandType.Text;
+            conn.Open();
+            cmd.ExecuteNonQuery();
+            cmd.Dispose();
+            conn.Close();
+            conn.Dispose();
+            return;
         }
         public static void WriteDeleteOnlySP(Project project, Table table)
         {
@@ -78,16 +77,15 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
             outputFile.Write(sb.ToString());
             outputFile.Close();
             outputFile.Dispose();
-            using (SqlConnection conn = new SqlConnection(project.ConnectionString))
-            {
-                using (SqlCommand cmd = new SqlCommand(sb.ToString(), conn))
-                {
-                    cmd.CommandType = CommandType.Text;
-                    conn.Open();
-                    cmd.ExecuteNonQuery();
-                    return;
-                }
-            }
+            using SqlConnection conn = new SqlConnection(project.ConnectionString);
+            using SqlCommand cmd = new SqlCommand(sb.ToString(), conn);
+            cmd.CommandType = CommandType.Text;
+            conn.Open();
+            cmd.ExecuteNonQuery();
+            cmd.Dispose();
+            conn.Close();
+            conn.Dispose();
+            return;
         }
     }
 }

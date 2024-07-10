@@ -153,27 +153,26 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
             outputFile.Close();
             outputFile.Dispose();
 
-            using (SqlConnection conn = new SqlConnection(project.ConnectionString))
+            using SqlConnection conn = new SqlConnection(project.ConnectionString);
+            using SqlCommand cmd = new SqlCommand(sb.ToString(), conn);
+            cmd.CommandType = CommandType.Text;
+            conn.Open();
+            try
             {
-                using (SqlCommand cmd = new SqlCommand(sb.ToString(), conn))
-                {
-                    cmd.CommandType = CommandType.Text;
-                    conn.Open();
-                    try
-                    {
-                        cmd.ExecuteNonQuery();
-                    }
-                    catch (Exception ex)
-                    {
-                        conn.Close();
-                        conn.Dispose();
-                        cmd.Dispose();
-                        Console.Write(sb);
-                        throw ex;
-                    }
-                    return;
-                }
+                cmd.ExecuteNonQuery();
+                cmd.Dispose();
+                conn.Close();
+                conn.Dispose();
             }
+            catch (Exception ex)
+            {
+                conn.Close();
+                conn.Dispose();
+                cmd.Dispose();
+                Console.Write(sb);
+                throw ex;
+            }
+            return;
         }
 
         public static void WriteGetByNombre(Project project, Table table)
@@ -242,26 +241,24 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
             outputFile.Write(sb.ToString());
             outputFile.Close();
             outputFile.Dispose();
-            using (SqlConnection conn = new SqlConnection(project.ConnectionString))
+            using SqlConnection conn = new SqlConnection(project.ConnectionString);
+            using SqlCommand cmd = new SqlCommand(sb.ToString(), conn);
+            cmd.CommandType = CommandType.Text;
+            conn.Open();
+            try
             {
-                using (SqlCommand cmd = new SqlCommand(sb.ToString(), conn))
-                {
-                    cmd.CommandType = CommandType.Text;
-                    conn.Open();
-                    try
-                    {
-                        cmd.ExecuteNonQuery();
-                    }
-                    catch (Exception ex)
-                    {
-                        conn.Close();
-                        conn.Dispose();
-                        cmd.Dispose();
-                        Console.Write(sb);
-                        throw ex;
-                    }
-                    return;
-                }
+                cmd.ExecuteNonQuery();
+                cmd.Dispose();
+                conn.Close();
+                conn.Dispose();
+            }
+            catch (Exception ex)
+            {
+                conn.Close();
+                conn.Dispose();
+                cmd.Dispose();
+                Console.Write(sb);
+                throw ex;
             }
         }
 
@@ -359,25 +356,24 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
             outputFile.Write(sb.ToString());
             outputFile.Close();
             outputFile.Dispose();
-            using (SqlConnection conn = new SqlConnection(project.ConnectionString))
+            using SqlConnection conn = new SqlConnection(project.ConnectionString);
+            using SqlCommand cmd = new SqlCommand(sb.ToString(), conn);
+            cmd.CommandType = CommandType.Text;
+            conn.Open();
+            try
             {
-                using (SqlCommand cmd = new SqlCommand(sb.ToString(), conn))
-                {
-                    cmd.CommandType = CommandType.Text;
-                    conn.Open();
-                    try
-                    {
-                        cmd.ExecuteNonQuery();
-                    }
-                    catch (Exception ex)
-                    {
-                        conn.Close();
-                        conn.Dispose();
-                        cmd.Dispose();
-                        Console.Write(sb);
-                        throw ex;
-                    }
-                }
+                cmd.ExecuteNonQuery();
+                cmd.Dispose();
+                conn.Close();
+                conn.Dispose();
+            }
+            catch (Exception ex)
+            {
+                conn.Close();
+                conn.Dispose();
+                cmd.Dispose();
+                Console.Write(sb);
+                throw ex;
             }
         }
     }

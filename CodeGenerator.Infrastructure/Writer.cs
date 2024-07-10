@@ -18,41 +18,46 @@ namespace CodeGenerator.Infrastructure
             {
                 await IndividualFiles(project, t);
             }
-            await Task.Run(() => { Templates.CleanArquitecture.Infrastructure.Context.WriteCommandContext(project); });
-            await Task.Run(() => { Templates.CleanArquitecture.Infrastructure.Context.WriteQueryContext(project); });
-            await Task.Run(() => { Route.WriteRoutes(project); });
+            await Task.Run(() => { 
+                Templates.CleanArquitecture.Infrastructure.Context.WriteCommandContext(project);
+                Templates.CleanArquitecture.Infrastructure.Context.WriteQueryContext(project);
+                Route.WriteRoutes(project);
+            });
         }
 
         private static async Task IndividualFiles(Project project, Table table)
         {
-            await Task.Run(() => { Get.WriteGetPaginated(project, table); });
-            await Task.Run(() => { Get.WriteGetById(project, table); });
-            await Task.Run(() => { Get.WriteGetByNombre(project, table); });
-            //await Task.Run(() => { Insert.WriteInsertSP(project, table); });
-            //await Task.Run(() => { Insert.WriteInsertOnlySP(project, table); });
-            //await Task.Run(() => { Update.WriteUpdateSP(project, table); });
-            await Task.Run(() => { Delete.WriteDeleteSP(project, table); });
-            await Task.Run(() => { Controller.WriteController(project, table); });
-            await Task.Run(() => { Command.WriteCreateCommand(project, table); });
-            await Task.Run(() => { Command.WriteUpdateCommand(project, table); });
-            await Task.Run(() => { Command.WriteDeleteCommand(project, table); });
-            await Task.Run(() => { Handler.WriteGetHandler(project, table);});
-            await Task.Run(() => { Handler.WriteUpdateHandler(project, table);});
-            await Task.Run(() => { Handler.WriteCreateHandler(project, table);});
-            await Task.Run(() => { Handler.WriteDeleteHandler(project, table);});
-            await Task.Run(() => { Query.WriteGetQuery(project, table);});
-            await Task.Run(() => { Response.WriteCommandResponse(project, table);});
-            await Task.Run(() => { Response.WriteGetResponse(project, table); });
-            await Task.Run(() => { Entity.WriteEntities(project, table); });
-            await Task.Run(() => { StoredProcedureResult.WriteCommands(project, table); });
-            await Task.Run(() => { StoredProcedureResult.WriteQueries(project, table); });
-            await Task.Run(() => { Mapper.WriteMappers(project, table); });
-            await Task.Run(() => { Component.WriteComponents(project, table); });
-            await Task.Run(() => { Component.WriteComponentItems(project, table); });
-            await Task.Run(() => { Interface.WriteCommandsInterfaces(project, table); });
-            await Task.Run(() => { Interface.WriteQueriesInterfaces(project, table); });
-            await Task.Run(() => { Repository.WriteCommandRepository(project, table); });
-            await Task.Run(() => { Repository.WriteQueryRepository(project, table); });
+            await Task.Run(() => { 
+                Get.WriteGetPaginated(project, table);
+                Get.WriteGetById(project, table); 
+                Get.WriteGetByNombre(project, table);
+                //Insert.WriteInsertSP(project, table);
+                //Insert.WriteInsertOnlySP(project, table);
+                //Update.WriteUpdateSP(project, table);
+                Delete.WriteDeleteSP(project, table);
+                Controller.WriteController(project, table); 
+                Command.WriteCreateCommand(project, table); 
+                Command.WriteUpdateCommand(project, table); 
+                Command.WriteDeleteCommand(project, table); 
+                Handler.WriteGetHandler(project, table); 
+                Handler.WriteUpdateHandler(project, table);
+                Handler.WriteCreateHandler(project, table);
+                Handler.WriteDeleteHandler(project, table);
+                Query.WriteGetQuery(project, table);
+                Response.WriteCommandResponse(project, table);
+                Response.WriteGetResponse(project, table);
+                Entity.WriteEntities(project, table);
+                StoredProcedureResult.WriteCommands(project, table);
+                StoredProcedureResult.WriteQueries(project, table);
+                Mapper.WriteMappers(project, table);
+                Component.WriteComponents(project, table);
+                Component.WriteComponentItems(project, table);
+                Interface.WriteCommandsInterfaces(project, table);
+                Interface.WriteQueriesInterfaces(project, table);
+                Repository.WriteCommandRepository(project, table);
+                Repository.WriteQueryRepository(project, table);
+            });
+            
         }
     }
 }
