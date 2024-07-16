@@ -235,16 +235,12 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
                 outputFile.WriteLine(string.Concat("                            <Grid item xs={", gridColumnSizeArray[i], "} md={", gridColumnSizeArray[i], "} lg={", gridColumnSizeArray[i], "}>"));
                 if (!columnsArray[i].IsForeignKey)
                 {
-                    outputFile.WriteLine(string.Concat($"                                 { project.Tables.First(f=>f.TableName == columnsArray[i].TableTarget).Catalog.GridName}"));
+                    outputFile.WriteLine(string.Concat($"                                 {columnsArray[i].Property.FormTitle}"));
                 }
                 else
                 {
                     var fkTableInfo = project.Tables.First(f => f.TableName == columnsArray[i].TableTarget);
-                    var fkColumnsInfo = fkTableInfo.Columns;
-                    var namedColumnInfo = fkColumnsInfo.FirstOrDefault(f => f.ColumnName.ToLower().Contains("nombre") || f.ColumnName.ToLower().Contains("descripcion") && !f.ColumnName.ToLower().Contains("descripcionid") || f.ColumnName.ToLower().Contains("codigo"));
-                    namedColumnInfo ??= fkColumnsInfo.First(f => f.IsPrimaryKey);
-
-                    outputFile.WriteLine(string.Concat($"                                 {namedColumnInfo.ColumnName}"));
+                    outputFile.WriteLine(string.Concat($"                                 {fkTableInfo.Catalog.GridName}"));
                 }
 
                 outputFile.WriteLine($"                            </Grid>");

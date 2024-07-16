@@ -31,9 +31,9 @@ namespace CodeGenerator.Infrastructure
                 Get.WriteGetPaginated(project, table);
                 Get.WriteGetById(project, table); 
                 Get.WriteGetByNombre(project, table);
-                //Insert.WriteInsertSP(project, table);
-                //Insert.WriteInsertOnlySP(project, table);
-                //Update.WriteUpdateSP(project, table);
+                Insert.WriteInsertSP(project, table);
+                Insert.WriteInsertOnlySP(project, table);
+                Update.WriteUpdateSP(project, table);
                 Delete.WriteDeleteSP(project, table);
                 Controller.WriteController(project, table); 
                 Command.WriteCreateCommand(project, table); 

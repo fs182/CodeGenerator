@@ -16,7 +16,7 @@ namespace CodeGenerator.Infrastructure.Repositories.Local
             await Task.Run(() => {
 				project = context.Projects.Where(f => f.ProjectId == projectId).
 					Include(g => g.Tables).
-					ThenInclude(g => g.Columns).
+                    ThenInclude(g => g.Columns).
                     ThenInclude(g => g.Property).
                     Include(g=> g.Catalogs).
                     ThenInclude(g => g.Properties).
@@ -75,8 +75,43 @@ namespace CodeGenerator.Infrastructure.Repositories.Local
 						isnull(a.[SchemaTarget],'') <> isnull(c.[SchemaTarget],'') or
 						isnull(a.[TableTarget],'') <> isnull(c.[TableTarget],'') or
 						isnull(a.[ColumnTarget],'') <> isnull(c.[ColumnTarget],'') )
-					WHERE c.ObjectId is not null and a.ProjectId = {command.ProjectId} 	
+					WHERE c.ObjectId is null and a.ProjectId = {command.ProjectId} 	
+
+					DECLARE @DeleteColumn as Table (ColumnId int Primary Key)
 					
+
+					INSERT INTO @DeleteColumn
+					SELECT a.ColumnId 
+					FROM dbo.[Column] a INNER JOIN dbo.[Table] b 
+					on a.ObjectId = b.ObjectId
+					LEFT OUTER JOIN dbo.[Column] c on 
+						a.[ObjectId] = c.[ObjectId] and
+						a.[ColumnNumber] = c.[ColumnNumber] and
+						a.[SchemaName] = c.[SchemaName] and
+						a.[TableName] = c.[TableName] and
+						(a.[ColumnName] <> c.[ColumnName] or
+						a.[SqlDataType] <> c.[SqlDataType] or
+						a.[MaxLength] <> c.[MaxLength] or
+						a.[Precision] <> c.[Precision] or
+						a.[Scale] <> c.[Scale] or
+						a.[IsNullable] <> c.[IsNullable] or
+						a.[IsIdentity] <> c.[IsIdentity] or
+						a.[IsPrimaryKey] <> c.[IsPrimaryKey] or
+						a.[IsForeignKey] <> c.[IsForeignKey] or
+						isnull(a.[SchemaSource],'') <> isnull(c.[SchemaSource],'') or
+						isnull(a.[TableSource],'') <> isnull(c.[TableSource],'') or
+						isnull(a.[ColumnSource],'') <> isnull(c.[ColumnSource],'') or
+						isnull(a.[SchemaTarget],'') <> isnull(c.[SchemaTarget],'') or
+						isnull(a.[TableTarget],'') <> isnull(c.[TableTarget],'') or
+						isnull(a.[ColumnTarget],'') <> isnull(c.[ColumnTarget],'') )
+					WHERE c.ObjectId is not null and b.ProjectId = {command.ProjectId} 					
+	
+					DELETE a
+					FROM dbo.[Property] a INNER JOIN @DeleteColumn b on a.ColumnId = b.ColumnId
+
+					DELETE a
+					FROM dbo.[Column] a INNER JOIN @DeleteColumn b on a.ColumnId = b.ColumnId
+
 					INSERT INTO dbo.[Column]
 					SELECT       
 					b.[TableId]
@@ -144,7 +179,7 @@ namespace CodeGenerator.Infrastructure.Repositories.Local
 					            a.TableName + '[Form description]' as FormDescription,
 								a.TableName as GridName, 
 								a.TableName + '[Grid description]' as GridDescription, 
-					            cast({command.ProjectId} as bigint) as AuditId
+					            cast({command.AuditId} as bigint) as AuditId
 					FROM dbo.[Table] a LEFT OUTER JOIN dbo.[Catalog] b
 						ON a.TableId = b.TableId
 						WHERE b.CatalogId IS NULL and a.ProjectId = {command.ProjectId}
