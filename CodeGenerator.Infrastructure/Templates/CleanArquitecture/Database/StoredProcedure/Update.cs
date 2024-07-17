@@ -25,7 +25,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
             {
                 var nullable = c.IsNullable ? " = null" : "";
                 if (Helper.GetStringNetCoreType(c.SqlDataType) == "string")
-                    sb.AppendLine(string.Concat("\t", "@", c.ColumnName, " ", c.SqlDataType, "(", c.MaxLength, ")", nullable, ","));
+                    sb.AppendLine(string.Concat("\t", "@", c.ColumnName, " ", c.SqlDataType, "(", c.MaxLength == -1 ? "MAX" : c.MaxLength, ")", nullable, ","));
                 else
                     sb.AppendLine(string.Concat("\t", "@", c.ColumnName, " ", c.SqlDataType, "", nullable, ","));
             }

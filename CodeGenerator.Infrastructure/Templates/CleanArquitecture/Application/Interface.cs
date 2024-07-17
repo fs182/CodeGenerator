@@ -24,13 +24,13 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Application
 
             //if (!entity.SimplifiedCommand)
             //{
-            //    outputFile.WriteLine($"        Task<List<Responses.{table.TableName}.CommandResponse>> {table.TableName}Delete(Commands.{table.TableName}.DeleteCommand command);");
-            //    outputFile.WriteLine($"        Task<List<Responses.{table.TableName}.CommandResponse>> {table.TableName}Create(Commands.{table.TableName}.CreateCommand command);");
+                outputFile.WriteLine($"        Task<List<Responses.{table.TableName}.CommandResponse>> {table.TableName}Delete(Commands.{table.TableName}.DeleteCommand command);");
+                outputFile.WriteLine($"        Task<List<Responses.{table.TableName}.CommandResponse>> {table.TableName}Create(Commands.{table.TableName}.CreateCommand command);");
             //}
             //else
             //{
-                outputFile.WriteLine($"        Task {table.TableName}Delete(Commands.{table.TableName}.DeleteCommand command);");
-                outputFile.WriteLine($"        Task {table.TableName}Create(Commands.{table.TableName}.CreateCommand command);");
+            //    outputFile.WriteLine($"        Task {table.TableName}Delete(Commands.{table.TableName}.DeleteCommand command);");
+            //    outputFile.WriteLine($"        Task {table.TableName}Create(Commands.{table.TableName}.CreateCommand command);");
             //}
             outputFile.WriteLine($"        Task<{Helper.GetStringNetCoreType(pk.SqlDataType)}> {table.TableName}CreateOnly(Commands.{table.TableName}.CreateCommand command);");
 

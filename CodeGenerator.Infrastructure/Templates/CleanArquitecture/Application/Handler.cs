@@ -13,7 +13,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Application
             using StreamWriter outputFile = new(Path.Combine(project.ApplicationHandlersPath, table.TableName, string.Concat("CreateHandler.cs")), false, Encoding.UTF8);
             outputFile.WriteLine($"using {project.Namespace}.Application.Commands.{table.TableName};");
             //if (!entity.SimplifiedCommand)
-            //    outputFile.WriteLine($"using {project.Namespace}.Application.Responses.{table.TableName};");
+            outputFile.WriteLine($"using {project.Namespace}.Application.Responses.{table.TableName};");
 
             outputFile.WriteLine($"using {project.Namespace}.Application.Interfaces;");
             outputFile.WriteLine("using MediatR;");
@@ -21,9 +21,9 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Application
             outputFile.WriteLine("{");
 
             //if (!entity.SimplifiedCommand)
-            //    outputFile.WriteLine("    public class CreateHandler : IRequestHandler<CreateCommand, List<CommandResponse>>");
+                outputFile.WriteLine("    public class CreateHandler : IRequestHandler<CreateCommand, List<CommandResponse>>");
             //else
-                outputFile.WriteLine("    public class CreateHandler : IRequestHandler<CreateCommand, Unit>");
+            //    outputFile.WriteLine("    public class CreateHandler : IRequestHandler<CreateCommand, Unit>");
 
             outputFile.WriteLine("    {");
             outputFile.WriteLine("        private readonly ICatalogCommandRepository _repository;");
@@ -32,17 +32,17 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Application
             outputFile.WriteLine("            _repository = repository;");
             outputFile.WriteLine("        }");
             //if (!entity.SimplifiedCommand)
-            //    outputFile.WriteLine("        public async Task<List<CommandResponse>> Handle(CreateCommand command, CancellationToken cancellationToken)");
+                outputFile.WriteLine("        public async Task<List<CommandResponse>> Handle(CreateCommand command, CancellationToken cancellationToken)");
             //else
-                outputFile.WriteLine("        public async Task<Unit> Handle(CreateCommand command, CancellationToken cancellationToken)");
+            //    outputFile.WriteLine("        public async Task<Unit> Handle(CreateCommand command, CancellationToken cancellationToken)");
             outputFile.WriteLine("        {");
 
             //if (!entity.SimplifiedCommand)
-            //    outputFile.WriteLine($"            return _repository.{table.TableName}Create(command);");
+                outputFile.WriteLine($"            return await _repository.{table.TableName}Create(command);");
             //else
             //{
-                outputFile.WriteLine($"            await _repository.{table.TableName}Create(command);");
-                outputFile.WriteLine($"            return Unit.Value;");
+            //    outputFile.WriteLine($"            await _repository.{table.TableName}Create(command);");
+            //    outputFile.WriteLine($"            return Unit.Value;");
             //}
 
             outputFile.WriteLine("        }");
@@ -59,14 +59,14 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Application
             using StreamWriter outputFile = new(Path.Combine(project.ApplicationHandlersPath, table.TableName, string.Concat("DeleteHandler.cs")), false, Encoding.UTF8);
             outputFile.WriteLine($"using {project.Namespace}.Application.Commands.{table.TableName};");
             outputFile.WriteLine($"using {project.Namespace}.Application.Interfaces;");
-            //outputFile.WriteLine($"using {project.Namespace}.Application.Responses.{table.TableName};");
+            outputFile.WriteLine($"using {project.Namespace}.Application.Responses.{table.TableName};");
             outputFile.WriteLine("using MediatR;");
             outputFile.WriteLine($"namespace {project.Namespace}.Application.Handlers.{table.TableName}");
             outputFile.WriteLine("{");
             //if (!entity.SimplifiedCommand)
-            //    outputFile.WriteLine("    public class DeleteHandler : IRequestHandler<DeleteCommand, List<CommandResponse>>");
+                outputFile.WriteLine("    public class DeleteHandler : IRequestHandler<DeleteCommand, List<CommandResponse>>");
             //else
-                outputFile.WriteLine("    public class DeleteHandler : IRequestHandler<DeleteCommand, Unit>");
+            //    outputFile.WriteLine("    public class DeleteHandler : IRequestHandler<DeleteCommand, Unit>");
             outputFile.WriteLine("    {");
             outputFile.WriteLine("        private readonly ICatalogCommandRepository _repository;");
             outputFile.WriteLine("        public DeleteHandler(ICatalogCommandRepository repository)");
@@ -74,17 +74,17 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Application
             outputFile.WriteLine("            _repository = repository;");
             outputFile.WriteLine("        }");
             //if (!entity.SimplifiedCommand)
-            //    outputFile.WriteLine("        public async Task<List<CommandResponse>> Handle(DeleteCommand command, CancellationToken cancellationToken)");
+            outputFile.WriteLine("        public async Task<List<CommandResponse>> Handle(DeleteCommand command, CancellationToken cancellationToken)");
             //else
-                outputFile.WriteLine("        public async Task<Unit> Handle(DeleteCommand command, CancellationToken cancellationToken)");
+            //    outputFile.WriteLine("        public async Task<Unit> Handle(DeleteCommand command, CancellationToken cancellationToken)");
             outputFile.WriteLine("        {");
 
             //if (!entity.SimplifiedCommand)
-            //    outputFile.WriteLine($"            return _repository.{table.TableName}Delete(command);");
+                outputFile.WriteLine($"            return await _repository.{table.TableName}Delete(command);");
             //else
             //{
-                outputFile.WriteLine($"            await _repository.{table.TableName}Delete(command);");
-                outputFile.WriteLine($"            return Unit.Value;");
+            //    outputFile.WriteLine($"            await _repository.{table.TableName}Delete(command);");
+            //    outputFile.WriteLine($"            return Unit.Value;");
             //}
 
 

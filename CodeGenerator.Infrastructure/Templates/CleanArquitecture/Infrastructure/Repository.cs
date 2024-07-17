@@ -51,61 +51,61 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
             //}
 
             //if (!table.SimplifiedCommand)
-            //    outputFile.WriteLine($"        public async Task<List<Application.Responses.{table.TableName}.CommandResponse>> {table.TableName}Delete(Application.Commands.{table.TableName}.DeleteCommand command)");
+                outputFile.WriteLine($"        public async Task<List<Application.Responses.{table.TableName}.CommandResponse>> {table.TableName}Delete(Application.Commands.{table.TableName}.DeleteCommand command)");
             //else
-                outputFile.WriteLine($"        public async Task {table.TableName}Delete(Application.Commands.{table.TableName}.DeleteCommand command)");
+            //    outputFile.WriteLine($"        public async Task {table.TableName}Delete(Application.Commands.{table.TableName}.DeleteCommand command)");
 
             outputFile.WriteLine("        {");
             outputFile.WriteLine("            var parameters = new SqlParameter[]");
             outputFile.WriteLine("                {");
             //if (!table.SimplifiedCommand)
             //{
-            //    outputFile.WriteLine("                        new SqlParameter() {ParameterName = \"@PageNumber\", SqlDbType =  System.Data.SqlDbType.Int, Value = command.PageNumber},");
-            //    outputFile.WriteLine("                        new SqlParameter() {ParameterName = \"@RowsOfPage\", SqlDbType =  System.Data.SqlDbType.Int, Value = command.RowsOfPage},");
-            //    outputFile.WriteLine("                        new SqlParameter() {ParameterName = \"@ExistingRows\", SqlDbType =  System.Data.SqlDbType.Int, Direction = System.Data.ParameterDirection.Output},");
+            outputFile.WriteLine("                        new SqlParameter() {ParameterName = \"@PageNumber\", SqlDbType =  System.Data.SqlDbType.Int, Value = command.PageNumber},");
+            outputFile.WriteLine("                        new SqlParameter() {ParameterName = \"@RowsOfPage\", SqlDbType =  System.Data.SqlDbType.Int, Value = command.RowsOfPage},");
+            outputFile.WriteLine("                        new SqlParameter() {ParameterName = \"@ExistingRows\", SqlDbType =  System.Data.SqlDbType.Int, Direction = System.Data.ParameterDirection.Output},");
             //}
             var mainColumn = table.Columns.FirstOrDefault(f => f.IsPrimaryKey);
             //if (!table.SimplifiedCommand)
-            //    outputFile.WriteLine(string.Concat("                        new SqlParameter() {ParameterName = \"@", pk.Name, "\", SqlDbType =  System.Data.SqlDbType.Int, Value = command.", pk.Name, "}"));
+            outputFile.WriteLine(string.Concat("                        new SqlParameter() {ParameterName = \"@", pk.ColumnName, "\", SqlDbType =  System.Data.SqlDbType.Int, Value = command.", pk.ColumnName, "}"));
             //else
-            if(mainColumn != null)    
-                outputFile.WriteLine(string.Concat("                        new SqlParameter() {ParameterName = \"@", mainColumn.ColumnName, "\", SqlDbType =  System.Data.SqlDbType.", Helper.GetStringSQLDBType(mainColumn.SqlDataType), ", Value = command.", mainColumn.ColumnName, "}"));
+            //if(mainColumn != null)    
+            //    outputFile.WriteLine(string.Concat("                        new SqlParameter() {ParameterName = \"@", mainColumn.ColumnName, "\", SqlDbType =  System.Data.SqlDbType.", Helper.GetStringSQLDBType(mainColumn.SqlDataType), ", Value = command.", mainColumn.ColumnName, "}"));
 
 
             outputFile.WriteLine("                };");
             //if (!table.SimplifiedCommand)
             //{
-            //    outputFile.WriteLine($"            var result = new List<Context.StoredProcedureResult.Commands.{table.TableName}CommandResult>();");
-            //    outputFile.WriteLine(string.Concat("            await Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"[", table.SchemaName, "].[", table.TableName, "_Delete] @PageNumber, @RowsOfPage, @ExistingRows OUTPUT, @", pk.Name, "\", parameters).ToList(); });"));
+            outputFile.WriteLine($"            var result = new List<Context.StoredProcedureResult.Commands.{table.TableName}CommandResult>();");
+            outputFile.WriteLine(string.Concat("            await Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"[", table.SchemaName, "].[", table.TableName, "_Delete] @PageNumber, @RowsOfPage, @ExistingRows OUTPUT, @", pk.ColumnName, "\", parameters).ToList(); });"));
             //}
             //else
-            if (mainColumn != null)
-            {
-                outputFile.WriteLine("            await Task.Run(() => {");
-                outputFile.WriteLine($"             _context.Database.ExecuteSqlRaw(\"[{table.SchemaName}].[{table.TableName}_Delete_Only] @{mainColumn.ColumnName}\", parameters);");
-                outputFile.WriteLine("            });");
-            }
+            //if (mainColumn != null)
+            //{
+            //    outputFile.WriteLine("            await Task.Run(() => {");
+            //    outputFile.WriteLine($"             _context.Database.ExecuteSqlRaw(\"[{table.SchemaName}].[{table.TableName}_Delete_Only] @{mainColumn.ColumnName}\", parameters);");
+            //    outputFile.WriteLine("            });");
+            //}
                 
 
             //if (!table.SimplifiedCommand)
             //{
-            //    outputFile.WriteLine("            var existingRows = (int)parameters[2].Value;");
-            //    outputFile.WriteLine($"            return {table.TableName}Mapper.Map(result, command.RowsOfPage, existingRows);");
+            outputFile.WriteLine("            var existingRows = (int)parameters[2].Value;");
+            outputFile.WriteLine($"            return {table.TableName}Mapper.Map(result, command.RowsOfPage, existingRows);");
             //}
             outputFile.WriteLine("        }");
 
             //if (!table.SimplifiedCommand)
-            //    outputFile.WriteLine($"        public async Task<List<Application.Responses.{table.TableName}.CommandResponse>> {table.TableName}Create(Application.Commands.{table.TableName}.CreateCommand command)");
+            outputFile.WriteLine($"        public async Task<List<Application.Responses.{table.TableName}.CommandResponse>> {table.TableName}Create(Application.Commands.{table.TableName}.CreateCommand command)");
             //else
-                outputFile.WriteLine($"        public async Task {table.TableName}Create(Application.Commands.{table.TableName}.CreateCommand command)");
+            //    outputFile.WriteLine($"        public async Task {table.TableName}Create(Application.Commands.{table.TableName}.CreateCommand command)");
             outputFile.WriteLine("        {");
             outputFile.WriteLine("            var parameters = new SqlParameter[]");
             outputFile.WriteLine("                {");
             //if (!table.SimplifiedCommand)
             //{
-            //    outputFile.WriteLine("                    new SqlParameter() {ParameterName = \"@PageNumber\", SqlDbType =  System.Data.SqlDbType.Int, Value = command.PageNumber},");
-            //    outputFile.WriteLine("                        new SqlParameter() {ParameterName = \"@RowsOfPage\", SqlDbType =  System.Data.SqlDbType.Int, Value = command.RowsOfPage},");
-            //    outputFile.WriteLine("                        new SqlParameter() {ParameterName = \"@ExistingRows\", SqlDbType =  System.Data.SqlDbType.Int, Direction = System.Data.ParameterDirection.Output},");
+            outputFile.WriteLine("                    new SqlParameter() {ParameterName = \"@PageNumber\", SqlDbType =  System.Data.SqlDbType.Int, Value = command.PageNumber},");
+            outputFile.WriteLine("                        new SqlParameter() {ParameterName = \"@RowsOfPage\", SqlDbType =  System.Data.SqlDbType.Int, Value = command.RowsOfPage},");
+            outputFile.WriteLine("                        new SqlParameter() {ParameterName = \"@ExistingRows\", SqlDbType =  System.Data.SqlDbType.Int, Direction = System.Data.ParameterDirection.Output},");
             //}
 
             foreach (var c in table.Columns.Where(f => !f.IsIdentity))
@@ -119,26 +119,26 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
             outputFile.WriteLine("                };");
             //if (!table.SimplifiedCommand)
             //{
-            //    outputFile.WriteLine($"            var result = new List<Context.StoredProcedureResult.Commands.{table.TableName}CommandResult>();");
-            //    outputFile.Write(string.Concat("            await Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"[", table.SchemaName, "].[", table.TableName, "_Insert] @PageNumber, @RowsOfPage, @ExistingRows OUTPUT, "));
+            outputFile.WriteLine($"            var result = new List<Context.StoredProcedureResult.Commands.{table.TableName}CommandResult>();");
+            outputFile.Write(string.Concat("            await Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"[", table.SchemaName, "].[", table.TableName, "_Insert] @PageNumber, @RowsOfPage, @ExistingRows OUTPUT, "));
 
             //}
             //else
-            outputFile.WriteLine("            await Task.Run(() => {");
-            outputFile.Write($"             _context.Database.ExecuteSqlRawAsync(\"[{table.SchemaName}].[{table.TableName}_Insert] ");
+            //outputFile.WriteLine("            await Task.Run(() => {");
+            //outputFile.Write($"             _context.Database.ExecuteSqlRawAsync(\"[{table.SchemaName}].[{table.TableName}_Insert] ");
 
             foreach (var c in table.Columns.Where(f => !f.IsIdentity && f.ColumnName != "AuditoriaId"))
                 outputFile.Write($"@{c.ColumnName}, ");
 
             //if (!table.SimplifiedCommand)
             //{
-            //    outputFile.WriteLine("@AuditoriaId\", parameters).ToList(); });");
-            //    outputFile.WriteLine("            var existingRows = (int)parameters[2].Value;");
-            //    outputFile.WriteLine($"            return {table.TableName}Mapper.Map(result, command.RowsOfPage, existingRows);");
+            outputFile.WriteLine("@AuditoriaId\", parameters).ToList(); });");
+            outputFile.WriteLine("            var existingRows = (int)parameters[2].Value;");
+            outputFile.WriteLine($"            return {table.TableName}Mapper.Map(result, command.RowsOfPage, existingRows);");
             //}
             //else
-                outputFile.WriteLine("@AuditoriaId\", parameters);");
-            outputFile.WriteLine("            });");
+            //    outputFile.WriteLine("@AuditoriaId\", parameters);");
+            //    outputFile.WriteLine("            });");
 
             outputFile.WriteLine("        }");
 
