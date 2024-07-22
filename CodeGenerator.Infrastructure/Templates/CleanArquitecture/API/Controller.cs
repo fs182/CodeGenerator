@@ -64,6 +64,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.API
                 outputFile.WriteLine("        {");
                 outputFile.WriteLine("            try");
                 outputFile.WriteLine("            {");
+                outputFile.WriteLine("                command.AuditoriaId = 1;");
                 outputFile.WriteLine(string.Concat("                var result = await Mediator.Send(command);"));
                 outputFile.WriteLine("                return Ok(result);");
                 outputFile.WriteLine("            }");
@@ -83,6 +84,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.API
             outputFile.WriteLine("        {");
             outputFile.WriteLine("            try");
             outputFile.WriteLine("            {");
+            outputFile.WriteLine("                command.AuditoriaId = 1;");
             outputFile.WriteLine(string.Concat("                var result = await Mediator.Send(command);"));
             outputFile.WriteLine("                return Ok(result);");
             outputFile.WriteLine("            }");
@@ -105,6 +107,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.API
             outputFile.WriteLine("        {");
             outputFile.WriteLine("            try");
             outputFile.WriteLine("            {");
+            outputFile.WriteLine("                command. AuditoriaId = 1;");
             outputFile.WriteLine("                var result = await Mediator.Send(command);");
             outputFile.WriteLine("                return Ok(result);");
             outputFile.WriteLine("            }");

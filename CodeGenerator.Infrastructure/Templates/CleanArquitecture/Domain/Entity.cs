@@ -17,7 +17,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Domain
             outputFile.WriteLine("    {");
             foreach (var c in table.Columns.Where(f => f.ColumnName != "AuditoriaId"))
             {
-                outputFile.WriteLine(string.Concat("        public ", Helper.GetStringNetCoreType(c.SqlDataType), c.IsNullable ? "?" : "", " ", c.ColumnName, " { get; set; }"));
+                outputFile.WriteLine(string.Concat("        public ", Helper.GetStringNetCoreType(c.SqlDataType), c.IsNullable && Helper.GetStringNetCoreType(c.SqlDataType) != "string" ? "?" : "", " ", c.ColumnName, " { get; set; }"));
             }
 
             string prefixFk = "";
@@ -36,7 +36,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Domain
 
                 if (namedColumnInfo != null)
                 {
-                    outputFile.WriteLine(string.Concat("        public ", Helper.GetStringNetCoreType(namedColumnInfo.SqlDataType), c.IsNullable ? "?" : "", " ", fkTableInfo.TableName, namedColumnInfo.ColumnName,prefixFk, " { get; set; }"));
+                    outputFile.WriteLine(string.Concat("        public ", Helper.GetStringNetCoreType(namedColumnInfo.SqlDataType), c.IsNullable && Helper.GetStringNetCoreType(c.SqlDataType) != "string" ? "?" : "", " ", fkTableInfo.TableName, namedColumnInfo.ColumnName,prefixFk, " { get; set; }"));
                 }
                 prefixFk = "";
             }

@@ -193,6 +193,7 @@ namespace CodeGenerator.Infrastructure.Repositories.Local
 						,cast(1 as bit) as IsForForm
 						,cast(1 as bit) as IsForGrid
 						,cast(0 as bit) as IsReadOnly
+						,cast(0 as bit) as CreateGetBy
 						,cast(1 as smallint) as [Order]
 						,a.ColumnName + '[Grid header]' as GridHeader
 						,a.ColumnName + '[Form title]' as FormTitle

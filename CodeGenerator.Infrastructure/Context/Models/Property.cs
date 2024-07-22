@@ -16,6 +16,7 @@ namespace CodeGenerator.Infrastructure.Context.Models
         public bool IsForForm { get; set; }
         public bool IsForGrid { get; set; }
         public bool IsReadOnly { get; set; }
+        public bool CreateGetBy { get; set; }
         public short Order { get; set; }
         public string GridHeader { get; set; }
         public string FormTitle { get; set; }

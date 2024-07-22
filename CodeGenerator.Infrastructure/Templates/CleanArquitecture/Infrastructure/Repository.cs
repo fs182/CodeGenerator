@@ -223,23 +223,26 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
             outputFile.WriteLine(string.Concat("            return ", table.TableName, "Mapper.Map(result.First());"));
             outputFile.WriteLine(string.Concat("        }"));
 
-            var colNombre = table.Columns.FirstOrDefault(f => f.ColumnName == "Nombre");
-            if (colNombre != null)
-            {
-                outputFile.WriteLine($"        public async Task<Application.Responses.{table.TableName}.GetResponse> Get{table.TableName}ByName(string name)");
+            var customGetMethods = table.Columns.Where(f => f.Property.CreateGetBy.ToString() != null).ToList();
+            foreach (var customMethod in customGetMethods)
+            {               
+                outputFile.WriteLine($"        public async Task<Application.Responses.{table.TableName}.GetResponse> Get{table.TableName}By{customMethod.ColumnName}(string {customMethod.ColumnName.ToLower()})");
                 outputFile.WriteLine("        {");
                 outputFile.WriteLine("            var parameters = new SqlParameter[]");
                 outputFile.WriteLine("                {");
-                outputFile.WriteLine(string.Concat("                    new SqlParameter() {ParameterName = \"@", colNombre.ColumnName, "\", SqlDbType =  System.Data.SqlDbType.", Helper.GetStringSQLDBType(colNombre.SqlDataType), ", Value = name},"));
+                outputFile.WriteLine(string.Concat("                    new SqlParameter() {ParameterName = \"@", customMethod.ColumnName, "\", SqlDbType =  System.Data.SqlDbType.", Helper.GetStringSQLDBType(customMethod.SqlDataType), ", Value = name},"));
                 outputFile.WriteLine("                };");
                 outputFile.WriteLine($"            var result = new List<Context.StoredProcedureResult.Queries.{table.TableName}GetPaginatedResult>();");
-                outputFile.WriteLine(string.Concat("            await Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"", table.SchemaName, ".", table.TableName, "_Get_ByNombre @", colNombre.ColumnName, "\", parameters).ToList() ;});"));
+                outputFile.WriteLine(string.Concat("            await Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"", table.SchemaName, ".", table.TableName, "_Get_ByNombre @", customMethod.ColumnName, "\", parameters).ToList() ;});"));
                 outputFile.WriteLine($"            var {Helper.GetCamel(table.TableName)} = result.FirstOrDefault();");
                 outputFile.WriteLine($"            if ({Helper.GetCamel(table.TableName)} != null)");
                 outputFile.WriteLine($"                return {table.TableName}Mapper.Map({Helper.GetCamel(table.TableName)});");
                 outputFile.WriteLine("            return null;");
                 outputFile.WriteLine("        }");
+                outputFile.WriteLine("");
             }
+
+
 
             outputFile.WriteLine(string.Concat("    }"));
             outputFile.WriteLine(string.Concat("}"));

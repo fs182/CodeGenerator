@@ -177,88 +177,89 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
 
         public static void WriteGetByNombre(Project project, Table table)
         {
-            var columnNombre = table.Columns.FirstOrDefault(f => f.ColumnName.ToLower() == "nombre");
-            if (columnNombre == null)
-                return;
-            StringBuilder sb = new StringBuilder();
-            var pk = table.Columns.Where(f => f.IsPrimaryKey).First();
-            sb.AppendLine("-- =============================================");
-            sb.AppendLine(string.Concat("-- Author: ", project.Autor));
-            //sb.AppendLine(string.Concat("-- Create date: ", DateTime.Now.ToLongDateString(), " - ", DateTime.Now.ToLongTimeString()));
-            //sb.AppendLine(string.Concat("-- Create date: ", DateTime.Now.ToLongDateString()));
-            sb.AppendLine(string.Concat("-- Description: Get by Nombre ", table.TableName));
-            sb.AppendLine("-- =============================================");
-            sb.AppendLine(string.Concat("CREATE OR ALTER PROCEDURE ", table.SchemaName, ".[", project.StoredProceduresPrefix, table.TableName, "_Get_ByNombre]"));
-            sb.AppendLine(string.Concat("\t", "@", columnNombre.ColumnName, " ", columnNombre.SqlDataType, " (", columnNombre.MaxLength, ")"));
-            sb.AppendLine("AS");
-            sb.AppendLine("BEGIN");
-            sb.AppendLine("SET NOCOUNT ON;");
-            sb.AppendLine("");
-            sb.AppendLine("SELECT TOP 1");
-
-            foreach (var c in table.Columns.Where(f => f.ColumnName != "AuditoriaId"))
-                sb.AppendLine(string.Concat("\ta.", c.ColumnName, ","));
-            sb.AppendLine("\tb.AuditoriaId,");
-            sb.AppendLine("\tb.FechaModificacion,");
-            var existFK = table.Columns.FirstOrDefault(f => f.IsForeignKey && f.ColumnName != "AuditoriaId");
-            sb.AppendLine(string.Concat("\tc.NombreCorto as NombreCortoUsuario", existFK != null ? "," : ""));
-            int count = 0;
-            var fkCount = table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId").Count();
-            foreach (var c in table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId"))
+            var customGetMethods = table.Columns.Where(f => f.Property.CreateGetBy.ToString() != null).ToList();
+            foreach (var customMethod in customGetMethods)
             {
-                count++;
-                var fkTableInfo = project.Tables.First(f => f.TableName == c.TableTarget);
-                var fkColumnsInfo = fkTableInfo.Columns;
-                var fkColumnInfoPk = fkColumnsInfo.First(f => f.IsPrimaryKey);
-                var namedColumnInfo = fkColumnsInfo.FirstOrDefault(f => f.ColumnName.ToLower().Contains("nombre") || (f.ColumnName.ToLower().Contains("descripcion") && !f.ColumnName.ToLower().Contains("descripcionid")) || f.ColumnName.ToLower().Contains("codigo"));
-                namedColumnInfo ??= fkColumnsInfo.First(f => f.IsPrimaryKey);
+                StringBuilder sb = new StringBuilder();
+                var pk = table.Columns.Where(f => f.IsPrimaryKey).First();
+                sb.AppendLine("-- =============================================");
+                sb.AppendLine(string.Concat("-- Author: ", project.Autor));
+                //sb.AppendLine(string.Concat("-- Create date: ", DateTime.Now.ToLongDateString(), " - ", DateTime.Now.ToLongTimeString()));
+                //sb.AppendLine(string.Concat("-- Create date: ", DateTime.Now.ToLongDateString()));
+                sb.AppendLine(string.Concat("-- Description: Get by ", customMethod.ColumnName ," ", table.TableName));
+                sb.AppendLine("-- =============================================");
+                sb.AppendLine(string.Concat("CREATE OR ALTER PROCEDURE ", table.SchemaName, ".[", project.StoredProceduresPrefix, table.TableName, "_Get_By",customMethod.ColumnName,"]"));
+                sb.AppendLine(string.Concat("\t", "@", customMethod.ColumnName, " ", customMethod.SqlDataType, " (", customMethod.MaxLength, ")"));
+                sb.AppendLine("AS");
+                sb.AppendLine("BEGIN");
+                sb.AppendLine("SET NOCOUNT ON;");
+                sb.AppendLine("");
+                sb.AppendLine("SELECT TOP 1");
+
+                foreach (var c in table.Columns.Where(f => f.ColumnName != "AuditoriaId"))
+                    sb.AppendLine(string.Concat("\ta.", c.ColumnName, ","));
+                sb.AppendLine("\tb.AuditoriaId,");
+                sb.AppendLine("\tb.FechaModificacion,");
+                var existFK = table.Columns.FirstOrDefault(f => f.IsForeignKey && f.ColumnName != "AuditoriaId");
+                sb.AppendLine(string.Concat("\tc.NombreCorto as NombreCortoUsuario", existFK != null ? "," : ""));
+                int count = 0;
+                var fkCount = table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId").Count();
+                foreach (var c in table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId"))
+                {
+                    count++;
+                    var fkTableInfo = project.Tables.First(f => f.TableName == c.TableTarget);
+                    var fkColumnsInfo = fkTableInfo.Columns;
+                    var fkColumnInfoPk = fkColumnsInfo.First(f => f.IsPrimaryKey);
+                    var namedColumnInfo = fkColumnsInfo.FirstOrDefault(f => f.ColumnName.ToLower().Contains("nombre") || (f.ColumnName.ToLower().Contains("descripcion") && !f.ColumnName.ToLower().Contains("descripcionid")) || f.ColumnName.ToLower().Contains("codigo"));
+                    namedColumnInfo ??= fkColumnsInfo.First(f => f.IsPrimaryKey);
 
 
-                sb.AppendLine(string.Concat($"\tf{count}.{namedColumnInfo.ColumnName} as {fkTableInfo.TableName}{namedColumnInfo.ColumnName}", count != fkCount ? "," : ""));
+                    sb.AppendLine(string.Concat($"\tf{count}.{namedColumnInfo.ColumnName} as {fkTableInfo.TableName}{namedColumnInfo.ColumnName}", count != fkCount ? "," : ""));
 
-            }
-            sb.AppendLine(string.Concat("FROM ", table.TableName, " a "));
-            sb.AppendLine("INNER JOIN Auditoria b on a.AuditoriaId = b.AuditoriaId");
-            sb.AppendLine("INNER JOIN Usuario c on b.UsuarioId = c.UsuarioId");
-            count = 0;
-            foreach (var c in table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId"))
-            {
-                count++;
-                var fkTableInfo = project.Tables.First(f => f.TableName == c.TableTarget);
-                var fkColumnsInfo = fkTableInfo.Columns;
-                var fkColumnInfoPk = fkColumnsInfo.First(f => f.IsPrimaryKey);
-                var namedColumnInfo = fkColumnsInfo.FirstOrDefault(f => f.ColumnName.ToLower().Contains("nombre") || f.ColumnName.ToLower().Contains("descripcion") || f.ColumnName.ToLower().Contains("codigo"));
-                namedColumnInfo ??= fkColumnsInfo.First(f => f.IsPrimaryKey);
+                }
+                sb.AppendLine(string.Concat("FROM ", table.TableName, " a "));
+                sb.AppendLine("INNER JOIN Auditoria b on a.AuditoriaId = b.AuditoriaId");
+                sb.AppendLine("INNER JOIN Usuario c on b.UsuarioId = c.UsuarioId");
+                count = 0;
+                foreach (var c in table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId"))
+                {
+                    count++;
+                    var fkTableInfo = project.Tables.First(f => f.TableName == c.TableTarget);
+                    var fkColumnsInfo = fkTableInfo.Columns;
+                    var fkColumnInfoPk = fkColumnsInfo.First(f => f.IsPrimaryKey);
+                    var namedColumnInfo = fkColumnsInfo.FirstOrDefault(f => f.ColumnName.ToLower().Contains("nombre") || f.ColumnName.ToLower().Contains("descripcion") || f.ColumnName.ToLower().Contains("codigo"));
+                    namedColumnInfo ??= fkColumnsInfo.First(f => f.IsPrimaryKey);
 
-                sb.AppendLine($"LEFT OUTER JOIN {fkTableInfo.SchemaName}.{fkTableInfo.TableName} f{count} on a.{c.ColumnName} = f{count}.{fkColumnInfoPk.ColumnName}");
+                    sb.AppendLine($"LEFT OUTER JOIN {fkTableInfo.SchemaName}.{fkTableInfo.TableName} f{count} on a.{c.ColumnName} = f{count}.{fkColumnInfoPk.ColumnName}");
 
-            }
-            sb.AppendLine(string.Concat($"WHERE a.{columnNombre.ColumnName} = @{columnNombre.ColumnName}"));
-            sb.AppendLine("");
-            sb.AppendLine("END");
+                }
+                sb.AppendLine(string.Concat($"WHERE a.{customMethod.ColumnName} = @{customMethod.ColumnName}"));
+                sb.AppendLine("");
+                sb.AppendLine("END");
 
-            using StreamWriter outputFile = new(Path.Combine("C:\\Fernando\\Oficina\\FinancialModel\\FinancialModel\\FinancialModel\\src\\FinancialModel.Database\\StoredProcedures", string.Concat(table.SchemaName, ".", project.StoredProceduresPrefix, table.TableName, "_Get_ByNombre.sql")), false, Encoding.UTF8);
-            outputFile.Write(sb.ToString());
-            outputFile.Close();
-            outputFile.Dispose();
-            using SqlConnection conn = new SqlConnection(project.ConnectionString);
-            using SqlCommand cmd = new SqlCommand(sb.ToString(), conn);
-            cmd.CommandType = CommandType.Text;
-            conn.Open();
-            try
-            {
-                cmd.ExecuteNonQuery();
-                cmd.Dispose();
-                conn.Close();
-                conn.Dispose();
-            }
-            catch (Exception ex)
-            {
-                conn.Close();
-                conn.Dispose();
-                cmd.Dispose();
-                Console.Write(sb);
-                throw ex;
+                using StreamWriter outputFile = new(Path.Combine("C:\\Fernando\\Oficina\\FinancialModel\\FinancialModel\\FinancialModel\\src\\FinancialModel.Database\\StoredProcedures", string.Concat(table.SchemaName, ".", project.StoredProceduresPrefix, table.TableName, "_Get_ByNombre.sql")), false, Encoding.UTF8);
+                outputFile.Write(sb.ToString());
+                outputFile.Close();
+                outputFile.Dispose();
+                using SqlConnection conn = new SqlConnection(project.ConnectionString);
+                using SqlCommand cmd = new SqlCommand(sb.ToString(), conn);
+                cmd.CommandType = CommandType.Text;
+                conn.Open();
+                try
+                {
+                    cmd.ExecuteNonQuery();
+                    cmd.Dispose();
+                    conn.Close();
+                    conn.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    conn.Close();
+                    conn.Dispose();
+                    cmd.Dispose();
+                    Console.Write(sb);
+                    throw ex;
+                }
             }
         }
 
