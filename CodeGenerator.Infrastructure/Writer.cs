@@ -30,7 +30,7 @@ namespace CodeGenerator.Infrastructure
             await Task.Run(() => { 
                 Get.WriteGetPaginated(project, table);
                 Get.WriteGetById(project, table); 
-                Get.WriteGetByNombre(project, table);
+                Get.WriteGetByCustom(project, table);
                 Insert.WriteInsertSP(project, table);
                 Insert.WriteInsertOnlySP(project, table);
                 Update.WriteUpdateSP(project, table);

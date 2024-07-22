@@ -175,9 +175,9 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
             return;
         }
 
-        public static void WriteGetByNombre(Project project, Table table)
+        public static void WriteGetByCustom(Project project, Table table)
         {
-            var customGetMethods = table.Columns.Where(f => f.Property.CreateGetBy.ToString() != null).ToList();
+            var customGetMethods = table.Columns.Where(f => f.Property.CreateGetBy).ToList();
             foreach (var customMethod in customGetMethods)
             {
                 StringBuilder sb = new StringBuilder();
@@ -194,7 +194,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
                 sb.AppendLine("BEGIN");
                 sb.AppendLine("SET NOCOUNT ON;");
                 sb.AppendLine("");
-                sb.AppendLine("SELECT TOP 1");
+                sb.AppendLine("SELECT ");
 
                 foreach (var c in table.Columns.Where(f => f.ColumnName != "AuditoriaId"))
                     sb.AppendLine(string.Concat("\ta.", c.ColumnName, ","));
@@ -237,7 +237,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
                 sb.AppendLine("");
                 sb.AppendLine("END");
 
-                using StreamWriter outputFile = new(Path.Combine("C:\\Fernando\\Oficina\\FinancialModel\\FinancialModel\\FinancialModel\\src\\FinancialModel.Database\\StoredProcedures", string.Concat(table.SchemaName, ".", project.StoredProceduresPrefix, table.TableName, "_Get_ByNombre.sql")), false, Encoding.UTF8);
+                using StreamWriter outputFile = new(Path.Combine("C:\\Fernando\\Oficina\\FinancialModel\\FinancialModel\\FinancialModel\\src\\FinancialModel.Database\\StoredProcedures", string.Concat(table.SchemaName, ".", project.StoredProceduresPrefix, table.TableName, "_Get_By", customMethod.ColumnName, ".sql")), false, Encoding.UTF8);
                 outputFile.Write(sb.ToString());
                 outputFile.Close();
                 outputFile.Dispose();

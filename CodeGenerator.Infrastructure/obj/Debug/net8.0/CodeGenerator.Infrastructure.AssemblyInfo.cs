@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CodeGenerator.Infrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2159a20e936be0a2d3196f2e7c3b29da220804f5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ad607358746984e5e8959deb9379bc721adf6b7b")]
 [assembly: System.Reflection.AssemblyProductAttribute("CodeGenerator.Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CodeGenerator.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

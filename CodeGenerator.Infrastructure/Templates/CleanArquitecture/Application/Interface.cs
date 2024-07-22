@@ -55,7 +55,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Application
             outputFile.WriteLine($"        Task<List<Responses.{table.TableName}.GetResponse>> Get{table.TableName}s(Queries.{table.TableName}.GetQuery query);");
             outputFile.WriteLine($"        Task<Responses.{table.TableName}.GetResponse> Get{table.TableName}(Domain.Entities.{table.TableName} query);");
 
-            var customGetMethods = table.Columns.Where(f => f.Property.CreateGetBy.ToString() != null).ToList();
+            var customGetMethods = table.Columns.Where(f => f.Property.CreateGetBy).ToList();
 
             foreach (var customMethod in customGetMethods)
                 outputFile.WriteLine($"        Task<Responses.{table.TableName}.GetResponse> Get{table.TableName}By{customMethod.ColumnName}(string {customMethod.ColumnName.ToLower()});");
