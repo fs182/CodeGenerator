@@ -21,6 +21,7 @@ namespace CodeGenerator.Infrastructure
             await Task.Run(() => { 
                 Templates.CleanArquitecture.Infrastructure.Context.WriteCommandContext(project);
                 Templates.CleanArquitecture.Infrastructure.Context.WriteQueryContext(project);
+                Mapper.WriteMappers(project);
                 Route.WriteRoutes(project);
             });
         }
@@ -49,7 +50,6 @@ namespace CodeGenerator.Infrastructure
                 Entity.WriteEntities(project, table);
                 StoredProcedureResult.WriteCommands(project, table);
                 StoredProcedureResult.WriteQueries(project, table);
-                Mapper.WriteMappers(project, table);
                 Component.WriteComponents(project, table);
                 Component.WriteComponentItems(project, table);
                 Interface.WriteCommandsInterfaces(project, table);

@@ -11,7 +11,8 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
             if (!Directory.Exists(Path.Combine(project.InfrastructureRepositoriesPath, table.TableName)))
                 Directory.CreateDirectory(Path.Combine(project.InfrastructureRepositoriesPath, table.TableName));
             using StreamWriter outputFile = new(Path.Combine(project.InfrastructureRepositoriesPath, table.TableName, string.Concat(table.TableName, "CommandRepository.cs")), false, Encoding.UTF8);
-            outputFile.WriteLine(string.Concat("using ", project.Namespace, ".Infrastructure.Mappers;"));
+            
+            outputFile.WriteLine(string.Concat($"using {project.Namespace}.Domain.Entities;"));
             outputFile.WriteLine(string.Concat("using Microsoft.Data.SqlClient;"));
             outputFile.WriteLine(string.Concat("using Microsoft.EntityFrameworkCore;"));
             //if (table.SimplifiedCommand)
@@ -46,7 +47,10 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
                     outputFile.Write($" @{c.ColumnName},");
                 outputFile.WriteLine(" @AuditoriaId\", parameters).ToList(); });");
                 outputFile.WriteLine("            var existingRows = (int)parameters[2].Value;");
-                outputFile.WriteLine($"            return {table.TableName}Mapper.Map(result, command.RowsOfPage, existingRows);");
+                outputFile.WriteLine($"            var mappedResult = _mapper.Map<List<Application.Responses.{table.TableName}.CommandResponse>>(result);");
+                outputFile.WriteLine($"            if (mappedResult.Count != 0)");
+                outputFile.WriteLine($"                mappedResult[0].TotalPages = AdditionalFields.SetTotalPages(command.RowsOfPage, existingRows);");
+                outputFile.WriteLine($"            return mappedResult;");
                 outputFile.WriteLine("        }");
             //}
 
@@ -90,7 +94,10 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
             //if (!table.SimplifiedCommand)
             //{
             outputFile.WriteLine("            var existingRows = (int)parameters[2].Value;");
-            outputFile.WriteLine($"            return {table.TableName}Mapper.Map(result, command.RowsOfPage, existingRows);");
+            outputFile.WriteLine($"            var mappedResult = _mapper.Map<List<Application.Responses.{table.TableName}.CommandResponse>>(result);");
+            outputFile.WriteLine($"            if (mappedResult.Count != 0)");
+            outputFile.WriteLine($"                mappedResult[0].TotalPages = AdditionalFields.SetTotalPages(command.RowsOfPage, existingRows);");
+            outputFile.WriteLine($"            return mappedResult;");
             //}
             outputFile.WriteLine("        }");
 
@@ -134,7 +141,10 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
             //{
             outputFile.WriteLine("@AuditoriaId\", parameters).ToList(); });");
             outputFile.WriteLine("            var existingRows = (int)parameters[2].Value;");
-            outputFile.WriteLine($"            return {table.TableName}Mapper.Map(result, command.RowsOfPage, existingRows);");
+            outputFile.WriteLine($"            var mappedResult = _mapper.Map<List<Application.Responses.{table.TableName}.CommandResponse>>(result);");
+            outputFile.WriteLine($"            if (mappedResult.Count != 0)");
+            outputFile.WriteLine($"                mappedResult[0].TotalPages = AdditionalFields.SetTotalPages(command.RowsOfPage, existingRows);");
+            outputFile.WriteLine($"            return mappedResult;");
             //}
             //else
             //    outputFile.WriteLine("@AuditoriaId\", parameters);");
@@ -173,6 +183,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
             if (!Directory.Exists(Path.Combine(project.InfrastructureRepositoriesPath, table.TableName)))
                 Directory.CreateDirectory(Path.Combine(project.InfrastructureRepositoriesPath, table.TableName));
             using StreamWriter outputFile = new(Path.Combine(project.InfrastructureRepositoriesPath, table.TableName, string.Concat(table.TableName, "QueryRepository.cs")), false, Encoding.UTF8);
+            outputFile.WriteLine(string.Concat($"using {project.Namespace}.Domain.Entities;"));
             outputFile.WriteLine(string.Concat("using ", project.Namespace, ".Infrastructure.Mappers;"));
             outputFile.WriteLine(string.Concat("using Microsoft.Data.SqlClient;"));
             outputFile.WriteLine(string.Concat("using Microsoft.EntityFrameworkCore;"));
@@ -206,7 +217,10 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
             //if (table.GetBySpecificField == null)
             //{
                 outputFile.WriteLine(string.Concat("            var existingRows = (int)parameters[2].Value;"));
-                outputFile.WriteLine(string.Concat("            return ", table.TableName, "Mapper.Map(result, query.RowsOfPage,existingRows);"));
+                outputFile.WriteLine($"            var mappedResult = _mapper.Map<List<Application.Responses.{table.TableName}.GetResponse>>(result);");
+                outputFile.WriteLine($"            if (mappedResult.Count != 0)");
+                outputFile.WriteLine($"                mappedResult[0].TotalPages = AdditionalFields.SetTotalPages(query.RowsOfPage, existingRows);");
+                outputFile.WriteLine($"            return mappedResult;");
             //}
             //else
             //    outputFile.WriteLine(string.Concat("            return ", table.TableName, "Mapper.Map(result, 1, 1);"));
@@ -220,8 +234,8 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
             outputFile.WriteLine(string.Concat("                };"));
             outputFile.WriteLine($"            var result = new List<Context.StoredProcedureResult.Queries.{table.TableName}GetPaginatedResult>();");
             outputFile.WriteLine(string.Concat("            await Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"[", table.SchemaName, "].[", table.TableName, "_Get_ById] @", pk.ColumnName, "\", parameters).ToList(); });"));
-            outputFile.WriteLine(string.Concat("            return ", table.TableName, "Mapper.Map(result.First());"));
-            outputFile.WriteLine(string.Concat("        }"));
+            outputFile.WriteLine($"            return _mapper.Map<Application.Responses.{table.TableName}.GetResponse>(result);");
+                        outputFile.WriteLine(string.Concat("        }"));
 
             var customGetMethods = table.Columns.Where(f => f.Property.CreateGetBy).ToList();
             foreach (var customMethod in customGetMethods)
@@ -235,9 +249,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
                 outputFile.WriteLine($"            var result = new List<Context.StoredProcedureResult.Queries.{table.TableName}GetPaginatedResult>();");
                 outputFile.WriteLine(string.Concat("            await Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"", table.SchemaName, ".", table.TableName, "_Get_By",customMethod.ColumnName," @", customMethod.ColumnName, "\", parameters).ToList() ;});"));
                 outputFile.WriteLine($"            var {Helper.GetCamel(table.TableName)} = result.FirstOrDefault();");
-                outputFile.WriteLine($"            if ({Helper.GetCamel(table.TableName)} != null)");
-                outputFile.WriteLine($"                return {table.TableName}Mapper.Map({Helper.GetCamel(table.TableName)});");
-                outputFile.WriteLine("            return null;");
+                outputFile.WriteLine($"            return _mapper.Map<Application.Responses.{table.TableName}.GetResponse>(result);");
                 outputFile.WriteLine("        }");
                 outputFile.WriteLine("");
             }

@@ -148,7 +148,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
             sb.AppendLine("");
             sb.AppendLine("END");
 
-            using StreamWriter outputFile = new(Path.Combine("C:\\Fernando\\Oficina\\FinancialModel\\FinancialModel\\FinancialModel\\src\\FinancialModel.Database\\StoredProcedures", string.Concat(table.SchemaName, ".", project.StoredProceduresPrefix, table.TableName, "_Get_ById.sql")), false, Encoding.UTF8);
+            using StreamWriter outputFile = new(Path.Combine("C:\\Fernando\\Oficina\\FinancialModel\\FinancialModel\\FinancialModel\\src\\FinancialModel.Database\\GenericStoredProcedures", string.Concat(table.SchemaName, ".", project.StoredProceduresPrefix, table.TableName, "_Get_ById.sql")), false, Encoding.UTF8);
             outputFile.Write(sb.ToString());
             outputFile.Close();
             outputFile.Dispose();
@@ -237,7 +237,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
                 sb.AppendLine("");
                 sb.AppendLine("END");
 
-                using StreamWriter outputFile = new(Path.Combine("C:\\Fernando\\Oficina\\FinancialModel\\FinancialModel\\FinancialModel\\src\\FinancialModel.Database\\StoredProcedures", string.Concat(table.SchemaName, ".", project.StoredProceduresPrefix, table.TableName, "_Get_By", customMethod.ColumnName, ".sql")), false, Encoding.UTF8);
+                using StreamWriter outputFile = new(Path.Combine("C:\\Fernando\\Oficina\\FinancialModel\\FinancialModel\\FinancialModel\\src\\FinancialModel.Database\\GenericStoredProcedures", string.Concat(table.SchemaName, ".", project.StoredProceduresPrefix, table.TableName, "_Get_By", customMethod.ColumnName, ".sql")), false, Encoding.UTF8);
                 outputFile.Write(sb.ToString());
                 outputFile.Close();
                 outputFile.Dispose();
@@ -353,7 +353,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
             sb.AppendLine("");
             sb.AppendLine("END");
 
-            using StreamWriter outputFile = new(Path.Combine("C:\\Fernando\\Oficina\\FinancialModel\\FinancialModel\\FinancialModel\\src\\FinancialModel.Database\\StoredProcedures", string.Concat(table.SchemaName, ".", project.StoredProceduresPrefix, table.TableName, "_Get_Paginated.sql")), false, Encoding.UTF8);
+            using StreamWriter outputFile = new(Path.Combine("C:\\Fernando\\Oficina\\FinancialModel\\FinancialModel\\FinancialModel\\src\\FinancialModel.Database\\GenericStoredProcedures", string.Concat(table.SchemaName, ".", project.StoredProceduresPrefix, table.TableName, "_Get_Paginated.sql")), false, Encoding.UTF8);
             outputFile.Write(sb.ToString());
             outputFile.Close();
             outputFile.Dispose();

@@ -55,7 +55,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
             sb.AppendLine("\t@ExistingRows = @ExistingRows OUTPUT");
             sb.AppendLine("END");
 
-            using StreamWriter outputFile = new(Path.Combine("C:\\Fernando\\Oficina\\FinancialModel\\FinancialModel\\FinancialModel\\src\\FinancialModel.Database\\StoredProcedures", string.Concat(table.SchemaName, ".", project.StoredProceduresPrefix, table.TableName, "_Insert.sql")), false, Encoding.UTF8);
+            using StreamWriter outputFile = new(Path.Combine("C:\\Fernando\\Oficina\\FinancialModel\\FinancialModel\\FinancialModel\\src\\FinancialModel.Database\\GenericStoredProcedures", string.Concat(table.SchemaName, ".", project.StoredProceduresPrefix, table.TableName, "_Insert.sql")), false, Encoding.UTF8);
             outputFile.Write(sb.ToString());
             using SqlConnection conn = new SqlConnection(project.ConnectionString);
             using SqlCommand cmd = new SqlCommand(sb.ToString(), conn);
@@ -118,7 +118,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
             sb.AppendLine($"\tSET @{pk.ColumnName} = SCOPE_IDENTITY()");
             sb.AppendLine("END");
 
-            using StreamWriter outputFile = new(Path.Combine("C:\\Fernando\\Oficina\\FinancialModel\\FinancialModel\\FinancialModel\\src\\FinancialModel.Database\\StoredProcedures", string.Concat(table.SchemaName, ".", project.StoredProceduresPrefix, table.TableName, "_Insert_Only.sql")), false, Encoding.UTF8);
+            using StreamWriter outputFile = new(Path.Combine("C:\\Fernando\\Oficina\\FinancialModel\\FinancialModel\\FinancialModel\\src\\FinancialModel.Database\\GenericStoredProcedures", string.Concat(table.SchemaName, ".", project.StoredProceduresPrefix, table.TableName, "_Insert_Only.sql")), false, Encoding.UTF8);
             outputFile.Write(sb.ToString());
             using SqlConnection conn = new SqlConnection(project.ConnectionString);
             using SqlCommand cmd = new SqlCommand(sb.ToString(), conn);

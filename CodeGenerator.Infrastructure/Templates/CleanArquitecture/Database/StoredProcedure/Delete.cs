@@ -32,7 +32,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
             sb.AppendLine("\t@RowsOfPage = @RowsOfPage,");
             sb.AppendLine("\t@ExistingRows = @ExistingRows OUTPUT");
             sb.AppendLine("END");
-            using StreamWriter outputFile = new(Path.Combine("C:\\Fernando\\Oficina\\FinancialModel\\FinancialModel\\FinancialModel\\src\\FinancialModel.Database\\StoredProcedures\\", string.Concat(table.SchemaName, ".", project.StoredProceduresPrefix, table.TableName, "_Delete.sql")), false, Encoding.UTF8);
+            using StreamWriter outputFile = new(Path.Combine("C:\\Fernando\\Oficina\\FinancialModel\\FinancialModel\\FinancialModel\\src\\FinancialModel.Database\\GenericStoredProcedures\\", string.Concat(table.SchemaName, ".", project.StoredProceduresPrefix, table.TableName, "_Delete.sql")), false, Encoding.UTF8);
             outputFile.Write(sb.ToString());
             outputFile.Close();
             outputFile.Dispose();
@@ -73,7 +73,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
             //    sb.AppendLine(string.Concat("\tDELETE ", table.TableName, " WHERE ", entity.GetBySpecificField, " = @", entity.GetBySpecificField));
 
             sb.AppendLine("END");
-            using StreamWriter outputFile = new(Path.Combine("C:\\Fernando\\Oficina\\FinancialModel\\FinancialModel\\FinancialModel\\src\\FinancialModel.Database\\StoredProcedures\\", string.Concat(table.SchemaName, ".", project.StoredProceduresPrefix, table.TableName, "_Delete_Only.sql")), false, Encoding.UTF8);
+            using StreamWriter outputFile = new(Path.Combine("C:\\Fernando\\Oficina\\FinancialModel\\FinancialModel\\FinancialModel\\src\\FinancialModel.Database\\GenericStoredProcedures\\", string.Concat(table.SchemaName, ".", project.StoredProceduresPrefix, table.TableName, "_Delete_Only.sql")), false, Encoding.UTF8);
             outputFile.Write(sb.ToString());
             outputFile.Close();
             outputFile.Dispose();
