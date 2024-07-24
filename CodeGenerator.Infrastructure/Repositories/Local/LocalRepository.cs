@@ -32,8 +32,27 @@ namespace CodeGenerator.Infrastructure.Repositories.Local
             await Task.Run(() => {
                 context.Database.ExecuteSql($@"DELETE dbo.TableTemp WHERE ProjectId = {command.ProjectId}");
                 context.BulkInsert(tempTables);
-                context.Database.ExecuteSql($@"INSERT INTO dbo.[Table]
-                    SELECT 
+                context.Database.ExecuteSql($@"
+
+					UPDATE Q
+					SET objectId = P.ObjectId
+					FROM 
+					(SELECT b.ObjectId, b.TableName
+					FROM dbo.[Column] a RIGHT OUTER JOIN 
+					dbo.[TableTemp] B ON a.TableName = b.TableName and a.ObjectId = b.ObjectId
+					WHERE a.TableId IS NULL) p INNER JOIN dbo.[Column] q on p.TableName = q.TableName
+
+
+					UPDATE Q
+					SET objectId = P.ObjectId
+					FROM 
+					(SELECT b.ObjectId, b.TableName
+					FROM dbo.[Table] a RIGHT OUTER JOIN 
+					dbo.[TableTemp] B ON a.TableName = b.TableName and a.ObjectId = b.ObjectId
+					WHERE a.TableId IS NULL) p INNER JOIN dbo.[Table] q on p.TableName = q.TableName
+
+					INSERT INTO dbo.[Table]
+					SELECT 
 						a.ProjectId, 
 						a.ObjectId, 
 						a.SchemaName, 
@@ -52,6 +71,20 @@ namespace CodeGenerator.Infrastructure.Repositories.Local
                 context.Database.ExecuteSql($@"DELETE dbo.ColumnTemp WHERE ProjectId = {command.ProjectId}");
                 context.BulkInsert(tempColumns);
                 context.Database.ExecuteSql($@"
+					
+					DECLARE @NoDeleteColumn as Table (ColumnTempId int Primary Key)
+
+					INSERT @NoDeleteColumn 
+					SELECT a.ColumnTempId 
+					FROM dbo.ColumnTemp a INNER JOIN dbo.[Table] b 
+					on a.ObjectId = b.ObjectId
+					LEFT OUTER JOIN dbo.[Column] c on 
+									a.[ObjectId] = c.[ObjectId] and
+									a.[ColumnNumber] = c.[ColumnNumber] and
+									a.[SchemaName] = c.[SchemaName] and
+									a.[TableName] = c.[TableName] 
+					WHERE c.ObjectId is null and a.ProjectId = {command.ProjectId} 	
+					
 					DELETE a
 					FROM dbo.ColumnTemp a INNER JOIN dbo.[Table] b 
 					on a.ObjectId = b.ObjectId
@@ -74,8 +107,9 @@ namespace CodeGenerator.Infrastructure.Repositories.Local
 						isnull(a.[ColumnSource],'') <> isnull(c.[ColumnSource],'') or
 						isnull(a.[SchemaTarget],'') <> isnull(c.[SchemaTarget],'') or
 						isnull(a.[TableTarget],'') <> isnull(c.[TableTarget],'') or
-						isnull(a.[ColumnTarget],'') <> isnull(c.[ColumnTarget],'') )
-					WHERE c.ObjectId is null and a.ProjectId = {command.ProjectId} 	
+						isnull(a.[ColumnTarget],'') <> isnull(c.[ColumnTarget],''))
+					LEFT OUTER JOIN @NoDeleteColumn d on a.ColumnTempId = d.ColumnTempId
+					WHERE c.ObjectId is null and d.ColumnTempId is null and a.ProjectId = {command.ProjectId} 	
 
 					DECLARE @DeleteColumn as Table (ColumnId int Primary Key)
 					

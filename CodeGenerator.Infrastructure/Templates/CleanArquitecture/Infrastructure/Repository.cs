@@ -184,7 +184,6 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
                 Directory.CreateDirectory(Path.Combine(project.InfrastructureRepositoriesPath, table.TableName));
             using StreamWriter outputFile = new(Path.Combine(project.InfrastructureRepositoriesPath, table.TableName, string.Concat(table.TableName, "QueryRepository.cs")), false, Encoding.UTF8);
             outputFile.WriteLine(string.Concat($"using {project.Namespace}.Domain.Entities;"));
-            outputFile.WriteLine(string.Concat("using ", project.Namespace, ".Infrastructure.Mappers;"));
             outputFile.WriteLine(string.Concat("using Microsoft.Data.SqlClient;"));
             outputFile.WriteLine(string.Concat("using Microsoft.EntityFrameworkCore;"));
             outputFile.WriteLine(string.Concat("namespace ", project.Namespace, ".Infrastructure.Repositories"));
