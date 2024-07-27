@@ -11,145 +11,114 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
             if (!Directory.Exists(Path.Combine(project.InfrastructureRepositoriesPath, table.TableName)))
                 Directory.CreateDirectory(Path.Combine(project.InfrastructureRepositoriesPath, table.TableName));
             using StreamWriter outputFile = new(Path.Combine(project.InfrastructureRepositoriesPath, table.TableName, string.Concat(table.TableName, "CommandRepository.cs")), false, Encoding.UTF8);
-            
+
             outputFile.WriteLine(string.Concat($"using {project.Namespace}.Domain.Entities;"));
             outputFile.WriteLine(string.Concat("using Microsoft.Data.SqlClient;"));
             outputFile.WriteLine(string.Concat("using Microsoft.EntityFrameworkCore;"));
-            //if (table.SimplifiedCommand)
+
             outputFile.WriteLine(string.Concat("using MediatR;"));
-            
+
             outputFile.WriteLine(string.Concat("namespace ", project.Namespace, ".Infrastructure.Repositories"));
             outputFile.WriteLine(string.Concat("{"));
             outputFile.WriteLine(string.Concat("    public partial class CatalogCommandRepository"));
             outputFile.WriteLine(string.Concat("    {"));
 
-            var pk = table.Columns.First(f=>f.IsPrimaryKey);
-            //if (!table.NoUpdateCommand)
-            //{
-                outputFile.WriteLine($"        public async Task<List<Application.Responses.{table.TableName}.CommandResponse>> {table.TableName}Update(Application.Commands.{table.TableName}.UpdateCommand command)");
-                outputFile.WriteLine("        {");
-                outputFile.WriteLine("            var parameters = new SqlParameter[]");
-                outputFile.WriteLine("                {");
-                outputFile.WriteLine("                        new SqlParameter() {ParameterName = \"@PageNumber\", SqlDbType =  System.Data.SqlDbType.Int, Value = command.PageNumber},");
-                outputFile.WriteLine("                        new SqlParameter() {ParameterName = \"@RowsOfPage\", SqlDbType =  System.Data.SqlDbType.Int, Value = command.RowsOfPage},");
-                outputFile.WriteLine("                        new SqlParameter() {ParameterName = \"@ExistingRows\", SqlDbType =  System.Data.SqlDbType.Int, Direction = System.Data.ParameterDirection.Output},");
-                foreach (var c in table.Columns)
-                {
-                    var nullableValue = "";
-                    if (c.IsNullable)
-                        nullableValue = string.Concat(" == null ? DBNull.Value : command.", c.ColumnName);
-                    outputFile.WriteLine(string.Concat("                        new SqlParameter() {ParameterName = \"@", c.ColumnName, "\", SqlDbType =  System.Data.SqlDbType.", Helper.GetStringSQLDBType(c.SqlDataType), ",", c.IsNullable ? " IsNullable = true," : "", " Value = command.", c.ColumnName, nullableValue, "},"));
-                }
-                outputFile.WriteLine("                };");
-                outputFile.WriteLine($"            var result = new List<Context.StoredProcedureResult.Commands.{table.TableName}CommandResult>();");
-                outputFile.Write(string.Concat("            await Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"[", table.SchemaName, "].[", table.TableName, "_Update] @PageNumber, @RowsOfPage, @ExistingRows OUTPUT,"));
-                foreach (var c in table.Columns.Where(f => f.ColumnName != "AuditoriaId"))
-                    outputFile.Write($" @{c.ColumnName},");
-                outputFile.WriteLine(" @AuditoriaId\", parameters).ToList(); });");
-                outputFile.WriteLine("            var existingRows = (int)parameters[2].Value;");
-                outputFile.WriteLine($"            var mappedResult = _mapper.Map<List<Application.Responses.{table.TableName}.CommandResponse>>(result);");
-                outputFile.WriteLine($"            if (mappedResult.Count != 0)");
-                outputFile.WriteLine($"                mappedResult[0].TotalPages = AdditionalFields.SetTotalPages(command.RowsOfPage, existingRows);");
-                outputFile.WriteLine($"            return mappedResult;");
-                outputFile.WriteLine("        }");
-            //}
+            var pk = table.Columns.First(f => f.IsPrimaryKey);
 
-            //if (!table.SimplifiedCommand)
-                outputFile.WriteLine($"        public async Task<List<Application.Responses.{table.TableName}.CommandResponse>> {table.TableName}Delete(Application.Commands.{table.TableName}.DeleteCommand command)");
-            //else
-            //    outputFile.WriteLine($"        public async Task {table.TableName}Delete(Application.Commands.{table.TableName}.DeleteCommand command)");
-
+            outputFile.WriteLine($"        public async Task<List<Application.Responses.{table.TableName}.CommandResponse>> {table.TableName}Update(Application.Commands.{table.TableName}.UpdateCommand command)");
             outputFile.WriteLine("        {");
             outputFile.WriteLine("            var parameters = new SqlParameter[]");
             outputFile.WriteLine("                {");
-            //if (!table.SimplifiedCommand)
-            //{
             outputFile.WriteLine("                        new SqlParameter() {ParameterName = \"@PageNumber\", SqlDbType =  System.Data.SqlDbType.Int, Value = command.PageNumber},");
             outputFile.WriteLine("                        new SqlParameter() {ParameterName = \"@RowsOfPage\", SqlDbType =  System.Data.SqlDbType.Int, Value = command.RowsOfPage},");
             outputFile.WriteLine("                        new SqlParameter() {ParameterName = \"@ExistingRows\", SqlDbType =  System.Data.SqlDbType.Int, Direction = System.Data.ParameterDirection.Output},");
-            //}
-            var mainColumn = table.Columns.FirstOrDefault(f => f.IsPrimaryKey);
-            //if (!table.SimplifiedCommand)
-            outputFile.WriteLine(string.Concat("                        new SqlParameter() {ParameterName = \"@", pk.ColumnName, "\", SqlDbType =  System.Data.SqlDbType.Int, Value = command.", pk.ColumnName, "}"));
-            //else
-            //if(mainColumn != null)    
-            //    outputFile.WriteLine(string.Concat("                        new SqlParameter() {ParameterName = \"@", mainColumn.ColumnName, "\", SqlDbType =  System.Data.SqlDbType.", Helper.GetStringSQLDBType(mainColumn.SqlDataType), ", Value = command.", mainColumn.ColumnName, "}"));
+            foreach (var c in table.Columns)
+            {
+                var nullableValue = "";
+                if (c.IsNullable)
+                    nullableValue = string.Concat(" == null ? DBNull.Value : command.", c.ColumnName);
 
+                var size = "";
+                if(Helper.GetStringNetCoreType(c.SqlDataType) == "string")
+                    size = Helper.GetStringNetCoreType(c.SqlDataType) == "string" ? $" Size = {c.MaxLength}," : "";
+                if (Helper.GetStringNetCoreType(c.SqlDataType) == "decimal" && c.SqlDataType != "money")
+                    size = Helper.GetStringNetCoreType(c.SqlDataType) == "string" ? $" Precision = {c.Precision}, Scale = {c.Scale}," : "";
 
+                outputFile.WriteLine(string.Concat("                        new SqlParameter() {ParameterName = \"@", c.ColumnName, "\", SqlDbType =  System.Data.SqlDbType.", Helper.GetStringSQLDBType(c.SqlDataType), ",", size, c.IsNullable ? " IsNullable = true," : "", " Value = command.", c.ColumnName, nullableValue, "},"));
+            }
             outputFile.WriteLine("                };");
-            //if (!table.SimplifiedCommand)
-            //{
             outputFile.WriteLine($"            var result = new List<Context.StoredProcedureResult.Commands.{table.TableName}CommandResult>();");
-            outputFile.WriteLine(string.Concat("            await Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"[", table.SchemaName, "].[", table.TableName, "_Delete] @PageNumber, @RowsOfPage, @ExistingRows OUTPUT, @", pk.ColumnName, "\", parameters).ToList(); });"));
-            //}
-            //else
-            //if (mainColumn != null)
-            //{
-            //    outputFile.WriteLine("            await Task.Run(() => {");
-            //    outputFile.WriteLine($"             _context.Database.ExecuteSqlRaw(\"[{table.SchemaName}].[{table.TableName}_Delete_Only] @{mainColumn.ColumnName}\", parameters);");
-            //    outputFile.WriteLine("            });");
-            //}
-                
-
-            //if (!table.SimplifiedCommand)
-            //{
+            outputFile.Write(string.Concat("            await Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"[", table.SchemaName, "].[", table.TableName, "_Update] @PageNumber, @RowsOfPage, @ExistingRows OUTPUT,"));
+            foreach (var c in table.Columns.Where(f => f.ColumnName != "AuditoriaId"))
+                outputFile.Write($" @{c.ColumnName},");
+            outputFile.WriteLine(" @AuditoriaId\", parameters).ToList(); });");
             outputFile.WriteLine("            var existingRows = (int)parameters[2].Value;");
             outputFile.WriteLine($"            var mappedResult = _mapper.Map<List<Application.Responses.{table.TableName}.CommandResponse>>(result);");
             outputFile.WriteLine($"            if (mappedResult.Count != 0)");
             outputFile.WriteLine($"                mappedResult[0].TotalPages = AdditionalFields.SetTotalPages(command.RowsOfPage, existingRows);");
             outputFile.WriteLine($"            return mappedResult;");
-            //}
             outputFile.WriteLine("        }");
 
-            //if (!table.SimplifiedCommand)
-            outputFile.WriteLine($"        public async Task<List<Application.Responses.{table.TableName}.CommandResponse>> {table.TableName}Create(Application.Commands.{table.TableName}.CreateCommand command)");
-            //else
-            //    outputFile.WriteLine($"        public async Task {table.TableName}Create(Application.Commands.{table.TableName}.CreateCommand command)");
+
+
+            outputFile.WriteLine($"        public async Task<List<Application.Responses.{table.TableName}.CommandResponse>> {table.TableName}Delete(Application.Commands.{table.TableName}.DeleteCommand command)");
+
+
             outputFile.WriteLine("        {");
             outputFile.WriteLine("            var parameters = new SqlParameter[]");
             outputFile.WriteLine("                {");
-            //if (!table.SimplifiedCommand)
-            //{
+            outputFile.WriteLine("                        new SqlParameter() {ParameterName = \"@PageNumber\", SqlDbType =  System.Data.SqlDbType.Int, Value = command.PageNumber},");
+            outputFile.WriteLine("                        new SqlParameter() {ParameterName = \"@RowsOfPage\", SqlDbType =  System.Data.SqlDbType.Int, Value = command.RowsOfPage},");
+            outputFile.WriteLine("                        new SqlParameter() {ParameterName = \"@ExistingRows\", SqlDbType =  System.Data.SqlDbType.Int, Direction = System.Data.ParameterDirection.Output},");
+            var mainColumn = table.Columns.FirstOrDefault(f => f.IsPrimaryKey);
+
+            outputFile.WriteLine(string.Concat("                        new SqlParameter() {ParameterName = \"@", pk.ColumnName, "\", SqlDbType =  System.Data.SqlDbType.Int, Value = command.", pk.ColumnName, "}"));
+            outputFile.WriteLine("                };");
+            outputFile.WriteLine($"            var result = new List<Context.StoredProcedureResult.Commands.{table.TableName}CommandResult>();");
+            outputFile.WriteLine(string.Concat("            await Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"[", table.SchemaName, "].[", table.TableName, "_Delete] @PageNumber, @RowsOfPage, @ExistingRows OUTPUT, @", pk.ColumnName, "\", parameters).ToList(); });"));
+            outputFile.WriteLine("            var existingRows = (int)parameters[2].Value;");
+            outputFile.WriteLine($"            var mappedResult = _mapper.Map<List<Application.Responses.{table.TableName}.CommandResponse>>(result);");
+            outputFile.WriteLine($"            if (mappedResult.Count != 0)");
+            outputFile.WriteLine($"                mappedResult[0].TotalPages = AdditionalFields.SetTotalPages(command.RowsOfPage, existingRows);");
+            outputFile.WriteLine($"            return mappedResult;");
+            outputFile.WriteLine("        }");
+
+            outputFile.WriteLine($"        public async Task<List<Application.Responses.{table.TableName}.CommandResponse>> {table.TableName}Create(Application.Commands.{table.TableName}.CreateCommand command)");
+            outputFile.WriteLine("        {");
+            outputFile.WriteLine("            var parameters = new SqlParameter[]");
+            outputFile.WriteLine("                {");
             outputFile.WriteLine("                    new SqlParameter() {ParameterName = \"@PageNumber\", SqlDbType =  System.Data.SqlDbType.Int, Value = command.PageNumber},");
             outputFile.WriteLine("                        new SqlParameter() {ParameterName = \"@RowsOfPage\", SqlDbType =  System.Data.SqlDbType.Int, Value = command.RowsOfPage},");
             outputFile.WriteLine("                        new SqlParameter() {ParameterName = \"@ExistingRows\", SqlDbType =  System.Data.SqlDbType.Int, Direction = System.Data.ParameterDirection.Output},");
-            //}
 
             foreach (var c in table.Columns.Where(f => !f.IsIdentity))
             {
                 var nullableValue = "";
                 if (c.IsNullable)
                     nullableValue = string.Concat(" == null ? DBNull.Value : command.", c.ColumnName);
-                outputFile.WriteLine(string.Concat("                        new SqlParameter() {ParameterName = \"@", c.ColumnName, "\", SqlDbType =  System.Data.SqlDbType.", Helper.GetStringSQLDBType(c.SqlDataType), ",", c.IsNullable ? " IsNullable = true," : "", " Value = command.", c.ColumnName, nullableValue, "},"));
+
+                var size = "";
+                if (Helper.GetStringNetCoreType(c.SqlDataType) == "string")
+                    size = Helper.GetStringNetCoreType(c.SqlDataType) == "string" ? $" Size = {c.MaxLength}," : "";
+                if (Helper.GetStringNetCoreType(c.SqlDataType) == "decimal" && c.SqlDataType != "money")
+                    size = Helper.GetStringNetCoreType(c.SqlDataType) == "string" ? $" Precision = {c.Precision}, Scale = {c.Scale}," : "";
+
+                outputFile.WriteLine(string.Concat("                        new SqlParameter() {ParameterName = \"@", c.ColumnName, "\", SqlDbType =  System.Data.SqlDbType.", Helper.GetStringSQLDBType(c.SqlDataType), ",",size, c.IsNullable ? " IsNullable = true," : "", " Value = command.", c.ColumnName, nullableValue, "},"));
             }
 
             outputFile.WriteLine("                };");
-            //if (!table.SimplifiedCommand)
-            //{
             outputFile.WriteLine($"            var result = new List<Context.StoredProcedureResult.Commands.{table.TableName}CommandResult>();");
             outputFile.Write(string.Concat("            await Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"[", table.SchemaName, "].[", table.TableName, "_Insert] @PageNumber, @RowsOfPage, @ExistingRows OUTPUT, "));
-
-            //}
-            //else
-            //outputFile.WriteLine("            await Task.Run(() => {");
-            //outputFile.Write($"             _context.Database.ExecuteSqlRawAsync(\"[{table.SchemaName}].[{table.TableName}_Insert] ");
 
             foreach (var c in table.Columns.Where(f => !f.IsIdentity && f.ColumnName != "AuditoriaId"))
                 outputFile.Write($"@{c.ColumnName}, ");
 
-            //if (!table.SimplifiedCommand)
-            //{
             outputFile.WriteLine("@AuditoriaId\", parameters).ToList(); });");
             outputFile.WriteLine("            var existingRows = (int)parameters[2].Value;");
             outputFile.WriteLine($"            var mappedResult = _mapper.Map<List<Application.Responses.{table.TableName}.CommandResponse>>(result);");
             outputFile.WriteLine($"            if (mappedResult.Count != 0)");
             outputFile.WriteLine($"                mappedResult[0].TotalPages = AdditionalFields.SetTotalPages(command.RowsOfPage, existingRows);");
             outputFile.WriteLine($"            return mappedResult;");
-            //}
-            //else
-            //    outputFile.WriteLine("@AuditoriaId\", parameters);");
-            //    outputFile.WriteLine("            });");
-
             outputFile.WriteLine("        }");
 
             outputFile.WriteLine($"        public async Task<{Helper.GetStringNetCoreType(pk.SqlDataType)}> {table.TableName}CreateOnly(Application.Commands.{table.TableName}.CreateCommand command)");
@@ -162,7 +131,14 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
                 var nullableValue = "";
                 if (c.IsNullable)
                     nullableValue = string.Concat(" == null ? DBNull.Value : command.", c.ColumnName);
-                outputFile.WriteLine(string.Concat("                        new SqlParameter() {ParameterName = \"@", c.ColumnName, "\", SqlDbType =  System.Data.SqlDbType.", Helper.GetStringSQLDBType(c.SqlDataType), ",", c.IsNullable ? " IsNullable = true," : "", " Value = command.", c.ColumnName, nullableValue, "},"));
+
+                var size = "";
+                if (Helper.GetStringNetCoreType(c.SqlDataType) == "string")
+                    size = Helper.GetStringNetCoreType(c.SqlDataType) == "string" ? $" Size = {c.MaxLength}," : "";
+                if (Helper.GetStringNetCoreType(c.SqlDataType) == "decimal" && c.SqlDataType != "money")
+                    size = Helper.GetStringNetCoreType(c.SqlDataType) == "string" ? $" Precision = {c.Precision}, Scale = {c.Scale}," : "";
+
+                outputFile.WriteLine(string.Concat("                        new SqlParameter() {ParameterName = \"@", c.ColumnName, "\", SqlDbType =  System.Data.SqlDbType.", Helper.GetStringSQLDBType(c.SqlDataType), ",", size, c.IsNullable ? " IsNullable = true," : "", " Value = command.", c.ColumnName, nullableValue, "},"));
             }
             outputFile.WriteLine("                };");
             outputFile.Write(string.Concat("            await Task.Run(() => { _context.Database.ExecuteSqlRaw(\"", table.SchemaName, ".", table.TableName, "_Insert_Only @", pk.ColumnName, " OUTPUT,"));
@@ -196,33 +172,22 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
             outputFile.WriteLine(string.Concat("        {"));
             outputFile.WriteLine(string.Concat("            var parameters = new SqlParameter[]"));
             outputFile.WriteLine(string.Concat("                {"));
-            //if (table.GetBySpecificField == null)
-            //{
-                outputFile.WriteLine(string.Concat("                        new SqlParameter() {ParameterName = \"@PageNumber\", SqlDbType =  System.Data.SqlDbType.Int, Value = query.PageNumber},"));
-                outputFile.WriteLine(string.Concat("                        new SqlParameter() {ParameterName = \"@RowsOfPage\", SqlDbType =  System.Data.SqlDbType.Int, Value = query.RowsOfPage},"));
-                outputFile.WriteLine(string.Concat("                        new SqlParameter() {ParameterName = \"@ExistingRows\", SqlDbType =  System.Data.SqlDbType.Int, Direction = System.Data.ParameterDirection.Output}"));
-            //}
-            //else
-            //    outputFile.WriteLine(string.Concat("                        new SqlParameter() {ParameterName = \"@", table.GetBySpecificField, "\", SqlDbType =  System.Data.SqlDbType.", SqlDataAdapter.GetStringSQLDBType(columnsInfo.First(f => f.Name == table.GetBySpecificField).DataType), ", Value = query.", table.GetBySpecificField, "},"));
+
+            outputFile.WriteLine(string.Concat("                        new SqlParameter() {ParameterName = \"@PageNumber\", SqlDbType =  System.Data.SqlDbType.Int, Value = query.PageNumber},"));
+            outputFile.WriteLine(string.Concat("                        new SqlParameter() {ParameterName = \"@RowsOfPage\", SqlDbType =  System.Data.SqlDbType.Int, Value = query.RowsOfPage},"));
+            outputFile.WriteLine(string.Concat("                        new SqlParameter() {ParameterName = \"@ExistingRows\", SqlDbType =  System.Data.SqlDbType.Int, Direction = System.Data.ParameterDirection.Output}"));
+
 
             outputFile.WriteLine(string.Concat("                };"));
             outputFile.WriteLine($"            var result = new List<Context.StoredProcedureResult.Queries.{table.TableName}GetPaginatedResult>();");
-            //if (table.GetBySpecificField == null)
-                outputFile.WriteLine(string.Concat("            await Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"[", table.SchemaName, "].[", table.TableName, "_Get_Paginated] @PageNumber, @RowsOfPage, @ExistingRows OUTPUT\", parameters).ToList(); });"));
-            //else
-            //    outputFile.WriteLine(string.Concat("            await Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"[", table.SchemaName, "].[", table.TableName, "_Get_By", table.GetBySpecificField, "] @", table.GetBySpecificField, " \", parameters).ToList(); });"));
 
+            outputFile.WriteLine(string.Concat("            await Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"[", table.SchemaName, "].[", table.TableName, "_Get_Paginated] @PageNumber, @RowsOfPage, @ExistingRows OUTPUT\", parameters).ToList(); });"));
 
-            //if (table.GetBySpecificField == null)
-            //{
-                outputFile.WriteLine(string.Concat("            var existingRows = (int)parameters[2].Value;"));
-                outputFile.WriteLine($"            var mappedResult = _mapper.Map<List<Application.Responses.{table.TableName}.GetResponse>>(result);");
-                outputFile.WriteLine($"            if (mappedResult.Count != 0)");
-                outputFile.WriteLine($"                mappedResult[0].TotalPages = AdditionalFields.SetTotalPages(query.RowsOfPage, existingRows);");
-                outputFile.WriteLine($"            return mappedResult;");
-            //}
-            //else
-            //    outputFile.WriteLine(string.Concat("            return ", table.TableName, "Mapper.Map(result, 1, 1);"));
+            outputFile.WriteLine(string.Concat("            var existingRows = (int)parameters[2].Value;"));
+            outputFile.WriteLine($"            var mappedResult = _mapper.Map<List<Application.Responses.{table.TableName}.GetResponse>>(result);");
+            outputFile.WriteLine($"            if (mappedResult.Count != 0)");
+            outputFile.WriteLine($"                mappedResult[0].TotalPages = AdditionalFields.SetTotalPages(query.RowsOfPage, existingRows);");
+            outputFile.WriteLine($"            return mappedResult;");
 
             outputFile.WriteLine(string.Concat("        }"));
             outputFile.WriteLine(string.Concat("        public async Task<Application.Responses.", table.TableName, ".GetResponse> Get", table.TableName, "(Domain.Entities.", table.TableName, " query)"));
@@ -234,11 +199,11 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
             outputFile.WriteLine($"            var result = new List<Context.StoredProcedureResult.Queries.{table.TableName}GetPaginatedResult>();");
             outputFile.WriteLine(string.Concat("            await Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"[", table.SchemaName, "].[", table.TableName, "_Get_ById] @", pk.ColumnName, "\", parameters).ToList(); });"));
             outputFile.WriteLine($"            return _mapper.Map<Application.Responses.{table.TableName}.GetResponse>(result);");
-                        outputFile.WriteLine(string.Concat("        }"));
+            outputFile.WriteLine(string.Concat("        }"));
 
             var customGetMethods = table.Columns.Where(f => f.Property.CreateGetBy).ToList();
             foreach (var customMethod in customGetMethods)
-            {               
+            {
                 outputFile.WriteLine($"        public async Task<Application.Responses.{table.TableName}.GetResponse> Get{table.TableName}By{customMethod.ColumnName}(string {customMethod.ColumnName.ToLower()})");
                 outputFile.WriteLine("        {");
                 outputFile.WriteLine("            var parameters = new SqlParameter[]");
@@ -246,15 +211,12 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
                 outputFile.WriteLine(string.Concat("                    new SqlParameter() {ParameterName = \"@", customMethod.ColumnName, "\", SqlDbType =  System.Data.SqlDbType.", Helper.GetStringSQLDBType(customMethod.SqlDataType), ", Value = ", customMethod.ColumnName.ToLower(), "},"));
                 outputFile.WriteLine("                };");
                 outputFile.WriteLine($"            var result = new List<Context.StoredProcedureResult.Queries.{table.TableName}GetPaginatedResult>();");
-                outputFile.WriteLine(string.Concat("            await Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"", table.SchemaName, ".", table.TableName, "_Get_By",customMethod.ColumnName," @", customMethod.ColumnName, "\", parameters).ToList() ;});"));
+                outputFile.WriteLine(string.Concat("            await Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"", table.SchemaName, ".", table.TableName, "_Get_By", customMethod.ColumnName, " @", customMethod.ColumnName, "\", parameters).ToList() ;});"));
                 outputFile.WriteLine($"            var {Helper.GetCamel(table.TableName)} = result.FirstOrDefault();");
                 outputFile.WriteLine($"            return _mapper.Map<Application.Responses.{table.TableName}.GetResponse>(result);");
                 outputFile.WriteLine("        }");
                 outputFile.WriteLine("");
             }
-
-
-
             outputFile.WriteLine(string.Concat("    }"));
             outputFile.WriteLine(string.Concat("}"));
             outputFile.Close();

@@ -27,6 +27,8 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
                 var nullable = c.IsNullable ? " = null" : "";
                 if (Helper.GetStringNetCoreType(c.SqlDataType) == "string")
                     sb.AppendLine(string.Concat("\t", "@", c.ColumnName, " ", c.SqlDataType, "(", c.MaxLength == -1 ? "MAX" : c.MaxLength, ")", nullable, ","));
+                else if (Helper.GetStringNetCoreType(c.SqlDataType) == "decimal" && c.SqlDataType != "money")
+                    sb.AppendLine(string.Concat("\t", "@", c.ColumnName, " ", c.SqlDataType, "(", c.Precision, ",", c.Scale, ")", nullable, ","));
                 else
                     sb.AppendLine(string.Concat("\t", "@", c.ColumnName, " ", c.SqlDataType, "", nullable, ","));
             }
@@ -91,8 +93,10 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
             foreach (var c in table.Columns.Where(f => !f.IsIdentity && f != pk))
             {
                 var nullable = c.IsNullable ? " = null" : "";
-                if (Helper.GetStringSQLDBType(c.SqlDataType) == "string")
-                    sb.AppendLine(string.Concat("\t", "@", c.ColumnName, " ", c.SqlDataType, "(", c.MaxLength, ")", nullable, ","));
+                if (Helper.GetStringNetCoreType(c.SqlDataType) == "string")
+                    sb.AppendLine(string.Concat("\t", "@", c.ColumnName, " ", c.SqlDataType, "(", c.MaxLength == -1 ? "MAX" : c.MaxLength, ")", nullable, ","));
+                else if (Helper.GetStringNetCoreType(c.SqlDataType) == "decimal" && c.SqlDataType != "money")
+                    sb.AppendLine(string.Concat("\t", "@", c.ColumnName, " ", c.SqlDataType, "(", c.Precision, ",", c.Scale, ")", nullable, ","));
                 else
                     sb.AppendLine(string.Concat("\t", "@", c.ColumnName, " ", c.SqlDataType, "", nullable, ","));
             }
