@@ -332,7 +332,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
                 namedColumnInfo ??= fkColumnsInfo.First(f => f.IsPrimaryKey);
 
                 //sb.AppendLine(string.Concat($"\t\tf{count}.{namedColumnInfo.Name} as {fkTableInfo.Name}{namedColumnInfo.Name}", count != fkCount ? "," : ""));
-                sb.AppendLine(string.Concat($"\t\tf{count}.{namedColumnInfo.ColumnName} as {fkTableInfo.TableName}{prefixFk}{namedColumnInfo.ColumnName}", count != fkCount ? "," : ","));
+                sb.AppendLine(string.Concat($"\t\tf{count}.{namedColumnInfo.ColumnName} as {fkTableInfo.TableName}{namedColumnInfo.ColumnName}{prefixFk}", count != fkCount ? "," : ","));
                 prefixFk = "";
             }
             sb.Append("\t\tROW_NUMBER() OVER(");
