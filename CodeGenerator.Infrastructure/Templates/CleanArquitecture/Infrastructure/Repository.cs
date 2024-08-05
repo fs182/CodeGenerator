@@ -204,11 +204,11 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
             var customGetMethods = table.Columns.Where(f => f.Property.CreateGetBy).ToList();
             foreach (var customMethod in customGetMethods)
             {
-                outputFile.WriteLine($"        public async Task<Application.Responses.{table.TableName}.GetResponse> Get{table.TableName}By{customMethod.ColumnName}(string {customMethod.ColumnName.ToLower()})");
+                outputFile.WriteLine($"        public async Task<Application.Responses.{table.TableName}.GetResponse> Get{table.TableName}By{customMethod.ColumnName}({Helper.GetStringNetCoreType(customMethod.SqlDataType)} {Helper.GetCamel(customMethod.ColumnName)})");
                 outputFile.WriteLine("        {");
                 outputFile.WriteLine("            var parameters = new SqlParameter[]");
                 outputFile.WriteLine("                {");
-                outputFile.WriteLine(string.Concat("                    new SqlParameter() {ParameterName = \"@", customMethod.ColumnName, "\", SqlDbType =  System.Data.SqlDbType.", Helper.GetStringSQLDBType(customMethod.SqlDataType), ", Value = ", customMethod.ColumnName.ToLower(), "},"));
+                outputFile.WriteLine(string.Concat("                    new SqlParameter() {ParameterName = \"@", customMethod.ColumnName, "\", SqlDbType =  System.Data.SqlDbType.", Helper.GetStringSQLDBType(customMethod.SqlDataType), ", Value = ", Helper.GetCamel(customMethod.ColumnName), "},"));
                 outputFile.WriteLine("                };");
                 outputFile.WriteLine($"            var result = new List<Context.StoredProcedureResult.Queries.{table.TableName}GetPaginatedResult>();");
                 outputFile.WriteLine(string.Concat("            await Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"", table.SchemaName, ".", table.TableName, "_Get_By", customMethod.ColumnName, " @", customMethod.ColumnName, "\", parameters).ToList() ;});"));

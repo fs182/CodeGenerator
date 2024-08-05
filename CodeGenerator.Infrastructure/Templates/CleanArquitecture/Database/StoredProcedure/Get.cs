@@ -101,7 +101,15 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
             sb.AppendLine(string.Concat("-- Description: Get by Id ", table.TableName));
             sb.AppendLine("-- =============================================");
             sb.AppendLine(string.Concat("CREATE OR ALTER PROCEDURE ", table.SchemaName, ".[", project.StoredProceduresPrefix, table.TableName, "_Get_ById]"));
-            sb.AppendLine(string.Concat("\t", "@", pk.ColumnName, " ", pk.SqlDataType));
+
+            var nullable = pk.IsNullable ? " = null" : "";
+            if (Helper.GetStringNetCoreType(pk.SqlDataType) == "string")
+                sb.AppendLine(string.Concat("\t", "@", pk.ColumnName, " ", pk.SqlDataType, "(", pk.MaxLength == -1 ? "MAX" : pk.MaxLength, ")", nullable));
+            else if (Helper.GetStringNetCoreType(pk.SqlDataType) == "decimal" && pk.SqlDataType != "money")
+                sb.AppendLine(string.Concat("\t", "@", pk.ColumnName, " ", pk.SqlDataType, "(", pk.Precision, ",", pk.Scale, ")", nullable));
+            else
+                sb.AppendLine(string.Concat("\t", "@", pk.ColumnName, " ", pk.SqlDataType, "", nullable));
+
             sb.AppendLine("AS");
             sb.AppendLine("BEGIN");
             sb.AppendLine("SET NOCOUNT ON;");
@@ -189,7 +197,16 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
                 sb.AppendLine(string.Concat("-- Description: Get by ", customMethod.ColumnName ," ", table.TableName));
                 sb.AppendLine("-- =============================================");
                 sb.AppendLine(string.Concat("CREATE OR ALTER PROCEDURE ", table.SchemaName, ".[", project.StoredProceduresPrefix, table.TableName, "_Get_By",customMethod.ColumnName,"]"));
-                sb.AppendLine(string.Concat("\t", "@", customMethod.ColumnName, " ", customMethod.SqlDataType, " (", customMethod.MaxLength, ")"));
+
+                var nullable = customMethod.IsNullable ? " = null" : "";
+                if (Helper.GetStringNetCoreType(customMethod.SqlDataType) == "string")
+                    sb.AppendLine(string.Concat("\t", "@", customMethod.ColumnName, " ", customMethod.SqlDataType, "(", customMethod.MaxLength == -1 ? "MAX" : customMethod.MaxLength, ")", nullable));
+                else if (Helper.GetStringNetCoreType(customMethod.SqlDataType) == "decimal" && customMethod.SqlDataType != "money")
+                    sb.AppendLine(string.Concat("\t", "@", customMethod.ColumnName, " ", customMethod.SqlDataType, "(", customMethod.Precision, ",", customMethod.Scale, ")", nullable));
+                else
+                    sb.AppendLine(string.Concat("\t", "@", customMethod.ColumnName, " ", customMethod.SqlDataType, "", nullable));
+
+                //sb.AppendLine(string.Concat("\t", "@", customMethod.ColumnName, " ", customMethod.SqlDataType, " (", customMethod.MaxLength, ")"));
                 sb.AppendLine("AS");
                 sb.AppendLine("BEGIN");
                 sb.AppendLine("SET NOCOUNT ON;");

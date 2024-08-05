@@ -58,7 +58,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Application
             var customGetMethods = table.Columns.Where(f => f.Property.CreateGetBy).ToList();
 
             foreach (var customMethod in customGetMethods)
-                outputFile.WriteLine($"        Task<Responses.{table.TableName}.GetResponse> Get{table.TableName}By{customMethod.ColumnName}(string {customMethod.ColumnName.ToLower()});");
+                outputFile.WriteLine($"        Task<Responses.{table.TableName}.GetResponse> Get{table.TableName}By{customMethod.ColumnName}({Helper.GetStringNetCoreType(customMethod.SqlDataType)} {Helper.GetCamel(customMethod.ColumnName)});");
 
             outputFile.WriteLine(string.Concat("    }"));
             outputFile.WriteLine(string.Concat("}"));
