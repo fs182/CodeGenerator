@@ -362,3 +362,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /HeritageTrees/HeritageTrees.UI/build.zip
+/CodeGenerator.Infrastructure/bin/Debug/net8.0/CodeGenerator.Infrastructure.dll
+/CodeGenerator.Infrastructure/bin/Debug/net8.0/CodeGenerator.Infrastructure.pdb
