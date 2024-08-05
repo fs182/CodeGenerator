@@ -370,3 +370,9 @@ FodyWeavers.xsd
 /CodeGenerator.Infrastructure/obj/Debug/net8.0/CodeGenerator.Infrastructure.pdb
 /CodeGenerator.Infrastructure/obj/Debug/net8.0/ref/CodeGenerator.Infrastructure.dll
 /CodeGenerator.Infrastructure/obj/Debug/net8.0/refint/CodeGenerator.Infrastructure.dll
+/CodeGenerator.Infrastructure/bin/Debug/net8.0/CodeGenerator.Infrastructure.deps.json
+/CodeGenerator.Infrastructure/obj/CodeGenerator.Infrastructure.csproj.nuget.dgspec.json
+/CodeGenerator.Infrastructure/obj/Debug/net8.0/CodeGenerator.Infrastructure.assets.cache
+/CodeGenerator.Infrastructure/obj/Debug/net8.0/CodeGenerator.Infrastructure.csproj.CoreCompileInputs.cache
+/CodeGenerator.Infrastructure/obj/project.assets.json
+/CodeGenerator.Infrastructure/obj/project.nuget.cache
