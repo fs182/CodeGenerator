@@ -40,11 +40,13 @@ namespace CodeGenerator.Infrastructure
                 Command.WriteCreateCommand(project, table); 
                 Command.WriteUpdateCommand(project, table); 
                 Command.WriteDeleteCommand(project, table); 
-                Handler.WriteGetHandler(project, table); 
+                Handler.WriteGetHandler(project, table);
+                Handler.WriteGetByCustom(project, table);
                 Handler.WriteUpdateHandler(project, table);
                 Handler.WriteCreateHandler(project, table);
                 Handler.WriteDeleteHandler(project, table);
                 Query.WriteGetQuery(project, table);
+                Query.WriteGetByCustomQuery(project, table);
                 Response.WriteCommandResponse(project, table);
                 Response.WriteGetResponse(project, table);
                 Entity.WriteEntities(project, table);

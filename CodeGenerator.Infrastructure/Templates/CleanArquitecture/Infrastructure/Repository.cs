@@ -204,7 +204,11 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
             var customGetMethods = table.Columns.Where(f => f.Property.CreateGetBy).ToList();
             foreach (var customMethod in customGetMethods)
             {
-                outputFile.WriteLine($"        public async Task<Application.Responses.{table.TableName}.GetResponse> Get{table.TableName}By{customMethod.ColumnName}({Helper.GetStringNetCoreType(customMethod.SqlDataType)} {Helper.GetCamel(customMethod.ColumnName)})");
+                if(customMethod.Property.CreateGetByReturnList)
+                    outputFile.WriteLine($"        public async Task<List<Application.Responses.{table.TableName}.GetResponse>> Get{table.TableName}By{customMethod.ColumnName}({Helper.GetStringNetCoreType(customMethod.SqlDataType)} {Helper.GetCamel(customMethod.ColumnName)})");
+                else
+                    outputFile.WriteLine($"        public async Task<Application.Responses.{table.TableName}.GetResponse> Get{table.TableName}By{customMethod.ColumnName}({Helper.GetStringNetCoreType(customMethod.SqlDataType)} {Helper.GetCamel(customMethod.ColumnName)})");
+
                 outputFile.WriteLine("        {");
                 outputFile.WriteLine("            var parameters = new SqlParameter[]");
                 outputFile.WriteLine("                {");
@@ -212,8 +216,15 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
                 outputFile.WriteLine("                };");
                 outputFile.WriteLine($"            var result = new List<Context.StoredProcedureResult.Queries.{table.TableName}GetPaginatedResult>();");
                 outputFile.WriteLine(string.Concat("            await Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"", table.SchemaName, ".", table.TableName, "_Get_By", customMethod.ColumnName, " @", customMethod.ColumnName, "\", parameters).ToList() ;});"));
-                outputFile.WriteLine($"            var {Helper.GetCamel(table.TableName)} = result.FirstOrDefault();");
-                outputFile.WriteLine($"            return _mapper.Map<Application.Responses.{table.TableName}.GetResponse>(result);");
+
+                if (customMethod.Property.CreateGetByReturnList)
+                    outputFile.WriteLine($"            return _mapper.Map<List<Application.Responses.{table.TableName}.GetResponse>>(result);");
+                else
+                {
+                    outputFile.WriteLine($"            var {Helper.GetCamel(table.TableName)} = result.FirstOrDefault();");
+                    outputFile.WriteLine($"            return _mapper.Map<Application.Responses.{table.TableName}.GetResponse>({Helper.GetCamel(table.TableName)});");
+                }
+                    
                 outputFile.WriteLine("        }");
                 outputFile.WriteLine("");
             }

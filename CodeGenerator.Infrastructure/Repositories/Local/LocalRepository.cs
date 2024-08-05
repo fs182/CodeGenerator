@@ -229,6 +229,7 @@ namespace CodeGenerator.Infrastructure.Repositories.Local
 						,cast(0 as bit) as IsReadOnly
 						,cast(0 as bit) as CreateGetBy
 						,cast(0 as bit) as CreateGetByIncludeController
+					    ,cast(0 as bit) as CreateGetByReturnList
 						,cast(1 as smallint) as [Order]
 						,a.ColumnName + '[Grid header]' as GridHeader
 						,a.ColumnName + '[Form title]' as FormTitle

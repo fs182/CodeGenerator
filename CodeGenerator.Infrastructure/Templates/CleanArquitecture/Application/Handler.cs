@@ -105,16 +105,22 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Application
                 outputFile.WriteLine("using MediatR;");
                 outputFile.WriteLine(string.Concat("namespace ", project.Namespace, ".Application.Handlers.", table.TableName));
                 outputFile.WriteLine("{");
-                outputFile.WriteLine($"    public class GetHandler : IRequestHandler<GetBy{customMethod.ColumnName}Query, List<GetResponse>>");
+                if(customMethod.Property.CreateGetByReturnList)
+                    outputFile.WriteLine($"    public class GetByColumnHandler : IRequestHandler<GetByColumnQuery, List<GetResponse>>");
+                else
+                    outputFile.WriteLine($"    public class GetByColumnHandler : IRequestHandler<GetByColumnQuery, GetResponse>");
                 outputFile.WriteLine("    {");
                 outputFile.WriteLine("        private readonly ICatalogQueryRepository _repository;");
-                outputFile.WriteLine("        public GetHandler(ICatalogQueryRepository repository)");
+                outputFile.WriteLine("        public GetByColumnHandler(ICatalogQueryRepository repository)");
                 outputFile.WriteLine("        {");
                 outputFile.WriteLine("            _repository = repository;");
                 outputFile.WriteLine("        }");
-                outputFile.WriteLine("        public async Task<List<GetResponse>> Handle(GetQuery query, CancellationToken cancellationToken)");
+                if (customMethod.Property.CreateGetByReturnList)
+                    outputFile.WriteLine("        public async Task<List<GetResponse>> Handle(GetByColumnQuery query, CancellationToken cancellationToken)");
+                else
+                    outputFile.WriteLine("        public async Task<GetResponse> Handle(GetByColumnQuery query, CancellationToken cancellationToken)");
                 outputFile.WriteLine("        {");
-                outputFile.WriteLine(string.Concat("            return await _repository.Get", table.TableName, "s(query);"));
+                outputFile.WriteLine(string.Concat("            return await _repository.Get", table.TableName, "By",customMethod.ColumnName,"(query.", customMethod.ColumnName, ");"));
                 outputFile.WriteLine("        }");
                 outputFile.WriteLine("    }");
                 outputFile.WriteLine("}");
