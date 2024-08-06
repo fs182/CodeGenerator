@@ -57,9 +57,9 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.API
                 outputFile.WriteLine(string.Concat("        [Route(\"/", Helper.GetCamel(table.TableName), "/getBy",customMethod.ColumnName,"\")]"));
                 outputFile.WriteLine($"        [SwaggerOperation(Description = \"Trae el registro de {table.TableName} que coincida con el {customMethod.ColumnName}.\")]");
                 if (customMethod.ColumnName == "UsuarioId")
-                    outputFile.WriteLine($"        public async Task<ActionResult<List<GetResponse>>> Get{customMethod.ColumnName}()");
+                    outputFile.WriteLine($"        public async Task<ActionResult<List<GetResponse>>> GetBy{customMethod.ColumnName}()");
                 else
-                    outputFile.WriteLine($"        public async Task<ActionResult<List<GetResponse>>> Get{customMethod.ColumnName}([FromBody] GetByColumnQuery query)");
+                    outputFile.WriteLine($"        public async Task<ActionResult<List<GetResponse>>> GetBy{customMethod.ColumnName}([FromBody] GetByColumnQuery query)");
                 outputFile.WriteLine("        {");
                 outputFile.WriteLine($"            try");
                 outputFile.WriteLine("            {");
