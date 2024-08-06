@@ -54,6 +54,7 @@ namespace CodeGenerator.Infrastructure
                 StoredProcedureResult.WriteQueries(project, table);
                 Component.WriteComponents(project, table);
                 Component.WriteComponentItems(project, table);
+                Component.WriteWizards(project, table);
                 Interface.WriteCommandsInterfaces(project, table);
                 Interface.WriteQueriesInterfaces(project, table);
                 Repository.WriteCommandRepository(project, table);

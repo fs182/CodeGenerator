@@ -305,14 +305,14 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
                             prefixFk = countFk.ToString();
                         }
 
-                        outputFile.WriteLine(string.Concat("                                             getOptionLabel={(o) => o.", Helper.GetCamel(namedColumnInfo.ColumnName), "}"));
-                        outputFile.WriteLine(string.Concat("                                             options={", Helper.GetCamel(fkTableInfo.TableName), prefixFk, "s}"));
-                        outputFile.WriteLine(string.Concat("                                             value={", Helper.GetCamel(fkTableInfo.TableName), prefixFk, "}"));
-                        outputFile.WriteLine(string.Concat("                                             onChange={(event, newValue) => {"));
-                        outputFile.WriteLine(string.Concat("                                                 set", fkTableInfo.TableName, prefixFk, "(newValue);"));
-                        outputFile.WriteLine(string.Concat("                                             }}"));
-                        outputFile.WriteLine(string.Concat("                                             renderInput={(params) => <TextField {...params} label=\"", fkTableInfo.TableName, prefixFk, "\" ", columnsArray[j].IsNullable ? "" : "required", " />}"));
-                        outputFile.WriteLine(string.Concat("                                         />"));
+                        outputFile.WriteLine($"                                             getOptionLabel={{(o) => o.{Helper.GetCamel(namedColumnInfo.ColumnName)}}}");
+                        outputFile.WriteLine($"                                             options={{{Helper.GetCamel(fkTableInfo.TableName)}{prefixFk}s}}");
+                        outputFile.WriteLine($"                                             value={{{Helper.GetCamel(fkTableInfo.TableName)}{prefixFk}}}");
+                        outputFile.WriteLine($"                                             onChange={{(event, newValue) => {{");
+                        outputFile.WriteLine($"                                                 set{fkTableInfo.TableName}{prefixFk}(newValue);");
+                        outputFile.WriteLine($"                                             }}}}");
+                        outputFile.WriteLine($"                                             renderInput={{(params) => <TextField {{...params}} label=\"{fkTableInfo.TableName}{prefixFk}\" {(columnsArray[j].IsNullable ? "" : "required")} />}}");
+                        outputFile.WriteLine($"                                         />");
                         prefixFk = "";
                     }
                     outputFile.WriteLine($"                                      </Grid>");
@@ -435,6 +435,231 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
             outputFile.WriteLine($"    );");
             outputFile.WriteLine("};");
             outputFile.WriteLine($"export default {table.TableName}Item;");
+            outputFile.Close();
+            outputFile.Dispose();
+        }
+
+        public static void WriteWizards(Project project, Table table)
+        {
+            if (!Directory.Exists(Path.Combine(project.UIComponentsPath)))
+                Directory.CreateDirectory(Path.Combine(project.UIComponentsPath));
+            using StreamWriter outputFile = new(Path.Combine(project.UIComponentsPath, string.Concat("Wizard",table.TableName, ".js")), false, Encoding.UTF8);
+            var pk = table.Columns.First(f => f.IsPrimaryKey);
+            outputFile.WriteLine($"import React, {{useState,useEffect, useCallback }} from 'react';");
+            outputFile.WriteLine($"import axios from 'axios';");
+            outputFile.WriteLine($"import {{ Typography, Grid, Button, TextField, Box, useTheme }} from '@mui/material';");
+            outputFile.WriteLine($"import Autocomplete from '@mui/material/Autocomplete';");
+            outputFile.WriteLine($"import {{ useTranslation }} from 'react-i18next';");
+            outputFile.WriteLine($"import {{ API_URL }} from '../../utils/constants/paths';");
+            outputFile.WriteLine($"import JumboCardQuick from '@jumbo/components/JumboCardQuick';");
+            outputFile.WriteLine($"import Div from '@jumbo/shared/Div';");
+            outputFile.WriteLine($"import useSwalWrapper from '@jumbo/vendors/sweetalert2/hooks';");
+            outputFile.WriteLine();
+            outputFile.WriteLine($"const Wizard{table.TableName} = ({{ createMode, formRef, refItem, set{table.TableName}Created }}) => {{");
+            outputFile.WriteLine($"    const {{ t }} = useTranslation();");
+            outputFile.WriteLine($"    const Swal = useSwalWrapper();");
+            outputFile.WriteLine($"    const theme = useTheme();");
+            outputFile.WriteLine($"    const commandAlert = (variant, keyWord, customText) => {{");
+            outputFile.WriteLine($"        if (customText == undefined)");
+            outputFile.WriteLine($"            customText = `Se ${{keyWord}} el registro con exito!`;");
+            outputFile.WriteLine();
+            outputFile.WriteLine($"        const Toast = Swal.mixin({{ toast: true, position: 'top-end', showConfirmButton: false, timer: 2800, timerProgressBar: true, onOpen: toast => {{ toast.addEventListener('mouseenter', Swal.stopTimer); toast.addEventListener('mouseleave', Swal.resumeTimer); }} }});");
+            outputFile.WriteLine($"        Toast.fire({{ icon: variant, title: customText, background: theme.palette.background.paper }});");
+            outputFile.WriteLine($"    }};");
+            var foreings = table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId" && f.ColumnName != "UsuarioId").ToArray();
+            string prefixFk = "";
+            int countFk = 0;
+            for (var i = 0; i <= foreings.Count() - 1; i++)
+            {
+                if (table.Columns.Count(f => f.TableTarget == foreings[i].TableTarget) > 1)
+                {
+                    countFk++;
+                    prefixFk = countFk.ToString();
+                }
+                outputFile.WriteLine($"    const [{Helper.GetCamel(foreings[i].TableTarget)}{prefixFk}s, set{foreings[i].TableTarget}{prefixFk}s] = useState([]);");
+                outputFile.WriteLine($"    const [{Helper.GetCamel(foreings[i].TableTarget)}{prefixFk}, set{foreings[i].TableTarget}{prefixFk}] = useState(null);");
+                prefixFk = "";
+            }
+
+            outputFile.WriteLine($"    const [formData, setFormData] = useState({{");
+            var columns = table.Columns.Where(f => f.ColumnName != "AuditoriaId" && f.ColumnName != "UsuarioId" && f.ColumnName != pk.ColumnName).ToArray();
+            foreach (var column in columns)
+            {
+                if(Helper.GetStringNetCoreType(column.SqlDataType) == "string")
+                    outputFile.WriteLine($"        {Helper.GetCamel(column.ColumnName)}: '',");
+                else
+                    outputFile.WriteLine($"        {Helper.GetCamel(column.ColumnName)}: null,");
+            }
+            outputFile.WriteLine($"    }});");
+            outputFile.WriteLine();
+
+            prefixFk = "";
+            countFk = 0;
+            for (var i = 0; i <= foreings.Count() - 1; i++)
+            {
+                if (table.Columns.Count(f => f.TableTarget == foreings[i].TableTarget) > 1)
+                {
+                    countFk++;
+                    prefixFk = countFk.ToString();
+                }
+                outputFile.WriteLine($"    const fetch{foreings[i].TableTarget}{prefixFk}s = useCallback(async () => {{");
+                outputFile.WriteLine($"        try {{");
+                outputFile.WriteLine($"            const response = await axios.post(`${{API_URL}}{Helper.GetCamel(foreings[i].TableTarget)}{prefixFk}/getPaginated`, {{ pageNumber: 1, rowsOfPage: 9999 }});");
+                outputFile.WriteLine($"            set{foreings[i].TableTarget}s(response.data || []);");
+                outputFile.WriteLine($"         }} catch (error) {{");
+                outputFile.WriteLine($"            console.error('Error fetching {Helper.GetCamel(foreings[i].TableTarget)}s', error);");
+                outputFile.WriteLine($"        }}");
+                outputFile.WriteLine($"    }}, []);");
+                outputFile.WriteLine();
+                prefixFk = "";
+            }
+
+            outputFile.WriteLine($"    useEffect(() => {{");
+            prefixFk = "";
+            countFk = 0;
+            for (var i = 0; i <= foreings.Count() - 1; i++)
+            {
+                outputFile.WriteLine($"        fetch{foreings[i].TableTarget}{prefixFk}s();");
+                prefixFk = "";
+            }
+            prefixFk = "";
+            countFk = 0;
+            outputFile.WriteLine($"    }}, [");
+            for (var i = 0; i <= foreings.Count() - 1; i++)
+            {
+                outputFile.WriteLine($"         fetch{foreings[i].TableTarget}{prefixFk}s,");
+            }
+            outputFile.WriteLine("]);");
+            outputFile.WriteLine();
+            outputFile.WriteLine($"    useEffect(() => {{");
+            outputFile.WriteLine($"        if (createMode) {{");
+            outputFile.WriteLine($"            setFormData({{");
+
+            foreach (var noForeingColumn in columns)
+            {
+                if (Helper.GetStringNetCoreType(noForeingColumn.SqlDataType) == "string")
+                    outputFile.WriteLine($"                {Helper.GetCamel(noForeingColumn.ColumnName)}: '',");
+                else
+                    outputFile.WriteLine($"                {Helper.GetCamel(noForeingColumn.ColumnName)}: null,");
+            }
+            outputFile.WriteLine($"            }});");
+            outputFile.WriteLine($"        }} else if (refItem) {{");
+            outputFile.WriteLine($"            setFormData({{");
+
+            foreach (var noForeingColumn in columns)
+            {
+                outputFile.WriteLine($"                {Helper.GetCamel(noForeingColumn.ColumnName)}: refItem.{Helper.GetCamel(noForeingColumn.ColumnName)},");
+            }
+
+            outputFile.WriteLine($"            }});");
+
+            prefixFk = "";
+            countFk = 0;
+            for (var i = 0; i <= foreings.Count() - 1; i++)
+            {
+                outputFile.WriteLine($"            set{foreings[i].TableTarget}({Helper.GetCamel(foreings[i].TableTarget)}s.find(e => e.{Helper.GetCamel(foreings[i].ColumnName)} === refItem.{Helper.GetCamel(foreings[i].ColumnName)}) || null);");
+                prefixFk = "";
+            }
+            outputFile.WriteLine($"        }}");
+            outputFile.WriteLine($"    }}, [createMode, refItem, ");
+
+            prefixFk = "";
+            countFk = 0;
+            for (var i = 0; i <= foreings.Count() - 1; i++)
+            {
+                outputFile.WriteLine($"            {Helper.GetCamel(foreings[i].TableTarget)}s,");
+                prefixFk = "";
+            }
+
+            outputFile.WriteLine($"            ]);");
+            outputFile.WriteLine();
+            outputFile.WriteLine($"    const handleSave = async () => {{");
+            outputFile.WriteLine($"        if (!formRef.current.reportValidity()) return;");
+            outputFile.WriteLine($"        const newItem = createMode ? {{ ...formData, {Helper.GetCamel(pk.ColumnName)}: 0 }} : {{ ...formData, {Helper.GetCamel(pk.ColumnName)}: refItem.{Helper.GetCamel(pk.ColumnName)} }};");
+            outputFile.WriteLine($"        try {{");
+            outputFile.WriteLine($"            const url = `${{API_URL}}{Helper.GetCamel(table.TableName)}/wizard`;");
+            outputFile.WriteLine($"            await axios.post(url, newItem, {{ headers: {{ 'Content-Type': 'application/json', 'Authorization': `Bearer ${{localStorage.getItem('token')}}` }} }});");
+            outputFile.WriteLine($"            set{table.TableName}Created(true);");
+            outputFile.WriteLine($"            createMode ? commandAlert('success', 'creó', null) : commandAlert('success', 'actualizó', null);");
+            outputFile.WriteLine($"        }} catch (error) {{");
+            outputFile.WriteLine($"            console.error('Error saving data', error);");
+            outputFile.WriteLine($"            Swal.fire({{ icon: 'error', title: 'Error al guardar el registro' + error.data, toast: true, position: 'top-end', timer: 2800 }});");
+            outputFile.WriteLine($"        }}");
+            outputFile.WriteLine($"    }};");
+            outputFile.WriteLine();
+            outputFile.WriteLine($"    return (");
+            outputFile.WriteLine($"        <Div>");
+            outputFile.WriteLine($"            <JumboCardQuick fullWidth maxWidth='xl' wrapperSx={{{{ backgroundColor: 'background.paper', pt: 0 }}}}>");
+            outputFile.WriteLine($"                <Box p={{2}}>");
+            outputFile.WriteLine($"                    <form ref={{formRef}}>");
+
+
+            var columnsArray = table.Columns.Where(f => !f.IsIdentity && f.ColumnName != "AuditoriaId" && f.ColumnName != "UsuarioId").ToList();
+            var formLayoutArray = Helper.GetFormLayout(columnsArray.Count).ToArray();
+            int j = 0;
+            int count = 0;
+            prefixFk = "";
+            countFk = 0;
+            foreach (var row in formLayoutArray)
+            {
+                count++;
+                outputFile.WriteLine(string.Concat("                                  <Grid container spacing={3} p={1} ", count == formLayoutArray.Length ? "pb={3}" : "", ">"));
+                foreach (var c in row)
+                {
+                    outputFile.WriteLine(string.Concat("                                     <Grid item xs={", c, "} md={", c, "} lg={", c, "} >"));
+                    if (!columnsArray[j].IsForeignKey)
+                    {
+                        outputFile.WriteLine(string.Concat("                                         <TextField fullWidth ", columnsArray[j].IsNullable ? "" : "required ", " label='", columnsArray[j].Property.FormTitle, "' value={formData.", Helper.GetCamel(columnsArray[j].ColumnName), "} inputProps={{ maxLength: ", columnsArray[j].SqlDataType == "varchar" ? columnsArray[j].MaxLength : columnsArray[j].Precision, " }} onChange={(event) => { setFormData({ ...formData, ", Helper.GetCamel(columnsArray[j].ColumnName), ": event.target.value });}} />"));
+                    }
+                    else
+                    {
+                        outputFile.WriteLine(string.Concat("                                         <Autocomplete"));
+                        if (!columnsArray[j].IsNullable)
+                            outputFile.WriteLine(string.Concat("                                             required"));
+
+                        outputFile.WriteLine(string.Concat("                                             disablePortal"));
+                        outputFile.WriteLine($"                                             id=\"{columnsArray[j].ColumnName}\"");
+                        var fkTableInfo = project.Tables.First(f => f.TableName == columnsArray[j].TableTarget);
+                        var fkColumnsInfo = fkTableInfo.Columns;
+                        var namedColumnInfo = fkColumnsInfo.FirstOrDefault(f => f.ColumnName.ToLower().Contains("nombre") || f.ColumnName.ToLower().Contains("descripcion") && !f.ColumnName.ToLower().Contains("descripcionid") || f.ColumnName.ToLower().Contains("codigo"));
+                        namedColumnInfo ??= fkColumnsInfo.First(f => f.IsPrimaryKey);
+
+                        if (table.Columns.Where(f => f.TableTarget == columnsArray[j].TableTarget).Count() > 1)
+                        {
+                            countFk++;
+                            prefixFk = countFk.ToString();
+                        }
+
+                        outputFile.WriteLine($"                                             getOptionLabel={{o => o.{Helper.GetCamel(namedColumnInfo.ColumnName)} || ''}}");
+                        outputFile.WriteLine($"                                             options={{{Helper.GetCamel(fkTableInfo.TableName)}{prefixFk}s}}");
+                        outputFile.WriteLine($"                                             value={{{Helper.GetCamel(fkTableInfo.TableName)}{prefixFk}}}");
+                        outputFile.WriteLine($"                                             onChange={{(event, newValue) => {{");
+                        outputFile.WriteLine($"                                                 set{fkTableInfo.TableName}{prefixFk}(newValue);");
+                        outputFile.WriteLine($"                                                 setFormData(prevFormData => ({{");
+                        outputFile.WriteLine($"                                                 ...prevFormData,");
+                        outputFile.WriteLine($"                                                 {Helper.GetCamel(columnsArray[j].ColumnName)}: newValue ? newValue.{Helper.GetCamel(columnsArray[j].ColumnName)} : null");
+                        outputFile.WriteLine($"                                        }}));");
+                        outputFile.WriteLine(string.Concat("                                             }}"));
+                        outputFile.WriteLine(string.Concat("                                             renderInput={(params) => <TextField {...params} label=\"", fkTableInfo.TableName, prefixFk, "\" ", columnsArray[j].IsNullable ? "" : "required", " />}"));
+                        outputFile.WriteLine(string.Concat("                                         />"));
+                        prefixFk = "";
+                    }
+                    outputFile.WriteLine($"                                      </Grid>");
+                    j++;
+                }
+                outputFile.WriteLine($"                                  </Grid>");
+            }
+            outputFile.WriteLine($"                        <Button variant='outlined' onClick={{handleSave}}>");
+            outputFile.WriteLine($"                            {{createMode ? 'Registrar {table.TableName.ToLower()}' : 'Actualizar'}}");
+            outputFile.WriteLine($"                        </Button>");
+            outputFile.WriteLine($"                    </form>");
+            outputFile.WriteLine($"                </Box>");
+            outputFile.WriteLine($"            </JumboCardQuick>");
+            outputFile.WriteLine($"        </Div>");
+            outputFile.WriteLine($"    );");
+            outputFile.WriteLine($"}};");
+            outputFile.WriteLine();
+            outputFile.WriteLine($"export default Wizard{table.TableName};");
             outputFile.Close();
             outputFile.Dispose();
         }
