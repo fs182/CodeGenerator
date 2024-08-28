@@ -32,7 +32,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
             outputFile.WriteLine("                        new SqlParameter() {ParameterName = \"@PageNumber\", SqlDbType =  System.Data.SqlDbType.Int, Value = command.PageNumber},");
             outputFile.WriteLine("                        new SqlParameter() {ParameterName = \"@RowsOfPage\", SqlDbType =  System.Data.SqlDbType.Int, Value = command.RowsOfPage},");
             outputFile.WriteLine("                        new SqlParameter() {ParameterName = \"@ExistingRows\", SqlDbType =  System.Data.SqlDbType.Int, Direction = System.Data.ParameterDirection.Output},");
-            foreach (var c in table.Columns)
+            foreach (var c in table.Columns.OrderBy(f=>f.ColumnNumber))
             {
                 var nullableValue = "";
                 if (c.IsNullable)
@@ -49,7 +49,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
             outputFile.WriteLine("                };");
             outputFile.WriteLine($"            var result = new List<Context.StoredProcedureResult.Commands.{table.TableName}CommandResult>();");
             outputFile.Write(string.Concat("            await Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"[", table.SchemaName, "].[", table.TableName, "_Update] @PageNumber, @RowsOfPage, @ExistingRows OUTPUT,"));
-            foreach (var c in table.Columns.Where(f => f.ColumnName != "AuditoriaId"))
+            foreach (var c in table.Columns.Where(f => f.ColumnName != "AuditoriaId").OrderBy(g=>g.ColumnNumber))
                 outputFile.Write($" @{c.ColumnName},");
             outputFile.WriteLine(" @AuditoriaId\", parameters).ToList(); });");
             outputFile.WriteLine("            var existingRows = (int)parameters[2].Value;");
@@ -91,7 +91,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
             outputFile.WriteLine("                        new SqlParameter() {ParameterName = \"@RowsOfPage\", SqlDbType =  System.Data.SqlDbType.Int, Value = command.RowsOfPage},");
             outputFile.WriteLine("                        new SqlParameter() {ParameterName = \"@ExistingRows\", SqlDbType =  System.Data.SqlDbType.Int, Direction = System.Data.ParameterDirection.Output},");
 
-            foreach (var c in table.Columns.Where(f => !f.IsIdentity))
+            foreach (var c in table.Columns.Where(f => !f.IsIdentity).OrderBy(g => g.ColumnNumber))
             {
                 var nullableValue = "";
                 if (c.IsNullable)
@@ -110,7 +110,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
             outputFile.WriteLine($"            var result = new List<Context.StoredProcedureResult.Commands.{table.TableName}CommandResult>();");
             outputFile.Write(string.Concat("            await Task.Run(() => { result = _context.", table.TableName, "s.FromSqlRaw(\"[", table.SchemaName, "].[", table.TableName, "_Insert] @PageNumber, @RowsOfPage, @ExistingRows OUTPUT, "));
 
-            foreach (var c in table.Columns.Where(f => !f.IsIdentity && f.ColumnName != "AuditoriaId"))
+            foreach (var c in table.Columns.Where(f => !f.IsIdentity && f.ColumnName != "AuditoriaId").OrderBy(g=>g.ColumnNumber))
                 outputFile.Write($"@{c.ColumnName}, ");
 
             outputFile.WriteLine("@AuditoriaId\", parameters).ToList(); });");
@@ -126,7 +126,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
             outputFile.WriteLine($"            var parameters = new SqlParameter[]");
             outputFile.WriteLine("                {");
             outputFile.WriteLine(string.Concat("                    new SqlParameter() {ParameterName = \"@", pk.ColumnName, "\", SqlDbType =  System.Data.SqlDbType.", Helper.GetStringSQLDBType(pk.SqlDataType), ", Direction = System.Data.ParameterDirection.Output},"));
-            foreach (var c in table.Columns.Where(f => !f.IsIdentity))
+            foreach (var c in table.Columns.Where(f => !f.IsIdentity).OrderBy(g => g.ColumnNumber))
             {
                 var nullableValue = "";
                 if (c.IsNullable)
@@ -142,7 +142,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructur
             }
             outputFile.WriteLine("                };");
             outputFile.Write(string.Concat("            await Task.Run(() => { _context.Database.ExecuteSqlRaw(\"", table.SchemaName, ".", table.TableName, "_Insert_Only @", pk.ColumnName, " OUTPUT,"));
-            foreach (var c in table.Columns.Where(f => !f.IsIdentity && f.ColumnName != "AuditoriaId"))
+            foreach (var c in table.Columns.Where(f => !f.IsIdentity && f.ColumnName != "AuditoriaId").OrderBy(g => g.ColumnNumber))
                 outputFile.Write($"@{c.ColumnName}, ");
             outputFile.WriteLine("@AuditoriaId\", parameters);});");
             outputFile.WriteLine($"            var {Helper.GetCamel(pk.ColumnName)} = ({Helper.GetStringNetCoreType(pk.SqlDataType)})parameters[0].Value;");

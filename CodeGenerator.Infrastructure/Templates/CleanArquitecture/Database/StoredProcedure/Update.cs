@@ -21,7 +21,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
             sb.AppendLine("\t@PageNumber int,");
             sb.AppendLine("\t@RowsOfPage int,");
             sb.AppendLine("\t@ExistingRows int OUTPUT,");
-            foreach (var c in table.Columns)
+            foreach (var c in table.Columns.OrderBy(f=>f.ColumnNumber))
             {
                 var nullable = c.IsNullable ? " = null" : "";
                 if (Helper.GetStringNetCoreType(c.SqlDataType) == "string")
@@ -39,7 +39,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
 
             sb.AppendLine(string.Concat("\tUPDATE ", table.TableName));
             sb.AppendLine("\tSET");
-            foreach (var c in table.Columns.Where(f => !f.IsIdentity))
+            foreach (var c in table.Columns.Where(f => !f.IsIdentity).OrderBy(g=>g.ColumnNumber))
             {
                 sb.AppendLine(string.Concat("\t\t\t[", c.ColumnName, "] = @", c.ColumnName, ","));
             }

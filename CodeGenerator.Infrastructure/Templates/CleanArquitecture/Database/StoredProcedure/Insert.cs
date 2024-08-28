@@ -22,7 +22,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
             sb.AppendLine("\t@PageNumber int,");
             sb.AppendLine("\t@RowsOfPage int,");
             sb.AppendLine("\t@ExistingRows int OUTPUT,");
-            foreach (var c in table.Columns.Where(f => !f.IsIdentity))
+            foreach (var c in table.Columns.Where(f => !f.IsIdentity).OrderBy(g => g.ColumnNumber))
             {
                 var nullable = c.IsNullable ? " = null" : "";
                 if (Helper.GetStringNetCoreType(c.SqlDataType) == "string")
@@ -38,14 +38,14 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
             sb.AppendLine("BEGIN");
             sb.AppendLine("\tSET NOCOUNT ON;");
             sb.AppendLine(string.Concat("\tINSERT INTO [", table.SchemaName, "].[", table.TableName, "] ("));
-            foreach (var c in table.Columns.Where(f => !f.IsIdentity))
+            foreach (var c in table.Columns.Where(f => !f.IsIdentity).OrderBy(g => g.ColumnNumber))
             {
                 sb.AppendLine(string.Concat("\t\t\t[", c.ColumnName, "],"));
             }
             sb.Length = sb.Length - 3;
             sb.AppendLine(")");
             sb.AppendLine("\tVALUES (");
-            foreach (var c in table.Columns.Where(f => !f.IsIdentity))
+            foreach (var c in table.Columns.Where(f => !f.IsIdentity).OrderBy(g => g.ColumnNumber))
             {
                 sb.AppendLine(string.Concat("\t\t\t@", c.ColumnName, ","));
             }
@@ -90,7 +90,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
             sb.AppendLine("-- =============================================");
             sb.AppendLine(string.Concat("CREATE OR ALTER PROCEDURE ", table.SchemaName, ".[", project.StoredProceduresPrefix, table.TableName, "_Insert_Only]"));
             sb.AppendLine($"\t@{pk.ColumnName} {pk.SqlDataType} OUTPUT,");
-            foreach (var c in table.Columns.Where(f => !f.IsIdentity && f != pk))
+            foreach (var c in table.Columns.Where(f => !f.IsIdentity && f != pk).OrderBy(g => g.ColumnNumber))
             {
                 var nullable = c.IsNullable ? " = null" : "";
                 if (Helper.GetStringNetCoreType(c.SqlDataType) == "string")
@@ -106,14 +106,14 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
             sb.AppendLine("BEGIN");
             sb.AppendLine("\tSET NOCOUNT ON;");
             sb.AppendLine(string.Concat("\tINSERT INTO [", table.SchemaName, "].[", table.TableName, "] ("));
-            foreach (var c in table.Columns.Where(f => !f.IsIdentity))
+            foreach (var c in table.Columns.Where(f => !f.IsIdentity).OrderBy(g => g.ColumnNumber))
             {
                 sb.AppendLine(string.Concat("\t\t\t[", c.ColumnName, "],"));
             }
             sb.Length = sb.Length - 3;
             sb.AppendLine(")");
             sb.AppendLine("\tVALUES (");
-            foreach (var c in table.Columns.Where(f => !f.IsIdentity))
+            foreach (var c in table.Columns.Where(f => !f.IsIdentity).OrderBy(g => g.ColumnNumber))
             {
                 sb.AppendLine(string.Concat("\t\t\t@", c.ColumnName, ","));
             }

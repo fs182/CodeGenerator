@@ -116,7 +116,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
             sb.AppendLine("");
             sb.AppendLine("SELECT TOP 1");
 
-            foreach (var c in table.Columns.Where(f => f.ColumnName != "AuditoriaId"))
+            foreach (var c in table.Columns.Where(f => f.ColumnName != "AuditoriaId").OrderBy(g => g.ColumnNumber))
                 sb.AppendLine(string.Concat("\ta.", c.ColumnName, ","));
             sb.AppendLine("\tb.AuditoriaId,");
             sb.AppendLine("\tb.FechaModificacion,");
@@ -124,7 +124,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
             sb.AppendLine(string.Concat("\tc.NombreCorto as NombreCortoUsuario", existFK != null ? "," : ""));
             int count = 0;
             var fkCount = table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId").Count();
-            foreach (var c in table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId"))
+            foreach (var c in table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId").OrderBy(g => g.ColumnNumber))
             {
                 count++;
                 var fkTableInfo = project.Tables.First(f => f.TableName == c.TableTarget);
@@ -140,7 +140,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
             sb.AppendLine("INNER JOIN Auditoria b on a.AuditoriaId = b.AuditoriaId");
             sb.AppendLine("INNER JOIN Usuario c on b.UsuarioId = c.UsuarioId");
             count = 0;
-            foreach (var c in table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId"))
+            foreach (var c in table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId").OrderBy(g => g.ColumnNumber))
             {
                 count++;
                 var fkTableInfo = project.Tables.First(f => f.TableName == c.TableTarget);
@@ -213,7 +213,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
                 sb.AppendLine("");
                 sb.AppendLine("SELECT ");
 
-                foreach (var c in table.Columns.Where(f => f.ColumnName != "AuditoriaId"))
+                foreach (var c in table.Columns.Where(f => f.ColumnName != "AuditoriaId").OrderBy(g => g.ColumnNumber))
                     sb.AppendLine(string.Concat("\ta.", c.ColumnName, ","));
                 sb.AppendLine("\tb.AuditoriaId,");
                 sb.AppendLine("\tb.FechaModificacion,");
@@ -221,7 +221,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
                 sb.AppendLine(string.Concat("\tc.NombreCorto as NombreCortoUsuario", existFK != null ? "," : ""));
                 int count = 0;
                 var fkCount = table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId").Count();
-                foreach (var c in table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId"))
+                foreach (var c in table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId").OrderBy(g => g.ColumnNumber))
                 {
                     count++;
                     var fkTableInfo = project.Tables.First(f => f.TableName == c.TableTarget);
@@ -238,7 +238,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
                 sb.AppendLine("INNER JOIN Auditoria b on a.AuditoriaId = b.AuditoriaId");
                 sb.AppendLine("INNER JOIN Usuario c on b.UsuarioId = c.UsuarioId");
                 count = 0;
-                foreach (var c in table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId"))
+                foreach (var c in table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId").OrderBy(g => g.ColumnNumber))
                 {
                     count++;
                     var fkTableInfo = project.Tables.First(f => f.TableName == c.TableTarget);
@@ -304,7 +304,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
             sb.AppendLine("\tWITH CATALOGO AS");
             sb.AppendLine("\t(");
             sb.AppendLine("\tSELECT ");
-            foreach (var c in table.Columns.Where(f => f.ColumnName != "AuditoriaId"))
+            foreach (var c in table.Columns.Where(f => f.ColumnName != "AuditoriaId").OrderBy(g => g.ColumnNumber))
                 sb.AppendLine(string.Concat("\t\ta.", c.ColumnName, ","));
             sb.AppendLine("\t\tb.AuditoriaId,");
             sb.AppendLine("\t\tb.FechaModificacion,");
@@ -316,7 +316,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
             var fkCount = table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId").Count();
             string prefixFk = "";
             int countFk = 0;
-            foreach (var c in table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId"))
+            foreach (var c in table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId").OrderBy(g => g.ColumnNumber))
             {
                 if (table.Columns.Count(f => f.TableTarget == c.TableTarget) > 1)
                 {
@@ -350,7 +350,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
             sb.AppendLine("\tINNER JOIN Auditoria b on a.AuditoriaId = b.AuditoriaId");
             sb.AppendLine("\tINNER JOIN Usuario c on b.UsuarioId = c.UsuarioId");
             count = 0;
-            foreach (var c in table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId"))
+            foreach (var c in table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId").OrderBy(g => g.ColumnNumber))
             {
                 count++;
                 var fkTableInfo = project.Tables.First(f => f.TableName == c.TableTarget);
