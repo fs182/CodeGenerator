@@ -391,3 +391,17 @@ FodyWeavers.xsd
 /CodeGenerator.Console/obj/Debug/net8.0/CodeGenerator.Console.AssemblyInfoInputs.cache
 /CodeGenerator.Console/obj/project.assets.json
 /CodeGenerator.Console/obj/project.nuget.cache
+/CodeGenerator.Application/bin/Debug/net8.0/CodeGenerator.Application.dll
+/CodeGenerator.Application/bin/Debug/net8.0/CodeGenerator.Application.pdb
+/CodeGenerator.Application/obj/Debug/net8.0/CodeGenerator.Application.csproj.CoreCompileInputs.cache
+/CodeGenerator.Application/obj/Debug/net8.0/CodeGenerator.Application.dll
+/CodeGenerator.Application/obj/Debug/net8.0/CodeGenerator.Application.pdb
+/CodeGenerator.Application/obj/Debug/net8.0/ref/CodeGenerator.Application.dll
+/CodeGenerator.Application/obj/Debug/net8.0/refint/CodeGenerator.Application.dll
+/CodeGenerator.Domain/bin/Debug/net8.0/CodeGenerator.Domain.dll
+/CodeGenerator.Domain/bin/Debug/net8.0/CodeGenerator.Domain.pdb
+/CodeGenerator.Domain/obj/Debug/net8.0/CodeGenerator.Domain.csproj.CoreCompileInputs.cache
+/CodeGenerator.Domain/obj/Debug/net8.0/CodeGenerator.Domain.dll
+/CodeGenerator.Domain/obj/Debug/net8.0/CodeGenerator.Domain.pdb
+/CodeGenerator.Domain/obj/Debug/net8.0/ref/CodeGenerator.Domain.dll
+/CodeGenerator.Domain/obj/Debug/net8.0/refint/CodeGenerator.Domain.dll
