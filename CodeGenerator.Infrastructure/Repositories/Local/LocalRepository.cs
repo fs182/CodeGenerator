@@ -20,6 +20,7 @@ namespace CodeGenerator.Infrastructure.Repositories.Local
                     ThenInclude(g => g.Property).
                     Include(g=> g.Catalogs).
                     ThenInclude(g => g.Properties).
+                    AsSplitQuery().
                     First();
             });
 			project.Tables.ForEach(f=> f.Catalog = project.Catalogs.First(g => g.TableId == f.TableId));
