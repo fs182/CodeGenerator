@@ -146,7 +146,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
             outputFile.WriteLine($"        newItem.pageNumber = currentPage;");
             outputFile.WriteLine("        if (createMode) {");
             outputFile.WriteLine($"            newItem.{Helper.GetCamel(pk.ColumnName)} = 0;");
-            outputFile.WriteLine(string.Concat("            axios.post(`${API_URL}", Helper.GetCamel(table.TableName), "/create`, newItem).then((response) => {"));
+            outputFile.WriteLine(string.Concat("            axios.post(`${API_URL}", Helper.GetCamel(table.TableName), "/create`, newItem, { headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` }}).then((response) => {"));
             outputFile.WriteLine($"                if(!response.data)");
             outputFile.WriteLine($"                     return;");
             outputFile.WriteLine($"                set{table.TableName}s(response.data);");
@@ -155,7 +155,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
             outputFile.WriteLine("            });");
             outputFile.WriteLine("        }");
             outputFile.WriteLine("        else {");
-            outputFile.WriteLine(string.Concat("            axios.post(`${API_URL}", Helper.GetCamel(table.TableName), "/update`, newItem).then((response) => {"));
+            outputFile.WriteLine(string.Concat("            axios.post(`${API_URL}", Helper.GetCamel(table.TableName), "/update`, newItem, { headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` }}).then((response) => {"));
             outputFile.WriteLine($"                if(!response.data)");
             outputFile.WriteLine($"                     return;");
             outputFile.WriteLine($"                set{table.TableName}s(response.data);");
@@ -248,7 +248,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
             if (gridColumnLayout.Item2)
             {
                 outputFile.WriteLine(string.Concat("                            <Grid item xs={", gridColumnLayout.Item3, "} md={", gridColumnLayout.Item3, "} lg={", gridColumnLayout.Item3, "}>"));
-                outputFile.WriteLine("                                FechaModificacion");
+                outputFile.WriteLine("                                Fecha mod.");
                 outputFile.WriteLine($"                            </Grid>");
                 outputFile.WriteLine(string.Concat("                            <Grid item xs={", gridColumnLayout.Item4, "} md={", gridColumnLayout.Item4, "} lg={", gridColumnLayout.Item4, "}>"));
                 outputFile.WriteLine("                                Usuario");
@@ -369,7 +369,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
             outputFile.WriteLine($"        let toDeleteItem = item;");
             outputFile.WriteLine($"        toDeleteItem.rowsOfPage = ROWS_OF_PAGE;");
             outputFile.WriteLine($"        toDeleteItem.pageNumber = currentPage;");
-            outputFile.WriteLine(string.Concat("        axios.post(`${API_URL}", Helper.GetCamel(table.TableName), "/delete`, toDeleteItem).then((response) => {"));
+            outputFile.WriteLine(string.Concat("        axios.post(`${API_URL}", Helper.GetCamel(table.TableName), "/delete`, toDeleteItem, { headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` }}).then((response) => {"));
             outputFile.WriteLine($"                if(!response.data)");
             outputFile.WriteLine($"                     return;");
             outputFile.WriteLine($"            setItems(response.data);");

@@ -28,7 +28,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Application
             outputFile.WriteLine("        }");
             outputFile.WriteLine("        public async Task<List<CommandResponse>> Handle(CreateCommand command, CancellationToken cancellationToken)");          
             outputFile.WriteLine("        {");
-            outputFile.WriteLine("            command.AuditoriaId = await _customRepository.SetAudit(new Commands.Auditoria.AuditoriaUniqueCommand { OperacionId = (short)Domain.Enums.Operation.EtapaProyectoUpdate, FechaModificacion = DateTime.Now, UsuarioId = command.UsuarioId });");
+            outputFile.WriteLine(string.Concat("            command.AuditoriaId = await _customRepository.SetAudit(new Commands.Auditoria.AuditoriaUniqueCommand { OperacionId = (short)Domain.Enums.Operation.", table.TableName, "Create, FechaModificacion = DateTime.Now, UsuarioId = command.UsuarioId });"));
             outputFile.WriteLine($"            return await _repository.{table.TableName}Create(command);");
             outputFile.WriteLine("        }");
             outputFile.WriteLine("    }");
@@ -59,7 +59,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Application
             outputFile.WriteLine("        }");
             outputFile.WriteLine("        public async Task<List<CommandResponse>> Handle(DeleteCommand command, CancellationToken cancellationToken)");
             outputFile.WriteLine("        {");
-            outputFile.WriteLine("            command.AuditoriaId = await _customRepository.SetAudit(new Commands.Auditoria.AuditoriaUniqueCommand { OperacionId = (short)Domain.Enums.Operation.EtapaProyectoUpdate, FechaModificacion = DateTime.Now, UsuarioId = command.UsuarioId });");
+            outputFile.WriteLine(string.Concat("            command.AuditoriaId = await _customRepository.SetAudit(new Commands.Auditoria.AuditoriaUniqueCommand { OperacionId = (short)Domain.Enums.Operation.", table.TableName ,"Delete, FechaModificacion = DateTime.Now, UsuarioId = command.UsuarioId });"));
             outputFile.WriteLine($"            return await _repository.{table.TableName}Delete(command);");
             outputFile.WriteLine("        }");
             outputFile.WriteLine("    }");
@@ -158,7 +158,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Application
             outputFile.WriteLine("        }");
             outputFile.WriteLine("        public async Task<List<CommandResponse>> Handle(UpdateCommand command, CancellationToken cancellationToken)");
             outputFile.WriteLine("        {");
-            outputFile.WriteLine("            command.AuditoriaId = await _customRepository.SetAudit(new Commands.Auditoria.AuditoriaUniqueCommand { OperacionId = (short)Domain.Enums.Operation.EtapaProyectoUpdate, FechaModificacion = DateTime.Now, UsuarioId = command.UsuarioId });");
+            outputFile.WriteLine(string.Concat("            command.AuditoriaId = await _customRepository.SetAudit(new Commands.Auditoria.AuditoriaUniqueCommand { OperacionId = (short)Domain.Enums.Operation.", table.TableName, "Update, FechaModificacion = DateTime.Now, UsuarioId = command.UsuarioId });"));
             outputFile.WriteLine($"            return await _repository.{table.TableName}Update(command);");
             outputFile.WriteLine("        }");
             outputFile.WriteLine("    }");

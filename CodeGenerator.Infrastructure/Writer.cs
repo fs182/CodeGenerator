@@ -39,7 +39,8 @@ namespace CodeGenerator.Infrastructure
                 Controller.WriteController(project, table); 
                 Command.WriteCreateCommand(project, table); 
                 Command.WriteUpdateCommand(project, table); 
-                Command.WriteDeleteCommand(project, table); 
+                Command.WriteDeleteCommand(project, table);
+                Command.WriteWizardCommand(project, table);
                 Handler.WriteGetHandler(project, table);
                 Handler.WriteGetByCustom(project, table);
                 Handler.WriteUpdateHandler(project, table);

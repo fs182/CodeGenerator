@@ -67,7 +67,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.API
                 {
                     outputFile.WriteLine($"                if (!User.Identity.IsAuthenticated)");
                     outputFile.WriteLine($"                    return BadRequest(\"No autenticado\");");
-                    outputFile.WriteLine(string.Concat("                var query = new GetByColumnQuery { ", customMethod.ColumnName, " = ", Helper.GetStringNetCoreType(customMethod.SqlDataType), ".Parse(identity.Claims.First(f => f.Type == \"UserId\").Value) };"));
+                    outputFile.WriteLine(string.Concat("                var query = new GetByColumnQuery { ", customMethod.ColumnName, " = ", Helper.GetStringNetCoreType(customMethod.SqlDataType), ".Parse(User.Claims.First(f => f.Type == \"UserId\").Value) };"));
                 }                    
                 outputFile.WriteLine($"                var result = await Mediator.Send(query);");
                 outputFile.WriteLine($"                return Ok(result);");
@@ -143,13 +143,11 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.API
             outputFile.WriteLine("            }");
             outputFile.WriteLine("");
             outputFile.WriteLine("        }");
-            outputFile.WriteLine("    }");
-            outputFile.WriteLine("}");
             outputFile.WriteLine();
             outputFile.WriteLine($"        [HttpPost]");
             outputFile.WriteLine($"        [Route(\"/{Helper.GetCamel(table.TableName)}/wizard\")]");
             outputFile.WriteLine($"        [SwaggerOperation(Description = \"Crea o actualiza un registro de {table.TableName}.\")]");
-            outputFile.WriteLine($"        public async Task<ActionResult> Ziward(WizardCommand command)");
+            outputFile.WriteLine($"        public async Task<ActionResult> Wizard(WizardCommand command)");
             outputFile.WriteLine("        {");
             outputFile.WriteLine($"            try");
             outputFile.WriteLine("            {");
@@ -159,9 +157,12 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.API
             outputFile.WriteLine($"                var result = await Mediator.Send(command);");
             outputFile.WriteLine($"                return Ok(result);");
             outputFile.WriteLine("            }");
-            outputFile.WriteLine($"                catch (Exception ex)");
+            outputFile.WriteLine($"            catch (Exception ex)");
             outputFile.WriteLine("            {");
-            outputFile.WriteLine($"        return BadRequest(ex.Message);");
+            outputFile.WriteLine($"                return BadRequest(ex.Message);");
+            outputFile.WriteLine("            }");
+            outputFile.WriteLine("");
+            outputFile.WriteLine("        }");
             outputFile.WriteLine("    }");
             outputFile.WriteLine("}");
             outputFile.Close();

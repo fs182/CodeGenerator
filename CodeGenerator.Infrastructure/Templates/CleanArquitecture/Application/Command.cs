@@ -20,12 +20,13 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Application
             outputFile.WriteLine("{");
             outputFile.WriteLine("    public class CreateCommand: IRequest<List<CommandResponse>>, IGetPaginated");
             outputFile.WriteLine("    {");
-            foreach (var c in table.Columns.Where(f => f.ColumnName != "AuditoriaId"))
+            foreach (var c in table.Columns.Where(f => f.ColumnName != "AuditoriaId").OrderBy(g => g.ColumnNumber))
                 outputFile.WriteLine(string.Concat("        public ", Helper.GetStringNetCoreType(c.SqlDataType), c.IsNullable && Helper.GetStringNetCoreType(c.SqlDataType) != "string" ? "?" : "", " ", c.ColumnName, " { get; set; }"));           
             outputFile.WriteLine("        public int PageNumber { get; set; }");
             outputFile.WriteLine("        public int RowsOfPage { get; set; }");
             outputFile.WriteLine("        public long AuditoriaId { get; set; }");
-            outputFile.WriteLine("        public int UsuarioId { get; set; }");
+            if(table.Columns.All(f=>f.ColumnName != "UsuarioId"))
+                outputFile.WriteLine("        public int UsuarioId { get; set; }");
             outputFile.WriteLine("        [JsonIgnore]");
             outputFile.WriteLine("        public int ExistingRows { get; set; }");
             outputFile.WriteLine("    }");
@@ -53,6 +54,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Application
             outputFile.WriteLine("        public int PageNumber { get; set; }");
             outputFile.WriteLine("        public int RowsOfPage { get; set; }");
             outputFile.WriteLine("        public long AuditoriaId { get; set; }");
+            //if (table.Columns.All(f => f.ColumnName != "UsuarioId"))
             outputFile.WriteLine("        public int UsuarioId { get; set; }");
             outputFile.WriteLine("        [JsonIgnore]");
             outputFile.WriteLine("        public int ExistingRows { get; set; }");
@@ -78,9 +80,33 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Application
             outputFile.WriteLine("    {");
             outputFile.WriteLine("        public int PageNumber { get; set; }");
             outputFile.WriteLine("        public int RowsOfPage { get; set; }");
-            outputFile.WriteLine("        public int UsuarioId { get; set; }");
+            if (table.Columns.All(f => f.ColumnName != "UsuarioId"))
+                outputFile.WriteLine("        public int UsuarioId { get; set; }");
             outputFile.WriteLine("        [JsonIgnore]");
             outputFile.WriteLine("        public int ExistingRows { get; set; }");
+            outputFile.WriteLine("    }");
+            outputFile.WriteLine("}");
+            outputFile.Close();
+            outputFile.Dispose();
+        }
+
+        public static void WriteWizardCommand(Project project, Table table)
+        {
+            if (!Directory.Exists(Path.Combine(project.ApplicationCommandsPath, table.TableName)))
+                Directory.CreateDirectory(Path.Combine(project.ApplicationCommandsPath, table.TableName));
+            var pk = table.Columns.First(f => f.IsPrimaryKey);
+            using StreamWriter outputFile = new(Path.Combine(project.ApplicationCommandsPath, table.TableName, string.Concat("WizardCommand.cs")), false, Encoding.UTF8);
+            outputFile.WriteLine("using MediatR;");
+            outputFile.WriteLine("");
+            outputFile.WriteLine($"namespace {project.Namespace}.Application.Commands.{table.TableName}");
+            outputFile.WriteLine("{");
+            outputFile.WriteLine("    public class WizardCommand: IRequest<Unit>");
+            outputFile.WriteLine("    {");
+            foreach (var c in table.Columns.Where(f => f.ColumnName != "AuditoriaId").OrderBy(g => g.ColumnNumber))
+                outputFile.WriteLine(string.Concat("        public ", Helper.GetStringNetCoreType(c.SqlDataType), c.IsNullable && Helper.GetStringNetCoreType(c.SqlDataType) != "string" ? "?" : "", " ", c.ColumnName, " { get; set; }"));
+            outputFile.WriteLine("        public long AuditoriaId { get; set; }");
+            if (table.Columns.All(f => f.ColumnName != "UsuarioId"))
+                outputFile.WriteLine("        public int UsuarioId { get; set; }");
             outputFile.WriteLine("    }");
             outputFile.WriteLine("}");
             outputFile.Close();
