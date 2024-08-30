@@ -54,8 +54,8 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Application
             outputFile.WriteLine("        public int PageNumber { get; set; }");
             outputFile.WriteLine("        public int RowsOfPage { get; set; }");
             outputFile.WriteLine("        public long AuditoriaId { get; set; }");
-            //if (table.Columns.All(f => f.ColumnName != "UsuarioId"))
-            outputFile.WriteLine("        public int UsuarioId { get; set; }");
+            if (pk.ColumnName != "UsuarioId")
+                outputFile.WriteLine("        public int UsuarioId { get; set; }");
             outputFile.WriteLine("        [JsonIgnore]");
             outputFile.WriteLine("        public int ExistingRows { get; set; }");
             outputFile.WriteLine("    }");
@@ -107,6 +107,12 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Application
             outputFile.WriteLine("        public long AuditoriaId { get; set; }");
             if (table.Columns.All(f => f.ColumnName != "UsuarioId"))
                 outputFile.WriteLine("        public int UsuarioId { get; set; }");
+            foreach (var p in table.Catalog.RelatedProperties.Where(f=> f.IncludeInWizardCommand).OrderBy(f=>f.PropertyOrder))
+            {
+                var c = project.Tables.First(f => f.TableName == p.TableName).Columns.First(g => g.ColumnName == p.ColumnName);
+                outputFile.WriteLine(string.Concat("        public ", Helper.GetStringNetCoreType(c.SqlDataType), c.IsNullable && Helper.GetStringNetCoreType(c.SqlDataType) != "string" ? "?" : "", " ", c.ColumnName, " { get; set; }"));
+            }
+                
             outputFile.WriteLine("    }");
             outputFile.WriteLine("}");
             outputFile.Close();

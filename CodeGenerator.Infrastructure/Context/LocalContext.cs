@@ -18,6 +18,7 @@ namespace CodeGenerator.Infrastructure.Context
             modelBuilder.Entity<Column>();
             modelBuilder.Entity<Catalog>();
             modelBuilder.Entity<Property>();
+            modelBuilder.Entity<RelatedProperty>();
         }
 
         
@@ -28,5 +29,6 @@ namespace CodeGenerator.Infrastructure.Context
         public DbSet<Column> Columns { get; set; }
         public DbSet<Catalog> Catalogs { get; set; }
         public DbSet<Property> Properties { get; set; }
+        public DbSet<RelatedProperty> RelatedProperties { get; set; }
     }
 }

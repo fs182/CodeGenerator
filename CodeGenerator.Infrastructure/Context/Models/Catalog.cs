@@ -26,5 +26,6 @@ namespace CodeGenerator.Infrastructure.Context.Models
         public string GridDescription { get; set; }
         public long AuditId { get; set; }
         public List<Property> Properties { get; set; }
+        public List<RelatedProperty> RelatedProperties { get; set; }
     }
 }

@@ -16,14 +16,18 @@ namespace CodeGenerator.Infrastructure.Repositories.Local
             await Task.Run(() => {
 				project = context.Projects.Where(f => f.ProjectId == projectId).
 					Include(g => g.Tables).
-                    ThenInclude(g => g.Columns).
-                    ThenInclude(g => g.Property).
+						ThenInclude(g => g.Columns).
+						ThenInclude(g => g.Property).
+					Include(g => g.Tables).
+                        ThenInclude(g => g.Catalog).
                     Include(g=> g.Catalogs).
-                    ThenInclude(g => g.Properties).
+						ThenInclude(g => g.Properties).
+					Include(g => g.Catalogs).
+						ThenInclude(g => g.RelatedProperties).
                     AsSplitQuery().
                     First();
             });
-			project.Tables.ForEach(f=> f.Catalog = project.Catalogs.First(g => g.TableId == f.TableId));
+			//project.Tables.ForEach(f=> f.Catalog = project.Catalogs.First(g => g.TableId == f.TableId));
 			await Writer.GenerateProject(project);
         }
 

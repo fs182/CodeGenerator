@@ -136,7 +136,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
                         countFk++;
                         prefixFk = countFk.ToString();
                     }
-                    columnNullable = c.IsNullable ? $"{Helper.GetCamel(c.TableTarget)}{prefixFk} == null ? null : {Helper.GetCamel(c.TableTarget)}{prefixFk}.{Helper.GetCamel(c.ColumnName)};" : $"{Helper.GetCamel(c.TableTarget)}{prefixFk}.{Helper.GetCamel(c.ColumnName)};";
+                    columnNullable = c.IsNullable ? $"{Helper.GetCamel(c.TableTarget)}{prefixFk} == null ? null : {Helper.GetCamel(c.TableTarget)}{prefixFk}.{Helper.GetCamel(c.ColumnTarget)};" : $"{Helper.GetCamel(c.TableTarget)}{prefixFk}.{Helper.GetCamel(c.ColumnTarget)};";
                     prefixFk = "";
                 }
                 outputFile.WriteLine(string.Concat($"        newItem.{Helper.GetCamel(c.ColumnName)} = ", c.IsForeignKey ? $"{columnNullable}" : $"{Helper.GetCamel(c.ColumnName)};"));
@@ -218,7 +218,9 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
             outputFile.WriteLine($"        <React.Fragment>");
             outputFile.WriteLine("            <Stack direction={'row'} spacing={3}>");
             outputFile.WriteLine(string.Concat("                <Typography variant={'h2'} mb={3}>", table.Catalog.FormName, "</Typography>"));
-            outputFile.WriteLine("                <Fab size='small' onClick={() => { setOpen(true); setCreateMode(true); setRefItem({}); }} color={'primary'}><AddCircleIcon /></Fab>");
+            if(table.Catalog.CanBeCreated)
+                outputFile.WriteLine("                <Fab size='small' onClick={() => { setOpen(true); setCreateMode(true); setRefItem({}); }} color={'primary'}><AddCircleIcon /></Fab>");
+            
             outputFile.WriteLine($"            </Stack>");
             outputFile.WriteLine("            <Stack spacing={2}>");
             outputFile.WriteLine($"                <JumboCardQuick");
@@ -360,29 +362,33 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
             outputFile.WriteLine($"import useSwalWrapper from '@jumbo/vendors/sweetalert2/hooks';");
             outputFile.WriteLine($"");
             outputFile.WriteLine(string.Concat("const ", table.TableName, "Item = ({item,setItems, currentPage, setTotalPages, commandAlert, setOpen, setRefItem, setCreateMode }) => {"));
-            outputFile.WriteLine($"    const [deleteItem, setDeleteItem] = React.useState(false);");
-            outputFile.WriteLine($"    const Swal = useSwalWrapper();");
-            outputFile.WriteLine("    const confirmDelete = (keyItem) => { Swal.fire({ title: `¿Está seguro de eliminar: ${keyItem}?`, text: 'No se podrá revertir esta acción!', icon: 'warning', showCancelButton: true, confirmButtonText: 'Si, eliminar!', cancelButtonText: 'No, cancelar!', reverseButtons: true }).then(result => {if (result.value) {setDeleteItem(true);} else if (result.dismiss === Swal.DismissReason.cancel) {}});};");
-            outputFile.WriteLine("    React.useEffect(() => {");
-            outputFile.WriteLine($"        if (!deleteItem)");
-            outputFile.WriteLine($"            return;");
-            outputFile.WriteLine($"        let toDeleteItem = item;");
-            outputFile.WriteLine($"        toDeleteItem.rowsOfPage = ROWS_OF_PAGE;");
-            outputFile.WriteLine($"        toDeleteItem.pageNumber = currentPage;");
-            outputFile.WriteLine(string.Concat("        axios.post(`${API_URL}", Helper.GetCamel(table.TableName), "/delete`, toDeleteItem, { headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` }}).then((response) => {"));
-            outputFile.WriteLine($"                if(!response.data)");
-            outputFile.WriteLine($"                     return;");
-            outputFile.WriteLine($"            setItems(response.data);");
-            outputFile.WriteLine($"            setTotalPages(response.data[0].totalPages);");
-            outputFile.WriteLine($"            commandAlert('success','eliminó',null);");
-            outputFile.WriteLine($"            setDeleteItem(false);");
-            outputFile.WriteLine("        }).catch((error) => {");
-            outputFile.WriteLine("            if (error.response) {");
-            outputFile.WriteLine($"                commandAlert('error','',error.response.data);");
-            outputFile.WriteLine("            }   ");
-            outputFile.WriteLine("            setDeleteItem(false);");
-            outputFile.WriteLine("        });");
-            outputFile.WriteLine("    }, [deleteItem]);");
+            if (table.Catalog.CanBeDeleted)
+            {
+                outputFile.WriteLine($"    const [deleteItem, setDeleteItem] = React.useState(false);");
+                outputFile.WriteLine($"    const Swal = useSwalWrapper();");
+                outputFile.WriteLine("    const confirmDelete = (keyItem) => { Swal.fire({ title: `¿Está seguro de eliminar: ${keyItem}?`, text: 'No se podrá revertir esta acción!', icon: 'warning', showCancelButton: true, confirmButtonText: 'Si, eliminar!', cancelButtonText: 'No, cancelar!', reverseButtons: true }).then(result => {if (result.value) {setDeleteItem(true);} else if (result.dismiss === Swal.DismissReason.cancel) {}});};");
+                outputFile.WriteLine("    React.useEffect(() => {");
+                outputFile.WriteLine($"        if (!deleteItem)");
+                outputFile.WriteLine($"            return;");
+                outputFile.WriteLine($"        let toDeleteItem = item;");
+                outputFile.WriteLine($"        toDeleteItem.rowsOfPage = ROWS_OF_PAGE;");
+                outputFile.WriteLine($"        toDeleteItem.pageNumber = currentPage;");
+                outputFile.WriteLine(string.Concat("        axios.post(`${API_URL}", Helper.GetCamel(table.TableName), "/delete`, toDeleteItem, { headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` }}).then((response) => {"));
+                outputFile.WriteLine($"                if(!response.data)");
+                outputFile.WriteLine($"                     return;");
+                outputFile.WriteLine($"            setItems(response.data);");
+                outputFile.WriteLine($"            setTotalPages(response.data[0].totalPages);");
+                outputFile.WriteLine($"            commandAlert('success','eliminó',null);");
+                outputFile.WriteLine($"            setDeleteItem(false);");
+                outputFile.WriteLine("        }).catch((error) => {");
+                outputFile.WriteLine("            if (error.response) {");
+                outputFile.WriteLine($"                commandAlert('error','',error.response.data);");
+                outputFile.WriteLine("            }   ");
+                outputFile.WriteLine("            setDeleteItem(false);");
+                outputFile.WriteLine("        });");
+                outputFile.WriteLine("    }, [deleteItem]);");
+            }
+
             outputFile.WriteLine($"");
             outputFile.WriteLine($"    return (");
             outputFile.WriteLine("        <Card sx={{ mb: 0.5 }}>");
@@ -423,12 +429,14 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
             outputFile.WriteLine($"                </Grid>");
 
             outputFile.WriteLine("                <ListItemIcon className={'ListItemIcons'} sx={{position: 'absolute', right: 24, top: 7, transition: 'all 0.2s', opacity: 0 }}>");
-            outputFile.WriteLine("                    <Fab onClick={() => { setOpen(true); setRefItem(item); setCreateMode(false); }} size='small' color={'primary'} sx={{ right: 14 }}><EditIcon /></Fab>");
+            if (table.Catalog.CanBeUpdated)
+                outputFile.WriteLine("                    <Fab onClick={() => { setOpen(true); setRefItem(item); setCreateMode(false); }} size='small' color={'primary'} sx={{ right: 14 }}><EditIcon /></Fab>");
             string relevantColumnName = pk.ColumnName;
             var nameDescriptionColumn = table.Columns.FirstOrDefault(f => f.ColumnName.ToLower().Contains("nombre") || f.ColumnName.ToLower().Contains("descripcion"));
             if (nameDescriptionColumn != null)
                 relevantColumnName = nameDescriptionColumn.ColumnName;
-            outputFile.WriteLine(string.Concat("                    <Fab onClick={() => confirmDelete(item.", Helper.GetCamel(relevantColumnName), ")} size='small' color={'secondary'}><DeleteIcon /></Fab>"));
+            if(table.Catalog.CanBeDeleted)
+                outputFile.WriteLine(string.Concat("                    <Fab onClick={() => confirmDelete(item.", Helper.GetCamel(relevantColumnName), ")} size='small' color={'secondary'}><DeleteIcon /></Fab>"));
             outputFile.WriteLine($"                </ListItemIcon>");
             outputFile.WriteLine($"            </ListItemButton>");
             outputFile.WriteLine($"        </Card>");

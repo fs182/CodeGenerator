@@ -1,6 +1,7 @@
 ﻿using CodeGenerator.Infrastructure.Context.Models;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using System.Diagnostics.Metrics;
 using System.Text;
 
 
@@ -122,10 +123,18 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
             sb.AppendLine("\tb.FechaModificacion,");
             var existFK = table.Columns.FirstOrDefault(f => f.IsForeignKey && f.ColumnName != "AuditoriaId");
             sb.AppendLine(string.Concat("\tc.NombreCorto as NombreCortoUsuario", existFK != null ? "," : ""));
-            int count = 0;
             var fkCount = table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId").Count();
+            int count = 0;
+            string prefixFk = "";
+            int countFk = 0;
             foreach (var c in table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId").OrderBy(g => g.ColumnNumber))
             {
+                if (table.Columns.Count(f => f.TableTarget == c.TableTarget) > 1)
+                {
+                    countFk++;
+                    prefixFk = countFk.ToString();
+                }
+
                 count++;
                 var fkTableInfo = project.Tables.First(f => f.TableName == c.TableTarget);
                 var fkColumnsInfo = fkTableInfo.Columns;
@@ -133,8 +142,9 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
                 var namedColumnInfo = fkColumnsInfo.FirstOrDefault(f => f.ColumnName.ToLower().Contains("nombre") || (f.ColumnName.ToLower().Contains("descripcion") && !f.ColumnName.ToLower().Contains("descripcionid")) || f.ColumnName.ToLower().Contains("codigo"));
                 namedColumnInfo ??= fkColumnsInfo.First(f => f.IsPrimaryKey);
 
-                sb.AppendLine(string.Concat($"\tf{count}.{namedColumnInfo.ColumnName} as {fkTableInfo.TableName}{namedColumnInfo.ColumnName}", count != fkCount ? "," : ""));
-
+                //sb.AppendLine(string.Concat($"\tf{count}.{namedColumnInfo.ColumnName} as {fkTableInfo.TableName}{namedColumnInfo.ColumnName}", count != fkCount ? "," : ""));
+                sb.AppendLine(string.Concat($"\tf{count}.{namedColumnInfo.ColumnName} as {fkTableInfo.TableName}{namedColumnInfo.ColumnName}{prefixFk}", count != fkCount ? "," : ""));
+                prefixFk = "";
             }
             sb.AppendLine(string.Concat("FROM ", table.TableName, " a "));
             sb.AppendLine("INNER JOIN Auditoria b on a.AuditoriaId = b.AuditoriaId");
@@ -221,8 +231,16 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
                 sb.AppendLine(string.Concat("\tc.NombreCorto as NombreCortoUsuario", existFK != null ? "," : ""));
                 int count = 0;
                 var fkCount = table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId").Count();
+                string prefixFk = "";
+                int countFk = 0;
                 foreach (var c in table.Columns.Where(f => f.IsForeignKey && f.ColumnName != "AuditoriaId").OrderBy(g => g.ColumnNumber))
                 {
+                    if (table.Columns.Count(f => f.TableTarget == c.TableTarget) > 1)
+                    {
+                        countFk++;
+                        prefixFk = countFk.ToString();
+                    }
+
                     count++;
                     var fkTableInfo = project.Tables.First(f => f.TableName == c.TableTarget);
                     var fkColumnsInfo = fkTableInfo.Columns;
@@ -230,9 +248,9 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
                     var namedColumnInfo = fkColumnsInfo.FirstOrDefault(f => f.ColumnName.ToLower().Contains("nombre") || (f.ColumnName.ToLower().Contains("descripcion") && !f.ColumnName.ToLower().Contains("descripcionid")) || f.ColumnName.ToLower().Contains("codigo"));
                     namedColumnInfo ??= fkColumnsInfo.First(f => f.IsPrimaryKey);
 
-
-                    sb.AppendLine(string.Concat($"\tf{count}.{namedColumnInfo.ColumnName} as {fkTableInfo.TableName}{namedColumnInfo.ColumnName}", count != fkCount ? "," : ""));
-
+                    //sb.AppendLine(string.Concat($"\tf{count}.{namedColumnInfo.ColumnName} as {fkTableInfo.TableName}{namedColumnInfo.ColumnName}", count != fkCount ? "," : ""));
+                    sb.AppendLine(string.Concat($"\tf{count}.{namedColumnInfo.ColumnName} as {fkTableInfo.TableName}{namedColumnInfo.ColumnName}{prefixFk}", count != fkCount ? "," : ""));
+                    prefixFk = "";
                 }
                 sb.AppendLine(string.Concat("FROM ", table.TableName, " a "));
                 sb.AppendLine("INNER JOIN Auditoria b on a.AuditoriaId = b.AuditoriaId");
@@ -332,7 +350,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
                 namedColumnInfo ??= fkColumnsInfo.First(f => f.IsPrimaryKey);
 
                 //sb.AppendLine(string.Concat($"\t\tf{count}.{namedColumnInfo.Name} as {fkTableInfo.Name}{namedColumnInfo.Name}", count != fkCount ? "," : ""));
-                sb.AppendLine(string.Concat($"\t\tf{count}.{namedColumnInfo.ColumnName} as {fkTableInfo.TableName}{namedColumnInfo.ColumnName}{prefixFk}", count != fkCount ? "," : ","));
+                sb.AppendLine(string.Concat($"\t\tf{count}.{namedColumnInfo.ColumnName} as {fkTableInfo.TableName}{namedColumnInfo.ColumnName}{prefixFk},"));
                 prefixFk = "";
             }
             sb.Append("\t\tROW_NUMBER() OVER(");
