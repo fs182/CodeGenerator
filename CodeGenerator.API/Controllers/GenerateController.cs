@@ -10,13 +10,13 @@ namespace CodeGenerator.API.Controllers
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public partial class PopulateController : ApiControllerBase
+    public partial class GenerateController : ApiControllerBase
     {
 
         [HttpPost]
-        [Route("/populate")]
-        [SwaggerOperation(Description = "Trae los registros de AgenteDano paginados.")]
-        public async Task<ActionResult> Populate([FromBody] PopulateCommand command)
+        [Route("/generate")]
+        [SwaggerOperation(Description = "Genera el código de un proyecto específico.")]
+        public async Task<ActionResult> Generate([FromBody] PopulateCommand command)
         {
             try
             {

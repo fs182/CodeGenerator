@@ -94,7 +94,7 @@ namespace CodeGenerator.API
 
             services.AddSwaggerGen(options =>
             {
-                options.SwaggerDoc("v1", new OpenApiInfo { Title = "FinancialModel.API", Version = "1.0.1" });
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = "CodeGenerator.API", Version = "1.0.1" });
                 options.CustomSchemaIds(c => c.FullName);
                 options.EnableAnnotations();
 

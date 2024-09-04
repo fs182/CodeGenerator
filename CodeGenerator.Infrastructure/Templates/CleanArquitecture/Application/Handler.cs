@@ -1,5 +1,8 @@
-﻿using CodeGenerator.Infrastructure.Context.Models;
+﻿using AutoMapper;
+using CodeGenerator.Infrastructure.Context.Models;
+using CodeGenerator.Infrastructure.Templates.CleanArquitecture.Infrastructure;
 using System.Text;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 
 namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Application
@@ -12,6 +15,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Application
                 Directory.CreateDirectory(Path.Combine(project.ApplicationHandlersPath, table.TableName));
             using StreamWriter outputFile = new(Path.Combine(project.ApplicationHandlersPath, table.TableName, string.Concat("CreateHandler.cs")), false, Encoding.UTF8);
             outputFile.WriteLine($"using {project.Namespace}.Application.Commands.{table.TableName};");
+            outputFile.WriteLine($"using {project.Namespace}.Application.Helpers;");
             outputFile.WriteLine($"using {project.Namespace}.Application.Responses.{table.TableName};");
             outputFile.WriteLine($"using {project.Namespace}.Application.Interfaces;");
             outputFile.WriteLine("using MediatR;");
@@ -29,6 +33,13 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Application
             outputFile.WriteLine("        public async Task<List<CommandResponse>> Handle(CreateCommand command, CancellationToken cancellationToken)");          
             outputFile.WriteLine("        {");
             outputFile.WriteLine(string.Concat("            command.AuditoriaId = await _customRepository.SetAudit(new Commands.Auditoria.AuditoriaUniqueCommand { OperacionId = (short)Domain.Enums.Operation.", table.TableName, "Create, FechaModificacion = DateTime.Now, UsuarioId = command.UsuarioId });"));
+            outputFile.WriteLine($"            await _repository.LogCreateOnly(new Commands.Log.CreateCommand");
+            outputFile.WriteLine($"            {{");
+            outputFile.WriteLine($"                AuditoriaId = command.AuditoriaId,");
+            outputFile.WriteLine($"                Detalle = ApplicationHelper.SerializeToJson(command),");
+            outputFile.WriteLine($"                OperacionId = (short)Domain.Enums.Operation.{table.TableName}Create,");
+            outputFile.WriteLine($"                UsuarioId = command.UsuarioId");
+            outputFile.WriteLine($"            }});");
             outputFile.WriteLine($"            return await _repository.{table.TableName}Create(command);");
             outputFile.WriteLine("        }");
             outputFile.WriteLine("    }");
@@ -43,6 +54,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Application
                 Directory.CreateDirectory(Path.Combine(project.ApplicationHandlersPath, table.TableName));
             using StreamWriter outputFile = new(Path.Combine(project.ApplicationHandlersPath, table.TableName, string.Concat("DeleteHandler.cs")), false, Encoding.UTF8);
             outputFile.WriteLine($"using {project.Namespace}.Application.Commands.{table.TableName};");
+            outputFile.WriteLine($"using {project.Namespace}.Application.Helpers;");
             outputFile.WriteLine($"using {project.Namespace}.Application.Interfaces;");
             outputFile.WriteLine($"using {project.Namespace}.Application.Responses.{table.TableName};");
             outputFile.WriteLine("using MediatR;");
@@ -60,6 +72,13 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Application
             outputFile.WriteLine("        public async Task<List<CommandResponse>> Handle(DeleteCommand command, CancellationToken cancellationToken)");
             outputFile.WriteLine("        {");
             outputFile.WriteLine(string.Concat("            command.AuditoriaId = await _customRepository.SetAudit(new Commands.Auditoria.AuditoriaUniqueCommand { OperacionId = (short)Domain.Enums.Operation.", table.TableName ,"Delete, FechaModificacion = DateTime.Now, UsuarioId = command.UsuarioId });"));
+            outputFile.WriteLine($"            await _repository.LogCreateOnly(new Commands.Log.CreateCommand");
+            outputFile.WriteLine($"            {{");
+            outputFile.WriteLine($"                AuditoriaId = command.AuditoriaId,");
+            outputFile.WriteLine($"                Detalle = ApplicationHelper.SerializeToJson(command),");
+            outputFile.WriteLine($"                OperacionId = (short)Domain.Enums.Operation.{table.TableName}Delete,");
+            outputFile.WriteLine($"                UsuarioId = command.UsuarioId");
+            outputFile.WriteLine($"            }});");
             outputFile.WriteLine($"            return await _repository.{table.TableName}Delete(command);");
             outputFile.WriteLine("        }");
             outputFile.WriteLine("    }");
@@ -140,6 +159,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Application
             if (!Directory.Exists(Path.Combine(project.ApplicationHandlersPath, table.TableName)))
                 Directory.CreateDirectory(Path.Combine(project.ApplicationHandlersPath, table.TableName));
             using StreamWriter outputFile = new(Path.Combine(project.ApplicationHandlersPath, table.TableName, string.Concat("UpdateHandler.cs")), false, Encoding.UTF8);
+            outputFile.WriteLine($"using {project.Namespace}.Application.Helpers;");
             outputFile.WriteLine($"using {project.Namespace}.Application.Interfaces;");
             outputFile.WriteLine($"using {project.Namespace}.Application.Commands.{table.TableName};");
             outputFile.WriteLine($"using {project.Namespace}.Application.Responses.{table.TableName};");
@@ -159,6 +179,13 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Application
             outputFile.WriteLine("        public async Task<List<CommandResponse>> Handle(UpdateCommand command, CancellationToken cancellationToken)");
             outputFile.WriteLine("        {");
             outputFile.WriteLine(string.Concat("            command.AuditoriaId = await _customRepository.SetAudit(new Commands.Auditoria.AuditoriaUniqueCommand { OperacionId = (short)Domain.Enums.Operation.", table.TableName, "Update, FechaModificacion = DateTime.Now, UsuarioId = command.UsuarioId });"));
+            outputFile.WriteLine($"            await _repository.LogCreateOnly(new Commands.Log.CreateCommand");
+            outputFile.WriteLine($"            {{");
+            outputFile.WriteLine($"                AuditoriaId = command.AuditoriaId,");
+            outputFile.WriteLine($"                Detalle = ApplicationHelper.SerializeToJson(command),");
+            outputFile.WriteLine($"                OperacionId = (short)Domain.Enums.Operation.{table.TableName}Update,");
+            outputFile.WriteLine($"                UsuarioId = command.UsuarioId");
+            outputFile.WriteLine($"            }});");
             outputFile.WriteLine($"            return await _repository.{table.TableName}Update(command);");
             outputFile.WriteLine("        }");
             outputFile.WriteLine("    }");
