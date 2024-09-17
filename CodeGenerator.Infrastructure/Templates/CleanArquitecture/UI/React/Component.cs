@@ -1,4 +1,5 @@
 ﻿using CodeGenerator.Infrastructure.Context.Models;
+using Microsoft.SqlServer.Server;
 using System.Text;
 
 namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
@@ -353,6 +354,12 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
                 Directory.CreateDirectory(Path.Combine(project.UIComponentsPath));
             using StreamWriter outputFile = new(Path.Combine(project.UIComponentsPath, string.Concat(table.TableName, "Item.js")), false, Encoding.UTF8);
             var pk = table.Columns.First(f => f.IsPrimaryKey);
+
+            //DETALLE GRID
+            var columnsArray = table.Columns.Where(f => !f.IsIdentity && f.ColumnName != "AuditoriaId").ToList();
+            var gridColumnLayout = Helper.GetColumnLayout(columnsArray.Count);
+            var gridColumnSizeArray = gridColumnLayout.Item1.ToArray();
+
             outputFile.WriteLine($"import React from 'react';");
             outputFile.WriteLine($"import axios from 'axios';");
             outputFile.WriteLine($"import EditIcon from '@mui/icons-material/Edit';");
@@ -360,6 +367,9 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
             outputFile.WriteLine("import {API_URL,ROWS_OF_PAGE} from '../../utils/constants/paths';");
             outputFile.WriteLine("import {Card,ListItemIcon, ListItemButton, Fab,Grid} from '@mui/material';");
             outputFile.WriteLine($"import useSwalWrapper from '@jumbo/vendors/sweetalert2/hooks';");
+            if (gridColumnLayout.Item2)
+                outputFile.WriteLine("import { format } from 'date-fns'; ");
+
             outputFile.WriteLine($"");
             outputFile.WriteLine(string.Concat("const ", table.TableName, "Item = ({item,setItems, currentPage, setTotalPages, commandAlert, setOpen, setRefItem, setCreateMode }) => {"));
             if (table.Catalog.CanBeDeleted)
@@ -388,17 +398,28 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
                 outputFile.WriteLine("        });");
                 outputFile.WriteLine("    }, [deleteItem]);");
             }
+            
 
+            if (gridColumnLayout.Item2)
+            {
+                outputFile.WriteLine("    const formatDate = (dateString) => {");
+                outputFile.WriteLine("        try");
+                outputFile.WriteLine("        {");
+                outputFile.WriteLine("            return format(new Date(dateString), 'dd/MM/yyyy HH:mm:ss');");
+                outputFile.WriteLine("        }");
+                outputFile.WriteLine("        catch (e)");
+                outputFile.WriteLine("        {");
+                outputFile.WriteLine("            console.error(\"Error formateando la fecha: \", e);");
+                outputFile.WriteLine("            return dateString;");
+                outputFile.WriteLine("        }");
+                outputFile.WriteLine("    };");
+            }
             outputFile.WriteLine($"");
             outputFile.WriteLine($"    return (");
             outputFile.WriteLine("        <Card sx={{ mb: 0.5 }}>");
             outputFile.WriteLine("            <ListItemButton component={'li'} sx={{p: theme => theme.spacing(1, 3), '&:hover .ListItemIcons': { opacity: 1}}}>");
-
             outputFile.WriteLine("                <Grid container alignItems='center' justifyContent='center' spacing={3.75} sx={{ p: theme => theme.spacing(0.8, 1) }} >");
-            //DETALLE GRID
-            var columnsArray = table.Columns.Where(f => !f.IsIdentity && f.ColumnName != "AuditoriaId").ToList();
-            var gridColumnLayout = Helper.GetColumnLayout(columnsArray.Count);
-            var gridColumnSizeArray = gridColumnLayout.Item1.ToArray();
+            
             for (int i = 0; i <= columnsArray.Count - 1; i++)
             {
                 outputFile.WriteLine(string.Concat("                    <Grid item xs={", gridColumnSizeArray[i], "} md={", gridColumnSizeArray[i], "} lg={", gridColumnSizeArray[i], "}>"));
@@ -420,7 +441,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
             if (gridColumnLayout.Item2)
             {
                 outputFile.WriteLine(string.Concat("                    <Grid item xs={", gridColumnLayout.Item3, "} md={", gridColumnLayout.Item3, "} lg={", gridColumnLayout.Item3, "}>"));
-                outputFile.WriteLine("                        {item.fechaModificacion}");
+                outputFile.WriteLine("                        {formatDate(item.fechaModificacion)}");
                 outputFile.WriteLine($"                    </Grid>");
                 outputFile.WriteLine(string.Concat("                    <Grid item xs={", gridColumnLayout.Item4, "} md={", gridColumnLayout.Item4, "} lg={", gridColumnLayout.Item4, "}>"));
                 outputFile.WriteLine("                        {item.nombreCortoUsuario}");
