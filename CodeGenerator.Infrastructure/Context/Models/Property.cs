@@ -19,6 +19,10 @@ namespace CodeGenerator.Infrastructure.Context.Models
         public bool CreateGetBy { get; set; }
         public bool CreateGetByIncludeController { get; set; }
         public bool CreateGetByReturnList { get; set; }
+        public bool IsDescriptionColumn { get; set; }
+        public short DescriptionOrder { get; set; }
+        public string DescriptionPreText { get; set; }
+        public string DescriptionPostText { get; set; }
         public short Order { get; set; }
         public string GridHeader { get; set; }
         public string FormTitle { get; set; }

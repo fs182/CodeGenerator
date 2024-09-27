@@ -287,7 +287,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
                     outputFile.WriteLine(string.Concat("                                     <Grid item xs={", c, "} md={", c, "} lg={", c, "} >"));
                     if (!columnsArray[j].IsForeignKey)
                     {
-                        outputFile.WriteLine(string.Concat("                                         <TextField fullWidth ", columnsArray[j].IsNullable ? "" : "required ", "id='outlined", columnsArray[j].IsNullable ? "" : "-required", "' label='", columnsArray[j].ColumnName, "' defaultValue={refItem.", Helper.GetCamel(columnsArray[j].ColumnName), "} inputProps={{ maxLength: ", columnsArray[j].SqlDataType == "varchar" ? columnsArray[j].MaxLength : columnsArray[j].Precision, " }} onChange={(event) => { set", columnsArray[j].ColumnName, "(event.target.value);}} />"));
+                        outputFile.WriteLine(string.Concat("                                         <TextField fullWidth ", columnsArray[j].IsNullable ? "" : "required ", "id='outlined", columnsArray[j].IsNullable ? "" : "-required", "' label='", columnsArray[j].Property.FormDescription, "' defaultValue={refItem.", Helper.GetCamel(columnsArray[j].ColumnName), "} inputProps={{ maxLength: ", columnsArray[j].SqlDataType == "varchar" ? columnsArray[j].MaxLength : columnsArray[j].Precision, " }} onChange={(event) => { set", columnsArray[j].ColumnName, "(event.target.value);}} />"));
                     }
                     else
                     {
@@ -314,7 +314,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
                         outputFile.WriteLine($"                                             onChange={{(event, newValue) => {{");
                         outputFile.WriteLine($"                                                 set{fkTableInfo.TableName}{prefixFk}(newValue);");
                         outputFile.WriteLine($"                                             }}}}");
-                        outputFile.WriteLine($"                                             renderInput={{(params) => <TextField {{...params}} label=\"{fkTableInfo.TableName}{prefixFk}\" {(columnsArray[j].IsNullable ? "" : "required")} />}}");
+                        outputFile.WriteLine($"                                             renderInput={{(params) => <TextField {{...params}} label=\"{fkTableInfo.Catalog.FormDescription}{prefixFk}\" {(columnsArray[j].IsNullable ? "" : "required")} />}}");
                         outputFile.WriteLine($"                                         />");
                         prefixFk = "";
                     }
@@ -669,7 +669,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
                         outputFile.WriteLine($"                                                 {Helper.GetCamel(columnsArray[j].ColumnName)}: newValue ? newValue.{Helper.GetCamel(columnsArray[j].ColumnName)} : null");
                         outputFile.WriteLine($"                                        }}));");
                         outputFile.WriteLine(string.Concat("                                             }}"));
-                        outputFile.WriteLine(string.Concat("                                             renderInput={(params) => <TextField {...params} label=\"", fkTableInfo.TableName, prefixFk, "\" ", columnsArray[j].IsNullable ? "" : "required", " />}"));
+                        outputFile.WriteLine(string.Concat("                                             renderInput={(params) => <TextField {...params} label=\"", fkTableInfo.Catalog.FormDescription, "\" ", columnsArray[j].IsNullable ? "" : "required", " />}"));
                         outputFile.WriteLine(string.Concat("                                         />"));
                         prefixFk = "";
                     }

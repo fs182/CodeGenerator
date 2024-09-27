@@ -348,9 +348,11 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.Database.Stor
                 var fkColumnInfoPk = fkColumnsInfo.First(f => f.IsPrimaryKey);
                 var namedColumnInfo = fkColumnsInfo.FirstOrDefault(f => f.ColumnName.ToLower().Contains("nombre") || (f.ColumnName.ToLower().Contains("descripcion") && !f.ColumnName.ToLower().Contains("descripcionid")) || f.ColumnName.ToLower().Contains("codigo"));
                 namedColumnInfo ??= fkColumnsInfo.First(f => f.IsPrimaryKey);
-
-                //sb.AppendLine(string.Concat($"\t\tf{count}.{namedColumnInfo.Name} as {fkTableInfo.Name}{namedColumnInfo.Name}", count != fkCount ? "," : ""));
-                sb.AppendLine(string.Concat($"\t\tf{count}.{namedColumnInfo.ColumnName} as {fkTableInfo.TableName}{namedColumnInfo.ColumnName}{prefixFk},"));
+                var fkCatalogColumns = Helper.GetFKCatalog(fkTableInfo, count);
+                if(fkCatalogColumns.Length > 0)
+                    sb.AppendLine(string.Concat($"\t\t{fkCatalogColumns} as {fkTableInfo.TableName}{namedColumnInfo.ColumnName}{prefixFk},"));
+                else
+                    sb.AppendLine(string.Concat($"\t\tf{count}.{namedColumnInfo.ColumnName} as {fkTableInfo.TableName}{namedColumnInfo.ColumnName}{prefixFk},"));
                 prefixFk = "";
             }
             sb.Append("\t\tROW_NUMBER() OVER(");

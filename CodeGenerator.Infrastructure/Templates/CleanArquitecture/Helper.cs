@@ -1,10 +1,27 @@
-﻿namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture
+﻿using CodeGenerator.Infrastructure.Context.Models;
+
+namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture
 {
     public static class Helper
     {
         public static string GetCamel(string value)
         {
             return string.Concat(value.Substring(0, 1).ToLower(), value.Substring(1));
+        }
+
+        public static string GetFKCatalog(Table fkTableInfo, int count)
+        {
+            var columns = fkTableInfo.Columns.Where(f => f.Property.IsDescriptionColumn).ToList();
+            string catalogColumn = "";
+
+            foreach (var c in columns)
+            {
+                var postText = c.Property.DescriptionPostText != null ? " + '" + c.Property.DescriptionPostText + "' + " : " + ";
+                catalogColumn = string.Concat(catalogColumn, $"f{count}.{c.ColumnName}{postText}");
+            }
+            if(catalogColumn.Length>3)
+                catalogColumn = catalogColumn.Remove(catalogColumn.Length - 3);
+            return catalogColumn;
         }
 
         public static string GetStringSQLDBType(string sqlDataType)

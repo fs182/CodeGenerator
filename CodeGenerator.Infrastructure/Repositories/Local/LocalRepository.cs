@@ -235,6 +235,10 @@ namespace CodeGenerator.Infrastructure.Repositories.Local
 						,cast(0 as bit) as CreateGetBy
 						,cast(0 as bit) as CreateGetByIncludeController
 					    ,cast(0 as bit) as CreateGetByReturnList
+						,cast(0 as bit) as IsDescriptionColumn	
+						,cast(0 as smallint) DescriptionOrder	
+						,null as DescriptionPreText	
+						,null as DescriptionPostText
 						,cast(1 as smallint) as [Order]
 						,a.ColumnName + '[Grid header]' as GridHeader
 						,a.ColumnName + '[Form title]' as FormTitle
