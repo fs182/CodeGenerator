@@ -1,5 +1,6 @@
 ﻿using CodeGenerator.Infrastructure.Context.Models;
 using Microsoft.SqlServer.Server;
+using System;
 using System.Text;
 
 namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
@@ -16,7 +17,11 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
             outputFile.WriteLine($"import axios from 'axios';");
             outputFile.WriteLine($"import {table.TableName}Item from '../../pages/catalogs/{table.TableName}Item';");
             outputFile.WriteLine($"import SendIcon from '@mui/icons-material/Send';");
-            outputFile.WriteLine("import {Typography,Pagination, Grid, Stack, Fab, Button, Dialog, DialogActions, DialogContent, TextField, useTheme, Box } from '@mui/material';");
+            if(table.Columns.Any(f=>f.SqlDataType == "bit"))
+                outputFile.WriteLine("import {Typography,Pagination, Grid, Stack, Fab, Button, Dialog, DialogActions, DialogContent, TextField, useTheme, Box, Checkbox, FormControlLabel  } from '@mui/material';");
+            else
+                outputFile.WriteLine("import {Typography,Pagination, Grid, Stack, Fab, Button, Dialog, DialogActions, DialogContent, TextField, useTheme, Box } from '@mui/material';");
+
             outputFile.WriteLine("import Autocomplete from '@mui/material/Autocomplete';");
             outputFile.WriteLine($"import AddCircleIcon from '@mui/icons-material/AddCircle';");
             outputFile.WriteLine("import {useTranslation} from 'react-i18next';");
@@ -287,7 +292,10 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
                     outputFile.WriteLine(string.Concat("                                     <Grid item xs={", c, "} md={", c, "} lg={", c, "} >"));
                     if (!columnsArray[j].IsForeignKey)
                     {
-                        outputFile.WriteLine(string.Concat("                                         <TextField fullWidth ", columnsArray[j].IsNullable ? "" : "required ", "id='outlined", columnsArray[j].IsNullable ? "" : "-required", "' label='", columnsArray[j].Property.FormDescription, "' defaultValue={refItem.", Helper.GetCamel(columnsArray[j].ColumnName), "} inputProps={{ maxLength: ", columnsArray[j].SqlDataType == "varchar" ? columnsArray[j].MaxLength : columnsArray[j].Precision, " }} onChange={(event) => { set", columnsArray[j].ColumnName, "(event.target.value);}} />"));
+                        if (columnsArray[j].SqlDataType != "bit")
+                            outputFile.WriteLine(string.Concat("                                         <TextField fullWidth ", columnsArray[j].IsNullable ? "" : "required ", "id='outlined", columnsArray[j].IsNullable ? "" : "-required", "' label='", columnsArray[j].Property.FormDescription, "' defaultValue={refItem.", Helper.GetCamel(columnsArray[j].ColumnName), "} inputProps={{ maxLength: ", columnsArray[j].SqlDataType == "varchar" ? columnsArray[j].MaxLength : columnsArray[j].Precision, " }} onChange={(event) => { set", columnsArray[j].ColumnName, "(event.target.value);}} />"));
+                        else
+                            outputFile.WriteLine(string.Concat("                                         <FormControlLabel control={<Checkbox checked={", Helper.GetCamel(columnsArray[j].ColumnName), "} onChange={() => { set", columnsArray[j].ColumnName, "(!", Helper.GetCamel(columnsArray[j].ColumnName), "); }} />} label=\"", columnsArray[j].Property.FormTitle, "\"/>"));
                     }
                     else
                     {
@@ -307,8 +315,11 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
                             countFk++;
                             prefixFk = countFk.ToString();
                         }
-
-                        outputFile.WriteLine($"                                             getOptionLabel={{(o) => o.{Helper.GetCamel(namedColumnInfo.ColumnName)}}}");
+                        var fkCatalogsColumns = Helper.GetFKCatalogUI(fkTableInfo);
+                        if (fkCatalogsColumns.Length > 0)
+                            outputFile.WriteLine($"                                             getOptionLabel={{(o) => {fkCatalogsColumns}}}");
+                        else
+                            outputFile.WriteLine($"                                             getOptionLabel={{(o) => o.{Helper.GetCamel(namedColumnInfo.ColumnName)}}}");
                         outputFile.WriteLine($"                                             options={{{Helper.GetCamel(fkTableInfo.TableName)}{prefixFk}s}}");
                         outputFile.WriteLine($"                                             value={{{Helper.GetCamel(fkTableInfo.TableName)}{prefixFk}}}");
                         outputFile.WriteLine($"                                             onChange={{(event, newValue) => {{");
@@ -365,7 +376,10 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
             outputFile.WriteLine($"import EditIcon from '@mui/icons-material/Edit';");
             outputFile.WriteLine($"import DeleteIcon from '@mui/icons-material/Delete';");
             outputFile.WriteLine("import {API_URL,ROWS_OF_PAGE} from '../../utils/constants/paths';");
-            outputFile.WriteLine("import {Card,ListItemIcon, ListItemButton, Fab,Grid} from '@mui/material';");
+            if (table.Columns.Any(f => f.SqlDataType == "bit"))
+                outputFile.WriteLine("import {Card,ListItemIcon, ListItemButton, Fab, Grid, Checkbox, FormControlLabel} from '@mui/material';");
+            else
+                outputFile.WriteLine("import {Card,ListItemIcon, ListItemButton, Fab,Grid} from '@mui/material';");
             outputFile.WriteLine($"import useSwalWrapper from '@jumbo/vendors/sweetalert2/hooks';");
             if (gridColumnLayout.Item2)
                 outputFile.WriteLine("import { format } from 'date-fns'; ");
@@ -425,7 +439,10 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
                 outputFile.WriteLine(string.Concat("                    <Grid item xs={", gridColumnSizeArray[i], "} md={", gridColumnSizeArray[i], "} lg={", gridColumnSizeArray[i], "}>"));
                 if (!columnsArray[i].IsForeignKey)
                 {
-                    outputFile.WriteLine(string.Concat("                        {item.", Helper.GetCamel(columnsArray[i].ColumnName), "}"));
+                    if(columnsArray[i].SqlDataType == "bit")                        
+                        outputFile.WriteLine(string.Concat("                        <FormControlLabel control={<Checkbox checked={item.", Helper.GetCamel(columnsArray[i].ColumnName), "} />} />"));
+                    else
+                        outputFile.WriteLine(string.Concat("                        {item.", Helper.GetCamel(columnsArray[i].ColumnName), "}"));
                 }
                 else
                 {
@@ -476,7 +493,10 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
             var pk = table.Columns.First(f => f.IsPrimaryKey);
             outputFile.WriteLine($"import React, {{useState,useEffect, useCallback }} from 'react';");
             outputFile.WriteLine($"import axios from 'axios';");
-            outputFile.WriteLine($"import {{ Typography, Grid, Button, TextField, Box, useTheme }} from '@mui/material';");
+            if (table.Columns.Any(f => f.SqlDataType == "bit"))
+                outputFile.WriteLine($"import {{ Typography, Grid, Button, TextField, Box, useTheme, Checkbox, FormControlLabel }} from '@mui/material';");
+            else
+                outputFile.WriteLine($"import {{ Typography, Grid, Button, TextField, Box, useTheme }} from '@mui/material';");
             outputFile.WriteLine($"import Autocomplete from '@mui/material/Autocomplete';");
             outputFile.WriteLine($"import {{ useTranslation }} from 'react-i18next';");
             outputFile.WriteLine($"import {{ API_URL }} from '../../utils/constants/paths';");
@@ -638,7 +658,10 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
                     outputFile.WriteLine(string.Concat("                                     <Grid item xs={", c, "} md={", c, "} lg={", c, "} >"));
                     if (!columnsArray[j].IsForeignKey)
                     {
-                        outputFile.WriteLine(string.Concat("                                         <TextField fullWidth ", columnsArray[j].IsNullable ? "" : "required ", " label='", columnsArray[j].Property.FormTitle, "' value={formData.", Helper.GetCamel(columnsArray[j].ColumnName), "} inputProps={{ maxLength: ", columnsArray[j].SqlDataType == "varchar" ? columnsArray[j].MaxLength : columnsArray[j].Precision, " }} onChange={(event) => { setFormData({ ...formData, ", Helper.GetCamel(columnsArray[j].ColumnName), ": event.target.value });}} />"));
+                        if (columnsArray[j].SqlDataType != "bit")
+                            outputFile.WriteLine(string.Concat("                                         <TextField fullWidth ", columnsArray[j].IsNullable ? "" : "required ", " label='", columnsArray[j].Property.FormTitle, "' value={formData.", Helper.GetCamel(columnsArray[j].ColumnName), "} inputProps={{ maxLength: ", columnsArray[j].SqlDataType == "varchar" ? columnsArray[j].MaxLength : columnsArray[j].Precision, " }} onChange={(event) => { setFormData({ ...formData, ", Helper.GetCamel(columnsArray[j].ColumnName), ": event.target.value });}} />"));
+                        else
+                            outputFile.WriteLine(string.Concat("                                         <FormControlLabel control={<Checkbox checked={formData.", Helper.GetCamel(columnsArray[j].ColumnName), "} onChange={() => { setFormData({ ...formData, ", Helper.GetCamel(columnsArray[j].ColumnName), ": !formData.",Helper.GetCamel(columnsArray[j].ColumnName)," }); }} />} label=\"", columnsArray[j].Property.FormTitle, "\"/>"));
                     }
                     else
                     {
@@ -659,7 +682,11 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
                             prefixFk = countFk.ToString();
                         }
 
-                        outputFile.WriteLine($"                                             getOptionLabel={{o => o.{Helper.GetCamel(namedColumnInfo.ColumnName)} || ''}}");
+                        var fkCatalogsColumns = Helper.GetFKCatalogUI(fkTableInfo);
+                        if(fkCatalogsColumns.Length > 0)
+                            outputFile.WriteLine($"                                             getOptionLabel={{o => {fkCatalogsColumns} || ''}}");
+                        else
+                            outputFile.WriteLine($"                                             getOptionLabel={{o => o.{Helper.GetCamel(namedColumnInfo.ColumnName)} || ''}}");
                         outputFile.WriteLine($"                                             options={{{Helper.GetCamel(fkTableInfo.TableName)}{prefixFk}s}}");
                         outputFile.WriteLine($"                                             value={{{Helper.GetCamel(fkTableInfo.TableName)}{prefixFk}}}");
                         outputFile.WriteLine($"                                             onChange={{(event, newValue) => {{");
