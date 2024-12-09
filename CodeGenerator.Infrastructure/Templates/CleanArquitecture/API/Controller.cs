@@ -1,4 +1,5 @@
 ﻿using CodeGenerator.Infrastructure.Context.Models;
+using Microsoft.Data.SqlClient;
 using System.Text;
 
 
@@ -94,6 +95,11 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.API
             outputFile.WriteLine("            }");
             outputFile.WriteLine("            catch (Exception ex)");
             outputFile.WriteLine("            {");
+            outputFile.WriteLine("                if (ex is SqlException exception)");
+            outputFile.WriteLine("                {");
+            outputFile.WriteLine("                    if (exception.Errors[0].Number == 2601)");
+            outputFile.WriteLine($"                        return BadRequest(\"{table.Catalog.ErrorCreateUpdate}\");");
+            outputFile.WriteLine("                }");
             outputFile.WriteLine("                return BadRequest(ex.Message);");
             outputFile.WriteLine("            }");
             outputFile.WriteLine("");
@@ -139,6 +145,11 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.API
             outputFile.WriteLine("            }");
             outputFile.WriteLine("            catch (Exception ex)");
             outputFile.WriteLine("            {");
+            outputFile.WriteLine("                if (ex is SqlException exception)");
+            outputFile.WriteLine("                {");
+            outputFile.WriteLine("                    if (exception.Errors[0].Number == 2601)");
+            outputFile.WriteLine($"                        return BadRequest(\"{table.Catalog.ErrorCreateUpdate}\");");
+            outputFile.WriteLine("                }");
             outputFile.WriteLine("                return BadRequest(ex.Message);");
             outputFile.WriteLine("            }");
             outputFile.WriteLine("");

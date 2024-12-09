@@ -218,6 +218,7 @@ namespace CodeGenerator.Infrastructure.Repositories.Local
 					            a.TableName + '[Form description]' as FormDescription,
 								a.TableName as GridName, 
 								a.TableName + '[Grid description]' as GridDescription, 
+								null as ErrorCreateUpdate,
 					            cast({command.AuditId} as bigint) as AuditId
 					FROM dbo.[Table] a LEFT OUTER JOIN dbo.[Catalog] b
 						ON a.TableId = b.TableId

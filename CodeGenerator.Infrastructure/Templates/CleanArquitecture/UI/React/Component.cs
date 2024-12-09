@@ -60,7 +60,13 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
             outputFile.WriteLine($"    const [dialogButtonText, setDialogButtonText] = React.useState('');");
             outputFile.WriteLine("    const [refItem, setRefItem] = React.useState({});");
             foreach (var c in table.Columns.Where(f => !f.IsIdentity && f.ColumnName != "AuditoriaId"))
-                outputFile.WriteLine($"    const [{Helper.GetCamel(c.ColumnName)}, set{c.ColumnName}] = React.useState(null);");
+            {
+                if(c.SqlDataType != "bit")
+                    outputFile.WriteLine($"    const [{Helper.GetCamel(c.ColumnName)}, set{c.ColumnName}] = React.useState(null);");
+                else
+                    outputFile.WriteLine($"    const [{Helper.GetCamel(c.ColumnName)}, set{c.ColumnName}] = React.useState(false);");
+            }
+                
 
             outputFile.WriteLine($"");
             outputFile.WriteLine($"    const Swal = useSwalWrapper();");
@@ -158,7 +164,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
             outputFile.WriteLine($"                set{table.TableName}s(response.data);");
             outputFile.WriteLine($"                setTotalPages(response.data[0].totalPages);");
             outputFile.WriteLine($"                commandAlert('success', 'creó', null);");
-            outputFile.WriteLine("            });");
+            outputFile.WriteLine("            }).catch((error) => {\r\n                if (error.response) {\r\n                    commandAlert('error', '', error.response.data);\r\n                }\r\n            });");
             outputFile.WriteLine("        }");
             outputFile.WriteLine("        else {");
             outputFile.WriteLine(string.Concat("            axios.post(`${API_URL}", Helper.GetCamel(table.TableName), "/update`, newItem, { headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` }}).then((response) => {"));
@@ -167,7 +173,7 @@ namespace CodeGenerator.Infrastructure.Templates.CleanArquitecture.UI.React
             outputFile.WriteLine($"                set{table.TableName}s(response.data);");
             outputFile.WriteLine($"                setTotalPages(response.data[0].totalPages);");
             outputFile.WriteLine($"                commandAlert('success', 'actualizó', null);");
-            outputFile.WriteLine("            });");
+            outputFile.WriteLine("            }).catch((error) => {\r\n                if (error.response) {\r\n                    commandAlert('error', '', error.response.data);\r\n                }\r\n            });");
             outputFile.WriteLine("        }");
             outputFile.WriteLine($"        setCreateItem(false);");
             outputFile.WriteLine("    }, [createItem]);");
